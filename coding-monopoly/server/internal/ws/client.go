@@ -290,6 +290,8 @@ func (c *Client) handleIncomingMessage(data []byte) {
 	switch msg.Type {
 	case MessageTypeJoin:
 		c.handleJoinMessage(msg)
+	case "start_solo_game":
+		c.handleSoloStartMessage()
 	case MessageTypeChooseLevel:
 		c.handleChooseLevelMessage(msg)
 	case MessageTypeSubmitAnswer:
@@ -302,6 +304,15 @@ func (c *Client) handleIncomingMessage(data []byte) {
 	default:
 		log.Printf("[WS Client] Received unhandled message type '%s' from client %s", msg.Type, c.id)
 	}
+}
+
+func (c *Client) handleSoloStartMessage() {
+	if !c.IsJoined() { c.sendError("Join a room first"); return }
+	roomID := c.GetRoomID()
+	r := c.hub.GetRoomInstance(roomID)
+	if r == nil { c.sendError(ErrRoomNotFound.Error()); return }
+	if !r.StartSoloGame(c.GetID()) { c.sendError("Solo start requires exactly one connected player and an unstarted game"); return }
+	c.hub.broadcastStateSync(roomID)
 }
 
 func (c *Client) handleStateRequestMessage() {
