@@ -31,11 +31,14 @@ RUN go build -trimpath -ldflags="-s -w" -o /out/monopoly-server ./cmd/server \
 
 # ---- 3. Minimal runtime -----------------------------------------------------
 FROM alpine:3.22
-RUN apk add --no-cache ca-certificates tzdata \
+RUN apk add --no-cache ca-certificates tzdata postgresql-client \
     && addgroup -S -g 10001 app \
     && adduser -S -D -H -u 10001 -G app app
 
 COPY --from=server /out/monopoly-server /out/monopoly-seed /usr/local/bin/
+COPY server/migrations/ /app/migrations/
+COPY questions/easy.sql questions/medium.sql questions/hard.sql /app/questions/
+COPY deploy/init-db.sh /app/init-db.sh
 
 USER 10001:10001
 WORKDIR /app
