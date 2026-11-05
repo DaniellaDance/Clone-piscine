@@ -8,7 +8,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000002','mcq','Compiles and runs the program','Компилирует и запускает программу','Бағдарламаны компиляциялап, іске қосады',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000002','mcq','Only formats the code','Только форматирует','Тек пішімдейді',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000002','mcq','Creates a Git repository','Создаёт Git-репозиторий','Git репозиторийін құрады',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000003','mcq','hard','tomorrow_school_hard','Quest 1','Quest 1','Quest 1','В какой строке ошибка?
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000003','mcq','hard','tomorrow_school_hard','Quest 1','Quest 1','Quest 1','Which line contains the error?
 
 ```go
 package main
@@ -30,7 +30,7 @@ func main() {
 	x := 5
 	fmt.Println(y)
 }
-```','В какой строке ошибка?
+```','Қате қай жолда орналасқан?
 
 ```go
 package main
@@ -53,7 +53,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000005','mcq','Prints 2','Выведет 2','2 шығарады',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000005','mcq','Syntax error','Ошибка синтаксиса','Синтаксистік қате',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000005','mcq','Prints 1','Выведет 1','1 шығарады',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000006','mcq','hard','tomorrow_school_hard','Quest 2','Quest 2','Quest 2','В какой строке ошибка?
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000006','mcq','hard','tomorrow_school_hard','Quest 2','Quest 2','Quest 2','Which line contains the error?
 
 ```go
 package main
@@ -75,7 +75,7 @@ func main() {
 		println(x)
 	}
 }
-```','В какой строке ошибка?
+```','Қате қай жолда орналасқан?
 
 ```go
 package main
@@ -98,7 +98,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000008','mcq','It is the first byte, not necessarily a whole rune','Это первый байт, не обязательно целая руна','Бұл бірінші байт, ол міндетті түрде толық руна емес',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000008','mcq','Indexing starts at 1','Индексация с 1','Индекстеу 1-ден басталады',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000008','mcq','Strings cannot be indexed','Строки нельзя индексировать','Жолдарды индекстеуге болмайды',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000009','mcq','hard','tomorrow_school_hard','Quest 3','Quest 3','Quest 3','В какой строке ошибка?
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000009','mcq','hard','tomorrow_school_hard','Quest 3','Quest 3','Quest 3','Which line contains the error?
 
 ```go
 package main
@@ -107,7 +107,7 @@ import "fmt"
 
 func main() {
 	s := "Go"
-	s[0] = ''N''
+	s[0] = ''''N''''
 	fmt.Print(s)
 }
 ```','В какой строке ошибка?
@@ -122,7 +122,7 @@ func main() {
 	s[0] = ''N''
 	fmt.Print(s)
 }
-```','В какой строке ошибка?
+```','Қате қай жолда орналасқан?
 
 ```go
 package main
@@ -131,7 +131,7 @@ import "fmt"
 
 func main() {
 	s := "Go"
-	s[0] = ''N''
+	s[0] = ''''N''''
 	fmt.Print(s)
 }
 ```',true);
@@ -146,7 +146,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000011','mcq','An inner variable hides an outer one','Внутренняя переменная скрывает внешнюю','Ішкі айнымалы сыртқы айнымалыны жасырады',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000011','mcq','Deleting a value','Удаление значения','Мәнді жою',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000011','mcq','Changing a package type','Изменение типа пакета','Пакет типін өзгерту',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000012','mcq','hard','tomorrow_school_hard','Quest 4','Quest 4','Quest 4','В какой строке ошибка?
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000012','mcq','hard','tomorrow_school_hard','Quest 4','Quest 4','Quest 4','Which line contains the error?
 
 ```go
 package main
@@ -166,7 +166,7 @@ func square(x int) int {
 	println(y)
 }
 func main() {}
-```','В какой строке ошибка?
+```','Қате қай жолда орналасқан?
 
 ```go
 package main
@@ -188,7 +188,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000014','mcq','They may share the same underlying array','Они могут разделять базовый массив','Олар бір негізгі массивті ортақ пайдалануы мүмкін',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000014','mcq','A slice is always copied','Срез всегда копируется','Срез әрқашан көшіріледі',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000014','mcq','Because of fmt','Из-за fmt','fmt салдарынан',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000015','mcq','hard','tomorrow_school_hard','Quest 5','Quest 5','Quest 5','В какой строке возникает ошибка при выполнении?
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000015','mcq','hard','tomorrow_school_hard','Quest 5','Quest 5','Quest 5','Which line causes a runtime error?
 
 ```go
 package main
@@ -210,7 +210,7 @@ func main() {
 	a := []int{1, 2}
 	fmt.Print(a[2])
 }
-```','В какой строке возникает ошибка при выполнении?
+```','Қай жолда орындау қатесі пайда болады?
 
 ```go
 package main
@@ -233,7 +233,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000017','mcq','A pointer to the struct is passed','Передан указатель на структуру','Құрылымға көрсеткіш беріледі',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000017','mcq','Go passes everything by reference','Go передаёт всё по ссылке','Go барлығын сілтеме арқылы береді',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000017','mcq','The fields are global','Поля глобальные','Өрістер жаһандық',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000018','mcq','hard','tomorrow_school_hard','Quest 6','Quest 6','Quest 6','В какой строке возникает ошибка при выполнении?
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000018','mcq','hard','tomorrow_school_hard','Quest 6','Quest 6','Quest 6','Which line causes a runtime error?
 
 ```go
 package main
@@ -251,7 +251,7 @@ func main() {
 	var p *int
 	*p = 3
 }
-```','В какой строке возникает ошибка при выполнении?
+```','Қай жолда орындау қатесі пайда болады?
 
 ```go
 package main
@@ -272,7 +272,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000020','mcq','Stack overflow or resource exhaustion','Переполнение стека/исчерпание ресурсов','Стек толып кетеді немесе ресурстар таусылады',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000020','mcq','Automatic termination','Автоматическая остановка','Автоматты түрде тоқтайды',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000020','mcq','Sorting','Сортировка','Сұрыптау орындалады',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000021','mcq','hard','tomorrow_school_hard','Quest 7','Quest 7','Quest 7','Что произойдёт при вызове f(1)?
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000021','mcq','hard','tomorrow_school_hard','Quest 7','Quest 7','Quest 7','What happens when f(1) is called?
 
 ```go
 package main
@@ -296,7 +296,7 @@ func f(n int) int {
 	return f(n + 1)
 }
 func main() { f(1) }
-```','Что произойдёт при вызове f(1)?
+```','f(1) шақырылғанда не болады?
 
 ```go
 package main
@@ -320,7 +320,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000023','mcq','for _, s := range os.Args[1:]','for _, s := range os.Args[1:]','for _, s := range os.Args[1:]',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000023','mcq','for _, s := range os.Args[0:0]','for _, s := range os.Args[0:0]','for _, s := range os.Args[0:0]',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000023','mcq','for s := range os.Args[0]','for s := range os.Args[0]','for s := range os.Args[0]',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000024','mcq','hard','tomorrow_school_hard','Quest 8','Quest 8','Quest 8','В какой строке возникает ошибка при выполнении?
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000024','mcq','hard','tomorrow_school_hard','Quest 8','Quest 8','Quest 8','Which line causes a runtime error?
 
 ```go
 package main
@@ -344,7 +344,7 @@ func main() {
 		println(os.Args[1])
 	}
 }
-```','В какой строке возникает ошибка при выполнении?
+```','Қай жолда орындау қатесі пайда болады?
 
 ```go
 package main
@@ -368,7 +368,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000026','mcq','The number of iterations is determined when iteration starts','Количество итераций определяется в начале обхода','Итерациялар саны өту басталғанда анықталады',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000026','mcq','It always causes a compilation error','Всегда ошибка компиляции','Әрқашан компиляция қатесі болады',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000026','mcq','range restarts automatically','range автоматически перезапускается','range автоматты түрде қайта басталады',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000027','mcq','hard','tomorrow_school_hard','Quest 9','Quest 9','Quest 9','В какой строке возникает ошибка при выполнении?
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000027','mcq','hard','tomorrow_school_hard','Quest 9','Quest 9','Quest 9','Which line causes a runtime error?
 
 ```go
 package main
@@ -390,7 +390,7 @@ func main() {
 		println(a[i])
 	}
 }
-```','В какой строке возникает ошибка при выполнении?
+```','Қай жолда орындау қатесі пайда болады?
 
 ```go
 package main
@@ -413,7 +413,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000029','mcq','Only a fixed number of links are changed','Меняется фиксированное число ссылок','Сілтемелердің тұрақты саны ғана өзгереді',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000029','mcq','The entire list is recreated','Пересоздаётся весь список','Бүкіл тізім қайта құрылады',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000029','mcq','Sorting is required','Нужна сортировка','Сұрыптау қажет',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000030','mcq','hard','tomorrow_school_hard','Quest 10','Quest 10','Quest 10','В какой строке возникает ошибка при выполнении?
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000030','mcq','hard','tomorrow_school_hard','Quest 10','Quest 10','Quest 10','Which line causes a runtime error?
 
 ```go
 package main
@@ -435,7 +435,7 @@ func main() {
 	var head *Node
 	println(head.Next)
 }
-```','В какой строке возникает ошибка при выполнении?
+```','Қай жолда орындау қатесі пайда болады?
 
 ```go
 package main
@@ -458,7 +458,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000032','mcq','The constant result 256 cannot be represented by uint8','Константный результат 256 не представим в uint8','256 константалық нәтижесі uint8 типіне сыймайды',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000032','mcq','Go does not support uint8','Go не поддерживает uint8','Go uint8 типін қолдамайды',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000032','mcq','255 is odd','255 нечётное','255 тақ сан',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000033','mcq','hard','tomorrow_school_hard','Quest 11','Quest 11','Quest 11','В какой строке ошибка?
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000033','mcq','hard','tomorrow_school_hard','Quest 11','Quest 11','Quest 11','Which line contains the error?
 
 ```go
 package main
@@ -478,7 +478,7 @@ func main() {
 	y := x << -1
 	println(y)
 }
-```','В какой строке ошибка?
+```','Қате қай жолда орналасқан?
 
 ```go
 package main
@@ -500,7 +500,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000035','mcq','A data race may occur','Возможна гонка данных','Деректер жарысы туындауы мүмкін',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000035','mcq','Go always serializes operations','Go всегда сериализует операции','Go операцияларды әрқашан кезектестіреді',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0002-0000-4000-8000-000000000035','mcq','The compiler automatically adds a mutex','Компилятор автоматически ставит mutex','Компилятор mutex автоматты түрде қосады',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000036','mcq','hard','tomorrow_school_hard','Quest 12','Quest 12','Quest 12','В какой строке ошибка?
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0002-0000-4000-8000-000000000036','mcq','hard','tomorrow_school_hard','Quest 12','Quest 12','Quest 12','Which line contains the error?
 
 ```go
 package main
@@ -524,7 +524,7 @@ func main() {
 	fmt.Printf("%d", x)
 	fmt.Println(y)
 }
-```','В какой строке ошибка?
+```','Қате қай жолда орналасқан?
 
 ```go
 package main
