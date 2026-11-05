@@ -561,17 +561,6 @@ func (r *Room) ChooseLevel(clientID string, difficulty string) error {
 		if err == nil && r.usedQuestionIDs[question.ID] { err = fmt.Errorf("question already used: %s",question.ID) }
 	}
 	if err != nil {
-			break
-		}
-		if !r.usedQuestionIDs[question.ID] {
-			found = true
-			break
-		}
-	}
-	if err == nil && !found {
-		err = fmt.Errorf("no unused questions available for difficulty %s", difficulty)
-	}
-	if err != nil {
 		player.ChosenDifficulty = ""
 		if r.broadcaster != nil {
 			r.broadcaster.SendError(clientID, "Unable to assign a question")
