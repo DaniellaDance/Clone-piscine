@@ -236,6 +236,9 @@ class WebSocketService {
         this.hasJoined = true
         this.persistIdentity()
         break
+      case 'game_start_countdown':
+        store.autoStartDeadline = Number(payload?.deadline) || 0
+        break
       case 'state_sync':
         this.applyPlayers(payload.players || [])
         store.boardCells = payload.board_cells || []
@@ -261,6 +264,7 @@ class WebSocketService {
         if (payload.game_over) {
           store.gameOver = payload.game_over as GameOverSummary
         }
+        if (payload.is_started) store.autoStartDeadline = 0
         if (payload.is_started !== undefined) {
           store.isStarted = !!payload.is_started
         }
