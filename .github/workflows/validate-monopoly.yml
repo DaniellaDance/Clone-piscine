@@ -58,6 +58,21 @@ jobs:
               GROUP BY p.id HAVING count(o.id) <> 3 OR count(o.id) FILTER (WHERE o.is_correct) <> 1
             ) THEN RAISE EXCEPTION 'Invalid options or correct answer count'; END IF;
             IF EXISTS (
+              SELECT 1 FROM problems
+              WHERE topic LIKE 'tomorrow_school_%'
+                AND (
+                  prompt_en = prompt_ru OR prompt_kz = prompt_ru
+                  OR prompt_en = '' OR prompt_kz = ''
+                )
+            ) THEN RAISE EXCEPTION 'Missing English or Kazakh question translation'; END IF;
+            IF EXISTS (
+              SELECT 1 FROM problem_options o
+              JOIN problems p ON p.id=o.problem_id
+              WHERE p.topic LIKE 'tomorrow_school_%'
+                AND o.text_ru ~ '[А-Яа-яӘәҒғҚқҢңӨөҰұҮүҺһІі]'
+                AND (o.text_en=o.text_ru OR o.text_kz=o.text_ru)
+            ) THEN RAISE EXCEPTION 'Missing translated answer option'; END IF;
+            IF EXISTS (
               SELECT 1 FROM (VALUES ('easy'),('medium'),('hard')) levels(level)
               WHERE (SELECT count(*) FROM problems WHERE difficulty::text=levels.level AND topic='tomorrow_school_'||levels.level) <> 36
             ) THEN RAISE EXCEPTION 'Incorrect difficulty counts'; END IF;
