@@ -172,6 +172,8 @@ type Room struct {
 	targetXP          int
 	disconnectGrace   time.Duration
 	graceTimers       map[string]*time.Timer
+	startTimer *time.Timer
+	startDeadline time.Time
 }
 
 // NewRoom creates a new Room with default board and initialized RNG.
@@ -393,16 +395,13 @@ func (r *Room) AddOrReconnectPlayer(clientID string, name string) (*Player, erro
 		return nil, errors.New("game is over")
 	}
 
-	// Mid-game join restriction: only reconnecting players can join a started game
-	if r.started {
-		return nil, ErrGameInProgress
-	}
-
+	
 	// New player joining before game starts
 	player := NewPlayer(clientID, name)
 	player.XP = r.InitialXP
 	r.players = append(r.players, player)
 	r.playerMap[clientID] = player
+	r.scheduleAutoStartLocked()
 
 	return player, nil
 }
@@ -431,6 +430,7 @@ func (r *Room) disconnectPlayer(clientID string, immediate bool) {
 
 	p.IsConnected = false
 	r.clearGraceTimerLocked(clientID)
+	if !r.started { r.scheduleAutoStartLocked() }
 
 	if r.activePlayerID != clientID || r.finished {
 		return
@@ -1053,6 +1053,45 @@ func (r *Room) SetBoard(layout BoardLayout) {
 // Admin control methods
 // ---------------------------------------------------------------------------
 
+// AutoStartDeadline is the scheduled start time, or zero when waiting for players.
+func (r *Room) AutoStartDeadline() time.Time {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	return r.startDeadline
+}
+
+func (r *Room) scheduleAutoStartLocked() {
+	if r.started || r.finished { return }
+	connected := 0
+	for _, p := range r.players { if p.IsConnected { connected++ } }
+	if connected < 2 {
+		if r.startTimer != nil { r.startTimer.Stop(); r.startTimer = nil }
+		r.startDeadline = time.Time{}
+		return
+	}
+	if r.startTimer != nil { return }
+	r.startDeadline = time.Now().Add(time.Minute)
+	r.startTimer = time.AfterFunc(time.Minute, func() {
+		r.mu.Lock()
+		defer r.mu.Unlock()
+		r.startTimer = nil
+		r.startDeadline = time.Time{}
+		if r.started || r.finished { return }
+		connected := 0
+		for _, p := range r.players { if p.IsConnected { connected++ } }
+		if connected < 2 { return }
+		for i, p := range r.players {
+			if p.IsConnected {
+				r.turnIdx = i
+				r.activePlayerID = p.ID
+				r.started = true
+				r.broadcastTurnStartedLocked()
+				return
+			}
+		}
+	})
+}
+
 // StartSoloGame allows the sole connected player to start without an administrator.
 func (r *Room) StartSoloGame(playerID string) bool {
 	r.mu.Lock()
@@ -1070,6 +1109,8 @@ func (r *Room) StartSoloGame(playerID string) bool {
 			r.turnIdx = i
 			r.activePlayerID = playerID
 			r.started = true
+			if r.startTimer != nil { r.startTimer.Stop(); r.startTimer = nil }
+			r.startDeadline = time.Time{}
 			r.broadcastTurnStartedLocked()
 			return true
 		}
