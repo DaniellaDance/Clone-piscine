@@ -9,7 +9,6 @@ import (
 
 	"server/internal/problems"
 	"server/internal/locale"
-	"fmt"
 	"server/internal/room"
 )
 
