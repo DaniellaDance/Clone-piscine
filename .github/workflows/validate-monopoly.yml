@@ -96,3 +96,5 @@ jobs:
       - name: Build deployable game binary
         working-directory: coding-monopoly
         run: make build
+      - name: Validate public deployment Docker image
+        run: docker build -f coding-monopoly/Dockerfile coding-monopoly -t coding-monopoly:ci
