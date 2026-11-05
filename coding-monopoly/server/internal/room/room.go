@@ -1053,6 +1053,30 @@ func (r *Room) SetBoard(layout BoardLayout) {
 // Admin control methods
 // ---------------------------------------------------------------------------
 
+// StartSoloGame allows the sole connected player to start without an administrator.
+func (r *Room) StartSoloGame(playerID string) bool {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if r.started || r.finished || r.playerMap[playerID] == nil || !r.playerMap[playerID].IsConnected {
+		return false
+	}
+	connected := 0
+	for _, p := range r.players {
+		if p.IsConnected { connected++ }
+	}
+	if connected != 1 { return false }
+	for i, p := range r.players {
+		if p.ID == playerID {
+			r.turnIdx = i
+			r.activePlayerID = playerID
+			r.started = true
+			r.broadcastTurnStartedLocked()
+			return true
+		}
+	}
+	return false
+}
+
 // AdminStartGame starts the game in the room manually.
 // Can only be started if the game has not already started or finished, and at least 1 connected player exists.
 func (r *Room) AdminStartGame() bool {
