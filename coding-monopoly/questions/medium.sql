@@ -8,7 +8,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000002','mcq','20','20','20',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000002','mcq','14','14','14',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000002','mcq','24','24','24',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000003','mcq','medium','tomorrow_school_medium','Quest 1','Quest 1','Quest 1','Допиши строку вместо ???, чтобы код работал.
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000003','mcq','medium','tomorrow_school_medium','Quest 1','Quest 1','Quest 1','Fill in the line replacing ??? so the code works.
 
 ```go
 package main
@@ -24,7 +24,7 @@ package main
 import "fmt"
 
 func main() { ???; fmt.Print(x) }
-```','Допиши строку вместо ???, чтобы код работал.
+```','Код жұмыс істеуі үшін ??? орнына тиісті жолды жазыңыз.
 
 ```go
 package main
@@ -44,7 +44,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000005','mcq','3','3','3',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000005','mcq','4','4','4',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000005','mcq','5','5','5',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000006','mcq','medium','tomorrow_school_medium','Quest 2','Quest 2','Quest 2','Допиши условие вместо ???.
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000006','mcq','medium','tomorrow_school_medium','Quest 2','Quest 2','Quest 2','Fill in the condition replacing ???.
 
 ```go
 package main
@@ -70,7 +70,7 @@ func main() {
 		fmt.Print("yes")
 	}
 }
-```','Допиши условие вместо ???.
+```','??? орнына тиісті шартты жазыңыз.
 
 ```go
 package main
@@ -95,7 +95,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000008','mcq','2','2','2',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000008','mcq','4','4','4',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000008','mcq','1','1','1',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000009','mcq','medium','tomorrow_school_medium','Quest 3','Quest 3','Quest 3','Допиши строку вместо ???.
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000009','mcq','medium','tomorrow_school_medium','Quest 3','Quest 3','Quest 3','Fill in the line replacing ???.
 
 ```go
 package main
@@ -111,7 +111,7 @@ package main
 import "fmt"
 
 func main() { s := "кот"; ???; fmt.Print(len(r)) }
-```','Допиши строку вместо ???.
+```','??? орнына тиісті жолды жазыңыз.
 
 ```go
 package main
@@ -131,7 +131,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000011','mcq','Two return values','Два возвращаемых значения','Екі қайтарылатын мән',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000011','mcq','Two arguments','Два аргумента','Екі аргумент',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000011','mcq','A method with no result','Метод без результата','Нәтижесіз әдіс',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000012','mcq','medium','tomorrow_school_medium','Quest 4','Quest 4','Quest 4','Допиши возвращаемую строку.
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000012','mcq','medium','tomorrow_school_medium','Quest 4','Quest 4','Quest 4','Complete the return statement.
 
 ```go
 package main
@@ -149,7 +149,7 @@ import "fmt"
 
 func twice(x int) int { ??? }
 func main()           { fmt.Print(twice(3)) }
-```','Допиши возвращаемую строку.
+```','Мәнді қайтару операторын толықтырыңыз.
 
 ```go
 package main
@@ -170,7 +170,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000014','mcq','The first is a fixed-length array','Первое — массив фиксированной длины','Біріншісі — ұзындығы тұрақты массив',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000014','mcq','There is no difference','Ничем','Еш айырмашылығы жоқ',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000014','mcq','The first is a string','Первое — строка','Біріншісі — жол',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000015','mcq','medium','tomorrow_school_medium','Quest 5','Quest 5','Quest 5','Допиши строку вместо ???.
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000015','mcq','medium','tomorrow_school_medium','Quest 5','Quest 5','Quest 5','Fill in the line replacing ???.
 
 ```go
 package main
@@ -186,7 +186,7 @@ package main
 import "fmt"
 
 func main() { a := []int{1, 2}; ???; fmt.Print(len(a)) }
-```','Допиши строку вместо ???.
+```','??? орнына тиісті жолды жазыңыз.
 
 ```go
 package main
@@ -206,7 +206,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000017','mcq','Dereferencing','Разыменование','Көрсеткіш арқылы мәнге қол жеткізу',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000017','mcq','Creating a package','Создание пакета','Пакет құру',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000017','mcq','Addition','Сложение','Қосу',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000018','mcq','medium','tomorrow_school_medium','Quest 6','Quest 6','Quest 6','Допиши строку вместо ???.
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000018','mcq','medium','tomorrow_school_medium','Quest 6','Quest 6','Quest 6','Fill in the line replacing ???.
 
 ```go
 package main
@@ -222,7 +222,7 @@ package main
 import "fmt"
 
 func main() { x := 5; ???; fmt.Print(*p) }
-```','Допиши строку вместо ???.
+```','??? орнына тиісті жолды жазыңыз.
 
 ```go
 package main
@@ -242,7 +242,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000020','mcq','Factorial','Факториал','Факториалды',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000020','mcq','Sum of numbers','Сумму чисел','Сандар қосындысын',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000020','mcq','String length','Длину строки','Жол ұзындығын',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000021','mcq','medium','tomorrow_school_medium','Quest 7','Quest 7','Quest 7','Допиши базовый случай вместо ???.
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000021','mcq','medium','tomorrow_school_medium','Quest 7','Quest 7','Quest 7','Fill in the base case replacing ???.
 
 ```go
 package main
@@ -270,7 +270,7 @@ func sum(n int) int {
 	return n + sum(n-1)
 }
 func main() { fmt.Print(sum(3)) }
-```','Допиши базовый случай вместо ???.
+```','??? орнына рекурсияның базалық жағдайын жазыңыз.
 
 ```go
 package main
@@ -296,7 +296,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000023','mcq','Panic: index out of range','Паника: индекс вне диапазона','Паника: индекс ауқымнан тыс',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000023','mcq','Empty string','Пустая строка','Бос жол',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000023','mcq','0','0','0',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000024','mcq','medium','tomorrow_school_medium','Quest 8','Quest 8','Quest 8','Допиши проверку вместо ???.
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000024','mcq','medium','tomorrow_school_medium','Quest 8','Quest 8','Quest 8','Fill in the check replacing ???.
 
 ```go
 package main
@@ -326,7 +326,7 @@ func main() {
 		fmt.Print(os.Args[1])
 	}
 }
-```','Допиши проверку вместо ???.
+```','??? орнына тексеруді жазыңыз.
 
 ```go
 package main
@@ -353,7 +353,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000026','mcq','O(n)','O(n)','O(n)',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000026','mcq','O(1)','O(1)','O(1)',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000026','mcq','O(n²)','O(n²)','O(n²)',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000027','mcq','medium','tomorrow_school_medium','Quest 9','Quest 9','Quest 9','Допиши условие для обмена соседних элементов.
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000027','mcq','medium','tomorrow_school_medium','Quest 9','Quest 9','Quest 9','Complete the condition for swapping adjacent elements.
 
 ```go
 package main
@@ -381,7 +381,7 @@ func main() {
 	}
 	fmt.Print(a)
 }
-```','Допиши условие для обмена соседних элементов.
+```','Көршілес элементтердің орнын ауыстыру шартын толықтырыңыз.
 
 ```go
 package main
@@ -407,7 +407,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000029','mcq','Otherwise a panic may occur','Иначе возможна паника','Әйтпесе паника болуы мүмкін',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000029','mcq','Otherwise the code is slower','Иначе код медленнее','Әйтпесе код баяулайды',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000029','mcq','Otherwise the node is deleted','Иначе узел удалится','Әйтпесе түйін жойылады',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000030','mcq','medium','tomorrow_school_medium','Quest 10','Quest 10','Quest 10','Допиши строку для связи узлов.
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000030','mcq','medium','tomorrow_school_medium','Quest 10','Quest 10','Quest 10','Complete the line linking the nodes.
 
 ```go
 package main
@@ -433,7 +433,7 @@ type Node struct {
 }
 
 func main() { a := &Node{Value: 1}; b := &Node{Value: 2}; ???; fmt.Print(a.Next.Value) }
-```','Допиши строку для связи узлов.
+```','Түйіндерді байланыстыратын жолды толықтырыңыз.
 
 ```go
 package main
@@ -458,7 +458,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000032','mcq','1','1','1',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000032','mcq','7','7','7',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000032','mcq','2','2','2',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000033','mcq','medium','tomorrow_school_medium','Quest 11','Quest 11','Quest 11','Допиши выражение для проверки младшего бита.
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000033','mcq','medium','tomorrow_school_medium','Quest 11','Quest 11','Quest 11','Complete the expression checking the least significant bit.
 
 ```go
 package main
@@ -474,7 +474,7 @@ package main
 import "fmt"
 
 func main() { x := 5; fmt.Print(???) }
-```','Допиши выражение для проверки младшего бита.
+```','Ең кіші разрядты битті тексеретін өрнекті толықтырыңыз.
 
 ```go
 package main
@@ -494,7 +494,7 @@ INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000035','mcq','The deferred call runs when the function returns','Отложенный вызов выполнится при выходе из функции','Кейінге қалдырылған шақыру функция аяқталғанда орындалады',true);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000035','mcq','It runs before the file opens','Он выполняется до открытия','Ол файл ашылмай тұрып орындалады',false);
 INSERT INTO problem_options (problem_id,problem_type,text_en,text_ru,text_kz,is_correct) VALUES ('daae0001-0000-4000-8000-000000000035','mcq','It suppresses errors','Он подавляет ошибки','Ол қателерді басады',false);
-INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000036','mcq','medium','tomorrow_school_medium','Quest 12','Quest 12','Quest 12','Допиши обработку ошибки вместо ???.
+INSERT INTO problems (id,type,difficulty,topic,title_en,title_ru,title_kz,prompt_en,prompt_ru,prompt_kz,is_published) VALUES ('daae0001-0000-4000-8000-000000000036','mcq','medium','tomorrow_school_medium','Quest 12','Quest 12','Quest 12','Complete the error handling replacing ???.
 
 ```go
 package main
@@ -516,7 +516,7 @@ import (
 )
 
 func main() { n, err := strconv.Atoi("42"); ???; fmt.Print(n) }
-```','Допиши обработку ошибки вместо ???.
+```','??? орнына қате өңдеуді жазыңыз.
 
 ```go
 package main
