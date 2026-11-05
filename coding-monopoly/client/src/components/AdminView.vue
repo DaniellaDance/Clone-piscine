@@ -1,0 +1,743 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { adminStore } from '../adminStore'
+import { adminApiService, type RoomSummary } from '../services/adminApiService'
+import adminWS from '../services/adminWebsocketService'
+import AdminBoardList from './AdminBoardList.vue'
+import AdminCreateRoomModal from './AdminCreateRoomModal.vue'
+import AdminQuestionList from './AdminQuestionList.vue'
+import AdminSpectatorView from './AdminSpectatorView.vue'
+
+type AdminTab = 'questions' | 'boards' | 'rooms'
+
+export default defineComponent({
+  name: 'AdminView',
+
+  components: {
+    AdminBoardList,
+    AdminCreateRoomModal,
+    AdminQuestionList,
+    AdminSpectatorView,
+  },
+
+  data() {
+    return {
+      store: adminStore,
+      loginPassword: '' as string,
+      loginError: '' as string,
+      loginLoading: false as boolean,
+      activeTab: 'questions' as AdminTab,
+      // rooms list
+      rooms: [] as RoomSummary[],
+      roomsLoading: false as boolean,
+      roomsError: '' as string,
+      roomsRefreshInterval: null as number | null,
+      showCreateRoom: false as boolean,
+      // selected room for spectating
+      selectedRoom: null as string | null,
+    }
+  },
+
+  computed: {
+    isLoggedIn(): boolean {
+      return !!adminStore.token
+    },
+    isWatchingRoom(): boolean {
+      return this.activeTab === 'rooms' && this.selectedRoom !== null
+    },
+  },
+
+  mounted() {
+    const savedToken = sessionStorage.getItem('admin_token')
+    if (savedToken) {
+      adminStore.token = savedToken
+    }
+  },
+
+  beforeUnmount() {
+    this.stopRoomsRefresh()
+  },
+
+  methods: {
+    async handleLogin() {
+      if (!this.loginPassword) return
+      this.loginLoading = true
+      this.loginError = ''
+      try {
+        const data = await adminApiService.login(this.loginPassword)
+        adminStore.token = data.token
+        sessionStorage.setItem('admin_token', data.token)
+      } catch (err: any) {
+        this.loginError = err.message || 'Invalid password or connection failed'
+      } finally {
+        this.loginLoading = false
+        this.loginPassword = ''
+      }
+    },
+
+    async handleLogout() {
+      adminWS.disconnect()
+      adminStore.token = ''
+      adminStore.connected = false
+      adminStore.roomID = ''
+      this.selectedRoom = null
+      this.rooms = []
+      sessionStorage.removeItem('admin_token')
+      sessionStorage.removeItem('admin_room')
+    },
+
+    async switchTab(tab: AdminTab) {
+      this.activeTab = tab
+      if (tab === 'rooms') {
+        // Deselect room so we show the list, not a spectator view
+        this.selectedRoom = null
+        adminWS.disconnect()
+        adminStore.connected = false
+        await this.loadRooms()
+        this.startRoomsRefresh()
+      } else {
+        this.stopRoomsRefresh()
+      }
+    },
+
+    async loadRooms() {
+      this.roomsLoading = true
+      this.roomsError = ''
+      try {
+        this.rooms = await adminApiService.listRooms(adminStore.token)
+      } catch (err: any) {
+        this.roomsError = err.message || 'Failed to load rooms'
+      } finally {
+        this.roomsLoading = false
+      }
+    },
+
+    startRoomsRefresh() {
+      this.stopRoomsRefresh()
+      this.roomsRefreshInterval = setInterval(() => {
+        if (this.selectedRoom === null) this.loadRooms()
+      }, 3000) as unknown as number
+    },
+
+    stopRoomsRefresh() {
+      if (this.roomsRefreshInterval !== null) {
+        clearInterval(this.roomsRefreshInterval)
+        this.roomsRefreshInterval = null
+      }
+    },
+
+    async selectRoom(roomID: string) {
+      this.stopRoomsRefresh()
+      this.selectedRoom = roomID
+      adminStore.roomID = roomID
+      sessionStorage.setItem('admin_room', roomID)
+      try {
+        await adminWS.connect(adminStore.token, roomID)
+      } catch (e) {
+        console.error('Spectator connection failed:', e)
+      }
+    },
+
+    backToRoomList() {
+      adminWS.disconnect()
+      adminStore.connected = false
+      this.selectedRoom = null
+      this.loadRooms()
+      this.startRoomsRefresh()
+    },
+
+    roomStatusLabel(room: RoomSummary): string {
+      if (room.is_finished) return this.$t('admin.roomStatus.finished')
+      if (room.is_paused) return this.$t('admin.roomStatus.paused')
+      if (room.is_started) return this.$t('admin.roomStatus.inProgress')
+      return this.$t('admin.roomStatus.waiting')
+    },
+
+    roomStatusClass(room: RoomSummary): string {
+      if (room.is_finished) return 'status-finished'
+      if (room.is_paused) return 'status-paused'
+      if (room.is_started) return 'status-active'
+      return 'status-waiting'
+    },
+
+    async onRoomCreated() {
+      this.showCreateRoom = false
+      await this.loadRooms()
+    },
+  },
+})
+</script>
+
+<template>
+  <!-- LOGIN BACKDROP -->
+  <div v-if="!isLoggedIn" class="login-backdrop">
+    <div class="login-card">
+      <div class="login-logo">🛡️ {{ $t('admin.portal') }}</div>
+      <p class="login-subtitle">{{ $t('admin.loginSubtitle') }}</p>
+
+      <div class="login-field">
+        <label for="admin-password">{{ $t('admin.password') }}</label>
+        <input
+          id="admin-password"
+          v-model="loginPassword"
+          type="password"
+          placeholder="••••••••"
+          class="login-input"
+          autofocus
+          @keydown.enter="handleLogin"
+        />
+      </div>
+
+      <p v-if="loginError" class="login-error">{{ loginError }}</p>
+
+      <button
+        id="admin-login-btn"
+        class="login-btn"
+        :disabled="loginLoading || !loginPassword"
+        @click="handleLogin"
+      >
+        <span v-if="loginLoading">{{ $t('admin.authenticating') }}</span>
+        <span v-else>{{ $t('admin.logIn') }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATED ADMIN AREA -->
+  <div v-else class="admin-app-layout">
+    <!-- Top Navigation Bar -->
+    <header class="admin-topbar">
+      <div class="topbar-left">
+        <span class="topbar-logo">🛡️ {{ $t('admin.panel') }}</span>
+        <nav class="admin-tabs">
+          <button
+            id="tab-questions"
+            class="tab-btn"
+            :class="{ active: activeTab === 'questions' }"
+            @click="switchTab('questions')"
+          >
+            📚 {{ $t('admin.questionBank') }}
+          </button>
+          <button
+            id="tab-boards"
+            class="tab-btn"
+            :class="{ active: activeTab === 'boards' }"
+            @click="switchTab('boards')"
+          >
+            🎲 {{ $t('admin.boardsTab') }}
+          </button>
+          <button
+            id="tab-rooms"
+            class="tab-btn"
+            :class="{ active: activeTab === 'rooms' }"
+            @click="switchTab('rooms')"
+          >
+            📡 {{ $t('admin.liveRooms') }}
+          </button>
+        </nav>
+      </div>
+
+      <div class="topbar-right">
+        <span v-if="isWatchingRoom" class="room-indicator">{{ $t('admin.roomLabel', { id: store.roomID }) }}</span>
+        <button id="admin-logout-btn" class="btn-secondary btn-sm" @click="handleLogout">
+          {{ $t('admin.logOut') }}
+        </button>
+      </div>
+    </header>
+
+    <!-- Main View Content -->
+    <main class="admin-main-content">
+      <!-- QUESTION BANK TAB -->
+      <AdminQuestionList v-if="activeTab === 'questions'" />
+
+      <!-- BOARDS TAB -->
+      <AdminBoardList v-else-if="activeTab === 'boards'" />
+
+      <!-- ROOMS TAB: list or spectator -->
+      <template v-else-if="activeTab === 'rooms'">
+
+        <!-- SPECTATOR VIEW (a room is selected) -->
+        <div v-if="isWatchingRoom" class="spectator-wrapper">
+          <div class="spectator-back-bar">
+            <button id="back-to-rooms-btn" class="back-btn" @click="backToRoomList">
+              ← {{ $t('admin.allRooms') }}
+            </button>
+            <span class="spectator-room-label">{{ $t('admin.watching') }} <strong>{{ selectedRoom }}</strong></span>
+            <span class="conn-pill" :class="{ connected: store.connected }">
+              {{ store.connected ? $t('admin.live') : $t('admin.disconnected') }}
+            </span>
+          </div>
+          <AdminSpectatorView :isEmbedded="true" />
+        </div>
+
+        <!-- ROOM LIST -->
+        <div v-else class="rooms-tab">
+          <div class="rooms-header">
+            <h2 class="rooms-title">🏠 {{ $t('admin.activeRooms') }}</h2>
+            <div class="rooms-header-actions">
+              <button id="open-create-room-btn" class="btn-primary btn-sm" @click="showCreateRoom = true">
+                {{ $t('admin.createRoom') }}
+              </button>
+              <button id="refresh-rooms-btn" class="btn-secondary btn-sm" :disabled="roomsLoading" @click="loadRooms">
+                {{ roomsLoading ? $t('admin.refreshing') : $t('admin.refresh') }}
+              </button>
+            </div>
+          </div>
+
+          <p v-if="roomsError" class="rooms-error">{{ roomsError }}</p>
+
+          <div v-if="rooms.length === 0 && !roomsLoading" class="rooms-empty">
+            <div class="empty-icon">🌐</div>
+            <p>{{ $t('admin.noRooms') }}</p>
+          </div>
+
+          <div v-else class="rooms-grid">
+            <div
+              v-for="room in rooms"
+              :key="room.room_id"
+              class="room-card"
+              :class="roomStatusClass(room)"
+              :id="`room-card-${room.room_id}`"
+              @click="selectRoom(room.room_id)"
+            >
+              <div class="room-card-top">
+                <span class="room-id">{{ room.room_id }}</span>
+                <span class="room-status" :class="roomStatusClass(room)">
+                  {{ roomStatusLabel(room) }}
+                </span>
+              </div>
+
+              <div class="room-card-stats">
+                <span v-if="room.topic" class="stat">
+                  <span class="stat-icon">📚</span>
+                  {{ room.topic }}
+                </span>
+                <span v-if="room.board_name" class="stat">
+                  <span class="stat-icon">🎲</span>
+                  {{ room.board_name }}
+                </span>
+                <span v-if="room.initial_xp > 0" class="stat">
+                  <span class="stat-icon">⭐</span>
+                  {{ $t('admin.startingXp', { xp: room.initial_xp }) }}
+                </span>
+                <span class="stat">
+                  <span class="stat-icon">👥</span>
+                  {{ room.player_count === 1 ? $t('admin.playerCountOne', { count: room.player_count }) : $t('admin.playerCount', { count: room.player_count }) }}
+                </span>
+                <span v-if="room.active_turn" class="stat">
+                  <span class="stat-icon">🎯</span>
+                  {{ $t('admin.playerTurn', { name: room.active_turn }) }}
+                </span>
+              </div>
+
+              <div v-if="room.players && room.players.length > 0" class="room-players">
+                <span
+                  v-for="(name, idx) in room.players.slice(0, 6)"
+                  :key="idx"
+                  class="player-chip"
+                >{{ name }}</span>
+                <span v-if="room.players.length > 6" class="player-chip more">
+                  +{{ room.players.length - 6 }}
+                </span>
+              </div>
+
+              <div class="room-card-footer">
+                <span class="view-room-link">{{ $t('admin.viewRoom') }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </main>
+
+    <AdminCreateRoomModal
+      v-if="showCreateRoom"
+      @created="onRoomCreated"
+      @cancel="showCreateRoom = false"
+    />
+  </div>
+</template>
+
+<style scoped>
+.admin-app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--c-navy-950);
+  color: var(--c-slate-200);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Login Backdrop */
+.login-backdrop {
+  min-height: 100vh;
+  background: var(--c-navy-950);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-card {
+  background: linear-gradient(145deg, var(--c-navy-800) 0%, var(--c-gray-900) 100%);
+  border: 1px solid var(--c-navy-700);
+  border-radius: 16px;
+  padding: 2.5rem 2.75rem;
+  width: 360px;
+  box-shadow: 0 24px 60px color-mix(in srgb, var(--c-shadow) 70%, transparent), 0 0 0 1px color-mix(in srgb, var(--c-blue-400) 10%, transparent);
+}
+.login-logo {
+  font-size: 1.6rem;
+  font-weight: 900;
+  text-align: center;
+  background: linear-gradient(90deg, var(--c-blue-400), var(--c-violet-400));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.4rem;
+}
+.login-subtitle {
+  text-align: center;
+  color: var(--c-slate-500);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+.login-field label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--c-slate-400);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.login-input {
+  background: var(--c-slate-900);
+  border: 1px solid var(--c-slate-700);
+  border-radius: 8px;
+  padding: 0.55rem 0.85rem;
+  color: var(--c-slate-100);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.login-input:focus {
+  border-color: var(--c-blue-400);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--c-blue-400) 20%, transparent);
+}
+.login-error {
+  color: var(--c-red-400);
+  font-size: 0.8rem;
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+.login-btn {
+  width: 100%;
+  padding: 0.65rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.95rem;
+  background: linear-gradient(90deg, var(--c-solid--blue-600), var(--c-solid--violet-600));
+  color: var(--c-white);
+  transition: opacity 0.2s, transform 0.15s;
+}
+.login-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+.login-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Top bar */
+.admin-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Right padding leaves room for the fixed theme/language controls (App.vue). */
+  padding: 0.5rem 15rem 0.5rem 1.25rem;
+  background: var(--c-navy-900);
+  border-bottom: 1px solid var(--c-slate-800);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.topbar-logo {
+  font-weight: 900;
+  font-size: 1.05rem;
+  background: linear-gradient(90deg, var(--c-blue-400), var(--c-violet-400));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.admin-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+.tab-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--c-slate-400);
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tab-btn:hover {
+  color: var(--c-slate-100);
+  background: var(--c-slate-800);
+}
+.tab-btn.active {
+  color: var(--c-blue-400);
+  background: var(--c-navy-800);
+  border-color: var(--c-navy-700);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--c-blue-400) 15%, transparent);
+}
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.room-indicator {
+  font-size: 0.8rem;
+  color: var(--c-slate-500);
+  font-family: monospace;
+}
+.admin-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Buttons */
+.btn-secondary {
+  background: var(--c-slate-800);
+  border: 1px solid var(--c-slate-700);
+  color: var(--c-slate-200);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-secondary:hover:not(:disabled) { opacity: 0.8; }
+.btn-secondary:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-sm {
+  padding: 0.3rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* Spectator wrapper */
+.spectator-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+.spectator-back-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1.25rem;
+  background: var(--c-navy-900);
+  border-bottom: 1px solid var(--c-slate-800);
+  flex-shrink: 0;
+}
+.back-btn {
+  background: transparent;
+  border: 1px solid var(--c-slate-700);
+  color: var(--c-slate-400);
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  color: var(--c-slate-100);
+  border-color: var(--c-blue-400);
+  background: var(--c-navy-800);
+}
+.spectator-room-label {
+  font-size: 0.85rem;
+  color: var(--c-slate-500);
+}
+.spectator-room-label strong {
+  color: var(--c-slate-100);
+  font-family: monospace;
+}
+.conn-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--c-red-500);
+  margin-left: auto;
+}
+.conn-pill.connected { color: var(--c-emerald-400); }
+
+/* Rooms tab */
+.rooms-tab {
+  padding: 1.5rem;
+  flex: 1;
+}
+.rooms-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+.rooms-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.btn-primary {
+  background: linear-gradient(90deg, var(--c-solid--blue-600), var(--c-solid--violet-600));
+  border: none;
+  color: var(--c-white);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  font-weight: 700;
+}
+.btn-primary:hover:not(:disabled) { opacity: 0.9; }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+.rooms-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--c-slate-100);
+}
+.rooms-error {
+  color: var(--c-red-400);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+.rooms-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--c-slate-600);
+}
+.empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+.rooms-empty p {
+  font-size: 0.9rem;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+/* Room cards grid */
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.room-card {
+  background: var(--c-navy-900);
+  border: 1px solid var(--c-slate-800);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.room-card:hover {
+  border-color: var(--c-blue-500);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--c-shadow) 40%, transparent);
+}
+.room-card.status-active  { border-left: 3px solid var(--c-emerald-400); }
+.room-card.status-paused  { border-left: 3px solid var(--c-amber-500); }
+.room-card.status-finished { border-left: 3px solid var(--c-slate-500); }
+.room-card.status-waiting  { border-left: 3px solid var(--c-blue-400); }
+
+.room-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.room-id {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--c-slate-100);
+  font-family: monospace;
+}
+.room-status {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+.room-status.status-active   { background: var(--c-emerald-900); color: var(--c-emerald-400); }
+.room-status.status-paused   { background: var(--c-amber-900); color: var(--c-amber-400); }
+.room-status.status-finished { background: var(--c-slate-800); color: var(--c-slate-500); }
+.room-status.status-waiting  { background: var(--c-blue-900); color: var(--c-blue-300); }
+
+.room-card-stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.stat {
+  font-size: 0.78rem;
+  color: var(--c-slate-400);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.stat-icon { font-size: 0.85rem; }
+
+.room-players {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.player-chip {
+  background: var(--c-slate-800);
+  border: 1px solid var(--c-slate-700);
+  border-radius: 99px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.72rem;
+  color: var(--c-slate-300);
+  white-space: nowrap;
+}
+.player-chip.more {
+  background: var(--c-slate-900);
+  color: var(--c-slate-500);
+}
+
+.room-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--c-slate-800);
+}
+.view-room-link {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--c-blue-500);
+  transition: color 0.2s;
+}
+.room-card:hover .view-room-link {
+  color: var(--c-blue-400);
+}
+</style>

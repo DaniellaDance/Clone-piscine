@@ -1,0 +1,7 @@
+bin/
+venv/
+.cursor/
+.agents/
+opencode.jsonc
+.codex/
+.env.prod
