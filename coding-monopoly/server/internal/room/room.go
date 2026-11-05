@@ -912,9 +912,12 @@ func (r *Room) advanceTurnLocked() {
 		}
 
 		if p.SkipNextTurn {
-			// Clear skip flag and skip this player's turn once
+			// In solo play there is no other player to receive the skipped turn.
+			// Consume the penalty and immediately return control to the solo player.
 			p.SkipNextTurn = false
-			continue
+			if totalPlayers > 1 {
+				continue
+			}
 		}
 
 		// Eligible active player found
