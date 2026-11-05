@@ -1,22 +1,17 @@
-databases:
-  - name: coding-monopoly-db
-    databaseName: monopoly
-    user: monopoly
-    plan: basic
+# Free Render web service + external Neon PostgreSQL.
+# Create a Neon Free project first, then paste its PostgreSQL connection string
+# into DATABASE_URL in Render. Never commit the connection string to GitHub.
 services:
   - type: web
     name: coding-monopoly-tomorrow-school
     runtime: docker
-    plan: starter
+    plan: free
     dockerContext: ./coding-monopoly
     dockerfilePath: ./coding-monopoly/Dockerfile
     healthCheckPath: /health
-    preDeployCommand: sh /app/init-db.sh
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: coding-monopoly-db
-          property: connectionString
+        sync: false
       - key: ADMIN_PASSWORD
         sync: false
       - key: ADMIN_TOKEN_SECRET
