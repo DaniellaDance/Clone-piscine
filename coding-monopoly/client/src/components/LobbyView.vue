@@ -90,6 +90,8 @@ export default defineComponent({
         />
       </div>
 
+      <p class="game-credits">Автор основного кода: ментор и программист Tomorrow School Еркебулан.<span class="credits-detail">(Доработка Dani Flor, тестировщики: Almaz, Sergio, Petr)</span></p>
+
       <p v-if="store.joinError" class="join-error">{{ store.joinError }}</p>
 
       <button
@@ -151,6 +153,15 @@ export default defineComponent({
   margin: -0.75rem 0 0.75rem 0;
   font-style: italic;
 }
+
+.game-credits {
+  margin: 0 0 1rem;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--c-slate-300);
+  text-align: center;
+}
+.credits-detail { display: block; margin-top: 0.3rem; }
 
 .join-error {
   text-align: center;
