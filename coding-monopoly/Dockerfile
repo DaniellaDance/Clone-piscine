@@ -45,4 +45,4 @@ WORKDIR /app
 ENV LISTEN_ADDR=0.0.0.0:8080
 EXPOSE 8080
 
-ENTRYPOINT ["/usr/local/bin/monopoly-server"]
+ENTRYPOINT ["/bin/sh", "-c", "sh /app/init-db.sh && exec /usr/local/bin/monopoly-server"]
