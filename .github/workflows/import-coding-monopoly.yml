@@ -1,6 +1,9 @@
 name: Import Coding Monopoly
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/import-coding-monopoly.yml'
 permissions:
   contents: write
 jobs:
