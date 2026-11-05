@@ -546,14 +546,21 @@ func (r *Room) ChooseLevel(clientID string, difficulty string) error {
 		return nil
 	}
 
-	// Select only a previously unseen question across every player and difficulty.
-	// A bounded retry prevents an infinite loop when the selected level is exhausted.
+	// Prefer deterministic, database-filtered selection; never retry random draws.
 	var question Question
 	var err error
-	found := false
-	for attempt := 0; attempt < 1000; attempt++ {
+	if provider, ok := r.questionProvider.(interface {
+		AssignUnusedQuestion(string, string, []string) (Question, error)
+	}); ok {
+		used := make([]string, 0, len(r.usedQuestionIDs))
+		for id := range r.usedQuestionIDs { used = append(used, id) }
+		question, err = provider.AssignUnusedQuestion(difficulty, r.Topic, used)
+	} else {
+		// Legacy providers are supported for in-memory tests.
 		question, err = r.questionProvider.AssignQuestion(difficulty, r.Topic)
-		if err != nil {
+		if err == nil && r.usedQuestionIDs[question.ID] { err = fmt.Errorf("question already used: %s",question.ID) }
+	}
+	if err != nil {
 			break
 		}
 		if !r.usedQuestionIDs[question.ID] {
