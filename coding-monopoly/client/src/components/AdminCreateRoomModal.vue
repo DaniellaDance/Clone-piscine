@@ -5,7 +5,7 @@ import { adminStore } from '../adminStore'
 
 // Mirrors the server's limits (admin.createRoom / room.DefaultTargetXP).
 const MAX_ROOM_ID_LENGTH = 64
-const TARGET_XP = 500
+const TARGET_XP = 300
 const MAX_INITIAL_XP = TARGET_XP - 1
 
 export default defineComponent({
