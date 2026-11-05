@@ -24,4 +24,6 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add coding-monopoly
           git diff --cached --quiet || git commit -m "Import Coding Monopoly game source"
-          git push
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
