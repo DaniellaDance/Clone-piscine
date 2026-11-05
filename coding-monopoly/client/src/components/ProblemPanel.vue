@@ -91,6 +91,20 @@ export default defineComponent({
     promptText(): string {
       return localeText(store.activeQuestion?.prompt)
     },
+    promptParts(): { text: string; code: boolean }[] {
+      const source = this.promptText()
+      const parts: { text: string; code: boolean }[] = []
+      const fences = /```(?:go|golang)?\\s*\\n?([\\s\\S]*?)```/gi
+      let cursor = 0
+      for (const match of source.matchAll(fences)) {
+        const index = match.index ?? 0
+        if (index > cursor) parts.push({ text: source.slice(cursor, index), code: false })
+        parts.push({ text: match[1].trimEnd(), code: true })
+        cursor = index + match[0].length
+      }
+      if (cursor < source.length) parts.push({ text: source.slice(cursor), code: false })
+      return parts.length ? parts : [{ text: source, code: false }]
+    },
   },
   mounted() {
     this.startTimer()
@@ -124,7 +138,7 @@ export default defineComponent({
       <div v-else class="question-content">
         <!-- Render prompt -->
         <div class="prompt-box">
-          <p class="prompt-text">{{ promptText() }}</p>
+          <template v-for="(part, index) in promptParts()" :key="index"><pre v-if="part.code" class="go-code"><code>{{ part.text }}</code></pre><p v-else class="prompt-text">{{ part.text }}</p></template>
         </div>
 
         <div v-if="isTimedOut && !submitted" class="timeout-overlay">
@@ -252,6 +266,19 @@ export default defineComponent({
   line-height: 1.5;
   color: var(--c-slate-100);
   white-space: pre-wrap;
+}
+
+.go-code {
+  white-space: pre;
+  overflow-x: auto;
+  tab-size: 4;
+  padding: 1rem;
+  margin: 0.75rem 0;
+  border-radius: 8px;
+  background: #0d1525;
+  color: #c8e2ff;
+  border: 1px solid #3c526e;
+  font: 0.9rem/1.6 ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 
 /* Overlays */
