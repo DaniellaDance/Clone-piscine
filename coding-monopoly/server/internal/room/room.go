@@ -859,6 +859,7 @@ func (r *Room) rollPlayerLocked(player *Player) []RollResult {
 		if r.broadcaster != nil {
 			r.broadcaster.BroadcastRoom(r.ID, "roll_resolved", res)
 		}
+		if player.XP >= r.targetXP { break }
 	}
 
 	return rollResults
@@ -866,8 +867,8 @@ func (r *Room) rollPlayerLocked(player *Player) []RollResult {
 
 func (r *Room) rollAndEndTurnLocked(player *Player, clientID string) []RollResult {
 	rolls := r.rollPlayerLocked(player)
-	r.endTurnLocked(clientID)
 	r.checkGameOverLocked()
+	r.endTurnLocked(clientID)
 	return rolls
 }
 
