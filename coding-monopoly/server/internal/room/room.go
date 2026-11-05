@@ -140,7 +140,7 @@ type GameOverPayload struct {
 
 const (
 	// DefaultTargetXP is the first-to-XP win threshold.
-	DefaultTargetXP = 500
+	DefaultTargetXP = 300
 	// DefaultDisconnectGrace is how long an active player may blip offline
 	// before their turn is forcibly ended. Distinct from the question timer.
 	DefaultDisconnectGrace = 5 * time.Second
