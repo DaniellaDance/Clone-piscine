@@ -174,6 +174,7 @@ func (h *Hub) Run() {
 					playerInfo := client.ToPlayerInfo(false)
 					h.broadcastPresence(roomID, "left", playerInfo)
 					h.broadcastStateSync(roomID)
+					h.broadcastStartCountdown(roomID)
 				}
 			}
 
@@ -196,8 +197,11 @@ func (h *Hub) Run() {
 
 			r := h.GetRoomInstance(roomID)
 			if r == nil {
-				c.sendError(ErrRoomNotFound.Error())
-				continue
+				if err := h.CreateRoomWithOptions(roomID, RoomOptions{Topic: "tomorrow_school_easy"}); err != nil && !errors.Is(err, ErrRoomAlreadyExists) {
+					c.sendError(err.Error())
+					continue
+				}
+				r = h.GetRoomInstance(roomID)
 			}
 
 			_, err := r.AddOrReconnectPlayer(c.id, req.name)
@@ -258,6 +262,7 @@ func (h *Hub) Run() {
 
 			// Broadcast state_sync to all clients in room (including the joining client)
 			h.broadcastStateSync(roomID)
+			h.broadcastStartCountdown(roomID)
 
 			// Mid-question resume: only the active player gets full question content,
 			// using the original deadline (remaining time), not a reset countdown.
@@ -394,6 +399,21 @@ func (h *Hub) broadcastPresence(roomID string, event string, player PlayerInfo) 
 	for _, c := range targetClients {
 		c.SendBytes(data)
 	}
+}
+
+func (h *Hub) broadcastStartCountdown(roomID string) {
+	r := h.GetRoomInstance(roomID)
+	if r == nil { return }
+	deadline := r.AutoStartDeadline()
+	var millis int64
+	if !deadline.IsZero() { millis = deadline.UnixMilli() }
+	data, err := NewMessage("game_start_countdown", roomID, map[string]interface{}{"deadline": millis})
+	if err != nil { return }
+	h.mu.RLock()
+	var clients []*Client
+	for client := range h.rooms[roomID] { clients = append(clients, client) }
+	h.mu.RUnlock()
+	for _, client := range clients { client.SendBytes(data) }
 }
 
 // BroadcastStateSync broadcasts state_sync to all clients connected to the room.
