@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { store } from '../store'
+import websocketService from '../services/websocketService'
 import type { Player } from '../store'
 import { localeText } from '../i18n'
 import { getTokenVisualPosition } from '../services/tokenMovement'
@@ -70,6 +71,9 @@ export default defineComponent({
     },
   },
   methods: {
+    startSolo() {
+      websocketService.send({ type: "start_solo_game", payload: {} })
+    },
     isCorner(idx: number): boolean {
       return this.cornerIndexes.includes(idx)
     },
@@ -256,6 +260,7 @@ export default defineComponent({
           </div>
         </div>
 
+        <button v-if="!store.isStarted && !store.gameOver && store.players.filter(p => p.is_connected !== false).length === 1" class="solo-start" @click="startSolo">▶ Начать игру / Start game / Ойынды бастау</button>
         <!-- Dice Roll & Effect Overlay Component -->
         <DiceOverlay />
 
@@ -289,6 +294,8 @@ export default defineComponent({
 </template>
 
 <style scoped>
+.solo-start { padding: 12px 18px; border-radius: 10px; background: #087b53; color: white; border: 0; font-weight: 800; cursor: pointer; margin: 10px; }
+
 .board-view {
   display: flex;
   justify-content: center;
