@@ -163,6 +163,7 @@ type Room struct {
 	broadcaster       Broadcaster
 	questionProvider  QuestionProvider
 	currentTurn       *activeTurn
+	usedQuestionIDs   map[string]bool // Room-wide: a question is never assigned twice.
 	deadlineDurations map[string]time.Duration
 	started           bool // set by AdminStartGame
 	paused            bool // set by AdminTogglePause
@@ -179,6 +180,7 @@ func NewRoom(id string, broadcaster Broadcaster) *Room {
 		ID:          id,
 		players:     make([]*Player, 0),
 		playerMap:   make(map[string]*Player),
+		usedQuestionIDs: make(map[string]bool),
 		turnIdx:     0,
 		board:       DefaultBoard(),
 		diceRng:     rand.New(rand.NewSource(time.Now().UnixNano())),
@@ -544,7 +546,24 @@ func (r *Room) ChooseLevel(clientID string, difficulty string) error {
 		return nil
 	}
 
-	question, err := r.questionProvider.AssignQuestion(difficulty, r.Topic)
+	// Select only a previously unseen question across every player and difficulty.
+	// A bounded retry prevents an infinite loop when the selected level is exhausted.
+	var question Question
+	var err error
+	found := false
+	for attempt := 0; attempt < 1000; attempt++ {
+		question, err = r.questionProvider.AssignQuestion(difficulty, r.Topic)
+		if err != nil {
+			break
+		}
+		if !r.usedQuestionIDs[question.ID] {
+			found = true
+			break
+		}
+	}
+	if err == nil && !found {
+		err = fmt.Errorf("no unused questions available for difficulty %s", difficulty)
+	}
 	if err != nil {
 		player.ChosenDifficulty = ""
 		if r.broadcaster != nil {
@@ -556,6 +575,8 @@ func (r *Room) ChooseLevel(clientID string, difficulty string) error {
 		player.ChosenDifficulty = ""
 		return errors.New("assigned question has invalid type")
 	}
+
+	r.usedQuestionIDs[question.ID] = true
 
 	duration := r.deadlineDurations[difficulty]
 	deadline := time.Now().Add(duration)
