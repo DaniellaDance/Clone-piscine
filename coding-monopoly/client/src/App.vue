@@ -6,6 +6,7 @@ import AdminView from './components/AdminView.vue'
 import LanguageSwitcher from './components/LanguageSwitcher.vue'
 import ThemeSwitcher from './components/ThemeSwitcher.vue'
 import { store } from './store'
+import websocketService from './services/websocketService'
 
 export default defineComponent({
   name: 'App',
@@ -20,6 +21,23 @@ export default defineComponent({
       return store.connected && store.boardCells.length > 0
     },
   },
+  methods: {
+    leaveGame() {
+      websocketService.disconnect()
+      for (const key of ['playerId', 'playerName', 'roomId']) sessionStorage.removeItem(key)
+      store.playerId = ''
+      store.playerName = ''
+      store.roomId = ''
+      store.boardCells = []
+      store.players = []
+      store.activeQuestion = null
+      store.questionActive = false
+      store.gameOver = null
+      store.currentTurnPlayer = ''
+      store.isStarted = false
+      store.joinError = ''
+    },
+  },
   created() {
     this.isAdmin = new URLSearchParams(window.location.search).get('admin') === '1'
   },
@@ -28,6 +46,7 @@ export default defineComponent({
 
 <template>
   <div class="app-controls">
+    <button v-if="!isAdmin && showBoard" class="leave-button" @click="leaveGame">Выйти из игры / Exit game / Ойыннан шығу</button>
     <ThemeSwitcher />
     <LanguageSwitcher />
   </div>
@@ -41,6 +60,7 @@ export default defineComponent({
 
 
 <style scoped>
+ .leave-button { background: #9b2525; color: white; border: 0; border-radius: 8px; padding: 10px; cursor: pointer; font-weight: 700; }
 /* Theme and language controls stay reachable on every screen. */
 .app-controls {
   position: fixed;
