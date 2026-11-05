@@ -1,0 +1,80 @@
+name: Validate Coding Monopoly and PostgreSQL questions
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'coding-monopoly/**'
+      - '.github/workflows/validate-monopoly.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: monopoly
+          POSTGRES_PASSWORD: monopoly_test
+          POSTGRES_DB: monopoly
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U monopoly -d monopoly"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: monopoly
+      PGPASSWORD: monopoly_test
+      PGDATABASE: monopoly
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check game source imported
+        run: test -f coding-monopoly/server/go.mod && test -f coding-monopoly/client/package.json
+      - name: Install PostgreSQL client
+        run: sudo apt-get update -qq && sudo apt-get install -y postgresql-client
+      - name: Apply migrations and question banks
+        run: |
+          set -euo pipefail
+          for file in coding-monopoly/server/migrations/*.up.sql; do
+            psql -v ON_ERROR_STOP=1 -f "$file"
+          done
+          for file in coding-monopoly/questions/{easy,medium,hard}.sql; do
+            psql -v ON_ERROR_STOP=1 -f "$file"
+          done
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          DO $$
+          DECLARE
+            n integer;
+          BEGIN
+            SELECT count(*) INTO n FROM problems WHERE topic LIKE 'tomorrow_school_%';
+            IF n <> 108 THEN RAISE EXCEPTION 'Expected 108 questions, got %', n; END IF;
+            IF EXISTS (
+              SELECT p.id FROM problems p LEFT JOIN problem_options o ON o.problem_id=p.id
+              WHERE p.topic LIKE 'tomorrow_school_%'
+              GROUP BY p.id HAVING count(o.id) <> 3 OR count(o.id) FILTER (WHERE o.is_correct) <> 1
+            ) THEN RAISE EXCEPTION 'Invalid options or correct answer count'; END IF;
+            IF EXISTS (
+              SELECT 1 FROM (VALUES ('easy'),('medium'),('hard')) levels(level)
+              WHERE (SELECT count(*) FROM problems WHERE difficulty::text=levels.level AND topic='tomorrow_school_'||levels.level) <> 36
+            ) THEN RAISE EXCEPTION 'Incorrect difficulty counts'; END IF;
+          END $$;
+          SQL
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: coding-monopoly/server/go.mod
+          cache-dependency-path: coding-monopoly/server/go.sum
+      - name: Go tests
+        working-directory: coding-monopoly/server
+        run: go test ./...
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: coding-monopoly/client/package-lock.json
+      - name: Frontend build
+        working-directory: coding-monopoly/client
+        run: npm ci && npm run build
