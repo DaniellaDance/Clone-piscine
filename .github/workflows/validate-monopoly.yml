@@ -67,14 +67,17 @@ jobs:
         with:
           go-version-file: coding-monopoly/server/go.mod
           cache-dependency-path: coding-monopoly/server/go.sum
-      - name: Go tests
-        working-directory: coding-monopoly/server
-        run: go test ./...
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
           cache-dependency-path: coding-monopoly/client/package-lock.json
-      - name: Frontend build
-        working-directory: coding-monopoly/client
-        run: npm ci && npm run build
+      - name: Build frontend and embed it for Go tests
+        working-directory: coding-monopoly
+        run: make build-client
+      - name: Go tests
+        working-directory: coding-monopoly/server
+        run: go test ./...
+      - name: Build deployable game binary
+        working-directory: coding-monopoly
+        run: make build
