@@ -1,0 +1,24 @@
+name: Import Coding Monopoly
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Import upstream game without overwriting questions
+        run: |
+          git clone --depth 1 https://github.com/Erkebulan-Akhmediya/coding-monopoly.git /tmp/upstream-game
+          mkdir -p coding-monopoly
+          rsync -a --exclude='.git' --exclude='questions/' /tmp/upstream-game/ coding-monopoly/
+          cp /tmp/upstream-game/questions/piscine_questions.sql coding-monopoly/questions/piscine_questions.sql
+          cp /tmp/upstream-game/questions/questions.md coding-monopoly/questions/questions.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add coding-monopoly
+          git diff --cached --quiet || git commit -m "Import Coding Monopoly game source"
+          git push
