@@ -87,7 +87,8 @@ export const store = reactive({
   highlightedCellIndex: null as number | null,
 
   // Win condition / end screen
-  targetXP: 500 as number,
+  targetXP: 300 as number,
+  autoStartDeadline: 0 as number,
   gameOver: null as GameOverSummary | null,
 
   // Room / game control state from server
