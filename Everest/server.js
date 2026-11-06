@@ -49,7 +49,7 @@ async function advanceKolobok(c,code,room){
  const bot=(await c.query("SELECT * FROM mountain_players WHERE room_code=$1 AND name='ИИ Колобок' AND active AND finished_at IS NULL",[code])).rows[0];if(!bot)return;
  let cur=(await c.query('SELECT m.question_id,m.created_at,q.difficulty,q.correct FROM mountain_current m JOIN mountain_questions q ON q.id=m.question_id WHERE m.room_code=$1 AND m.player_id=$2',[code,bot.id])).rows[0];
  if(!cur){await assign(c,code,bot);return}
- const delay=cur.difficulty==='easy'?10000:cur.difficulty==='medium'?20000:30000;
+ const delay=cur.difficulty==='easy'?20000:cur.difficulty==='medium'?40000:60000;
  if(Date.now()-new Date(cur.created_at).getTime()<delay)return;
  const question=(await c.query('SELECT * FROM mountain_questions WHERE id=$1',[cur.question_id])).rows[0];
  if(question)await applyQuestionResult(c,code,bot,question,true);
