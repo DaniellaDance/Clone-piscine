@@ -6,3 +6,17 @@ a.deepEqual(scopedBoard(manager,s).tickets.map(t=>t.id),['t1','t2']);a.equal(sco
 a.equal(canView(employee,s.tickets[1],s),false);a.equal(canManage(employee,s.tickets[0],s),false);a.equal(canManage(manager,s.tickets[1],s),true);a.equal(canManage(manager,s.tickets[2],s),false);a.equal(canManage(director,s.tickets[2],s),true);
 a.equal(scopedBoard({id:'u2',employee_id:'e2',role:'employee'},s).tickets.length,2);a.equal(scopedBoard({role:'manager',employee_id:null},s).tickets.length,0);
 console.log('PASS: own/assigned requests; department scope; director scope; comments, notifications and mutations');
+const {employeeReport}=await import('./policy.mjs');
+const person={id:'e2',managerId:'e1'},own={role:'employee',employee_id:'e2'},boss={role:'manager',employee_id:'e1'},otherBoss={role:'manager',employee_id:'e3'};
+const assigned=[{assigneeId:'e2',status:'resolved',created:0,due:100,resolvedAt:50},{assigneeId:'e2',status:'work',created:0,due:100}];
+a.equal(employeeReport(own,person,assigned,200).total,2);a(!('coefficient' in employeeReport(own,person,assigned,200)));a(!('rating' in employeeReport(otherBoss,person,assigned,200)));
+a.equal(employeeReport(boss,person,assigned,200).coefficient,80);a.equal(employeeReport(director,person,assigned,200).total,2);
+a.equal(employeeReport(boss,person,[],200).coefficient,null);
+console.log('PASS: all assigned requests counted; performance fields only for director and immediate manager; speed/volume formula');
+const {bonusReport}=await import('./policy.mjs');
+const bs={employees:[person],tickets:assigned,bonusPlans:{e2:{baseCents:100000}}};
+a.equal(bonusReport({role:'accountant'},bs)[0].amountCents,80000);
+a(!('coefficient' in bonusReport({role:'accountant'},bs)[0]));
+a.equal(bonusReport(own,bs).length,0);
+a.equal(bonusReport(boss,bs).length,0);
+console.log('PASS: bonus uses coefficient, money rounded in kopecks, employee/manager excluded from payroll');
