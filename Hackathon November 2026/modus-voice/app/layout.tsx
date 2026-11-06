@@ -2,11 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Modus Voice — голос команды",
+  title: "Modus Voice",
   description: "Обращения, предложения и обсуждения команды Модус Трейд. Прототип.",
-  other: {
-    "codex-preview": "development",
-  },
   manifest: "/manifest.webmanifest",
   icons: {
     icon: "/favicon.svg",
