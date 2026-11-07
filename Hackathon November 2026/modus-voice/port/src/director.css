@@ -8,3 +8,24 @@
 .desk-metric.new strong{color:#c62436}.desk-metric.work strong{color:#9e7b0d}.badge.new{background:#ffe1e5;color:#b51b30}.badge.work{background:#fff3bf;color:#806300}.badge.resolved{background:#def4e9;color:#237552}.stat.new{border-left-color:#c62436}.stat.new b{color:#c62436}.stat.work{border-left-color:#e9bf35}.stat.work b{color:#9e7b0d}.stacked .new{background:#c62436;color:white}.stacked .work{background:#e9bf35;color:#3c320c}.stacked .resolved{background:#2d9671;color:white}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.desk-metrics{grid-template-columns:repeat(5,minmax(0,1fr))}@media(max-width:700px){.desk-metrics{grid-template-columns:repeat(5,minmax(0,1fr))}.desk-metric{display:flex;flex-direction:column;align-items:flex-start;padding:8px 6px}.desk-metric>span{font-size:8px;min-height:21px}.desk-metric strong{font-size:23px}.desk-row-counts{display:flex;gap:5px}}
 /* Persistent priority marker; no flashing or animation. */
 .regular-marker{display:block;font-size:9px;color:#725921;margin-top:5px;white-space:normal}.attention-row{background:#fffaf4}.attention-sign{display:inline-flex;align-items:center;justify-content:center;flex:0 0 30px;width:30px;height:34px;border:2px solid #c62436;border-radius:7px;background:#fff0f2;color:#b0192b;font:900 28px/1 Arial,sans-serif;margin-right:7px}.ticket-heading{display:flex;align-items:center;gap:6px;overflow-wrap:anywhere}.tickettitle{white-space:normal}.tickettitle .attention-sign{margin-right:2px}@media(max-width:700px){.attention-sign{flex-basis:26px;width:26px;height:31px;font-size:26px}.tickettitle{font-size:11px}}
+
+/* Light corporate director workspace and restrained horizontal KPI chart */
+.director-shell header{background:#fff;color:#27313b;border-bottom:1px solid #dfe4e9}
+.director-shell header a{color:#9e2733}
+.director-shell .identity .secondary{background:#f2f4f7;color:#28323e;border:1px solid #dce1e7}
+.director-shell .demo{background:#edf1f5;color:#344050}
+.director-shell .mobilebrand>span{color:#3c4754}
+.desk-metric.all{background:#fff;color:#28323e;border-color:#e0e5eb;border-top:3px solid #64748b}
+.desk-metric.all>span{color:#667085}
+.desk-today{background:#f3f5f8;color:#253448;border:1px solid #dce2e8}
+.desk-today b{background:#e4eaf1}
+.desk-demo-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.desk-seed{background:#fff;border:1px solid #b6c2d1;border-radius:7px;padding:9px 12px;color:#30445c;font-size:11px;font-weight:700}
+.desk-seed:hover{background:#edf3f8}
+.desk-overview{gap:28px}
+.desk-donut{border-radius:12px;width:min(24vh,190px);aspect-ratio:1.6;background:#f1f4f8!important;position:relative}
+.desk-donut:before{content:'';position:absolute;left:12px;right:12px;bottom:12px;height:9px;border-radius:4px;background:linear-gradient(90deg,#c62436 0 33%,#e9bf35 33% 66%,#2d9671 66% 100%)}
+.desk-donut>div{width:auto;height:auto;border-radius:0;background:transparent}
+.desk-legend{gap:11px}
+.desk-chart,.desk-metric,.desk-actions>button{box-shadow:none}
+@media(max-width:700px){.desk-demo-tools{gap:5px}.desk-seed{font-size:10px;padding:7px}.desk-donut{width:min(33vw,150px)}}
