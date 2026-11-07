@@ -16,3 +16,5 @@ dialog{border:1px solid #d3ddc6;border-radius:18px;max-width:min(440px,calc(100v
 .question-stage{align-items:flex-start}.question pre{white-space:pre;tab-size:4;text-align:left;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;line-height:1.45;max-height:none;min-height:0;flex:0 1 auto}.options{flex:0 0 auto;margin-top:10px}#feedback{margin-top:8px}
 @media(max-width:700px){.track{height:calc(40px + var(--lane-count,1)*42px)}.lanes{height:calc(var(--lane-count,1)*42px - 4px)}.question pre{font-size:11px;line-height:1.4}}
 @media(max-height:650px){.track{height:calc(40px + var(--lane-count,1)*34px)}.lanes{height:calc(var(--lane-count,1)*34px - 4px)}.question pre{font-size:10px}.options{margin-top:5px}}
+
+.connection-status{position:fixed;top:65px;left:50%;transform:translateX(-50%);z-index:15;width:max-content;max-width:95vw;margin:0;padding:10px 14px;background:#fff4d5;border:1px solid #d6b653;border-radius:10px;color:#634d18;font-size:12px}
