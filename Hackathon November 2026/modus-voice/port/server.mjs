@@ -77,26 +77,122 @@ if(b.action==='demo_seed'){
  const result=await mutate(s=>{
   const existing=new Set(s.tickets.filter(t=>t.demo===true).map(t=>t.demoKey));
   const examples=[
-   ['Проверка пожарной сигнализации','Сервис безопасности','new','urgent',false,-2],
-   ['Замена датчика на объекте','Сервисный центр','work','normal',true,-28],
-   ['Уточнение сроков поставки','Логистика','resolved','normal',true,-80],
-   ['Предложение по обучению персонала','Обучение и персонал','new','normal',false,-6],
-   ['Исправление счёта по заказу','Продажи и бухгалтерия','work','normal',false,-44],
-   ['Ошибка авторизации в приложении','ИТ и интеграции','resolved','normal',false,-110],
-   ['Срочная диагностика оборудования','Сервисный центр','new','urgent',true,-1],
-   ['Улучшение процесса обработки заявок','Развитие и качество','resolved','normal',false,-200],
-   ['Нужна инструкция по эксплуатации','Обучение и персонал','work','normal',false,-19],
-   ['Задержка ответа на обращение','Диспетчер','new','normal',true,-50],
-   ['Проверка безопасности объекта','Сервис безопасности','resolved','normal',false,-130],
-   ['Повторная поставка комплектующих','Логистика','work','normal',true,-12]
-  ];
+  [
+    "Потеря видеосигнала с IP-камер на складе",
+    "Сервисный центр",
+    "new",
+    "urgent",
+    true,
+    -1,
+    "На учебном объекте «Склад-01» 4 из 16 камер недоступны в VMS. Коммутатор PoE включён, записи с 09:40 отсутствуют. Просим проверить питание, сеть и совместимость прошивки."
+  ],
+  [
+    "Подбор замены неисправного сетевого видеорегистратора",
+    "Сервисный центр",
+    "work",
+    "normal",
+    true,
+    -27,
+    "Действующий NVR не обнаруживает два HDD. Требуется подобрать совместимую замену с сохранением архива и согласовать выезд инженера."
+  ],
+  [
+    "Поставка контроллеров СКУД по учебному заказу MT-DEMO-1042",
+    "Логистика",
+    "resolved",
+    "normal",
+    true,
+    -76,
+    "Уточнить комплектацию и срок отгрузки 6 контроллеров и 12 считывателей. Серийные номера и накладные в учебном сценарии условные."
+  ],
+  [
+    "Предложение: единая база совместимости камер и NVR",
+    "Развитие и качество",
+    "new",
+    "normal",
+    false,
+    -5,
+    "Предлагаем вести проверяемую матрицу моделей, прошивок и протоколов ONVIF, чтобы снизить число повторных консультаций и возвратов."
+  ],
+  [
+    "Корректировка счёта и УПД по поставке СКУД",
+    "Продажи и бухгалтерия",
+    "work",
+    "normal",
+    false,
+    -43,
+    "В учебном счёте MT-DEMO-1088 требуется исправить количество считывателей с 8 на 10 и подготовить обновлённый комплект документов."
+  ],
+  [
+    "Интеграция событий пожарной сигнализации с диспетчерским ПО",
+    "ИТ и интеграции",
+    "resolved",
+    "normal",
+    false,
+    -105,
+    "Не отображались тестовые события от приёмно-контрольного прибора в диспетчерском ПО. Проверить журнал обмена и настройки шлюза."
+  ],
+  [
+    "Срочная неисправность контроллера доступа на проходной",
+    "Сервис безопасности",
+    "new",
+    "urgent",
+    true,
+    -2,
+    "На учебном объекте «БЦ-Север» контроллер СКУД не передаёт события в сервер, проходная работает по резервному регламенту. Нужна приоритетная диагностика."
+  ],
+  [
+    "Чек-лист предпродажной проверки оборудования",
+    "Развитие и качество",
+    "resolved",
+    "normal",
+    false,
+    -168,
+    "Предлагаем обязательную проверку комплектации, прошивок и совместимости перед передачей системному интегратору."
+  ],
+  [
+    "Обучение партнёров по настройке видеоаналитики",
+    "Обучение и персонал",
+    "work",
+    "normal",
+    false,
+    -18,
+    "Нужен учебный вебинар по настройке детекции движения, ложным срабатываниям и политике хранения видеоархива."
+  ],
+  [
+    "Нет ответа на запрос по гарантийному ремонту камеры",
+    "Диспетчер",
+    "new",
+    "normal",
+    true,
+    -49,
+    "По учебному обращению MT-DEMO-0977 нет обновления о диагностике камеры. Просим указать текущий этап и ожидаемый срок заключения."
+  ],
+  [
+    "Проверка сценария оповещения и журналов тревог",
+    "Сервис безопасности",
+    "resolved",
+    "normal",
+    false,
+    -125,
+    "Требуется сверить журналы тестовых тревог и маршрутизацию уведомлений без запуска реальной системы пожарного оповещения."
+  ],
+  [
+    "Доукомплектование заказа PoE-коммутаторами",
+    "Логистика",
+    "work",
+    "normal",
+    true,
+    -12,
+    "Для учебного проекта видеонаблюдения требуется подтвердить наличие 3 PoE-коммутаторов, бюджет мощности и сроки поставки."
+  ]
+];
   let added=0;
-  for(let i=0;i<examples.length;i++){const [title,department,status,priority,regular,hours]=examples[i],demoKey='modus-demo-'+i;if(existing.has(demoKey))continue;
+  for(let i=0;i<examples.length;i++){const [title,department,status,priority,regular,hours,description]=examples[i],demoKey='modus-demo-'+i;if(existing.has(demoKey)){const old=s.tickets.find(t=>t.demo===true&&t.demoKey===demoKey);if(old){old.title='[ДЕМО] '+title;old.description=description;old.department=department;old.category=title;old.priority=priority;old.status=status;old.isRegularCustomer=regular;}continue;}
    const created=Date.now()+hours*3600000,assignee=responsible(s.employees,s.tickets,department);
-   s.tickets.push({id:crypto.randomUUID(),demo:true,demoKey,title:'[ДЕМО] '+title,description:'Учебная заявка для демонстрации работы Modus Voice. Не является реальным обращением.',category:title,department,assigneeId:assignee.id,assignee,author:'Демонстрационный пользователь',createdBy:'demo',audience:'Сотрудник',type:i===3||i===7?'Идея':'Проблема',priority,status,isRegularCustomer:regular,created,updated:created+3600000,due:created+(priority==='urgent'?3600000:86400000),firstResponseAt:status==='new'?undefined:created+1800000,resolvedAt:status==='resolved'?created+7200000:undefined,resolution:status==='resolved'?'Демонстрационное решение':'',voters:[],benefit:'',faqTried:false});
+   s.tickets.push({id:crypto.randomUUID(),demo:true,demoKey,title:'[ДЕМО] '+title,description:description+' [ДЕМО: вымышленные сведения, не реальный клиент и не реальная неисправность.]',category:title,department,assigneeId:assignee.id,assignee,author:'Демонстрационный пользователь',createdBy:'demo',audience:'Сотрудник',type:i===3||i===7?'Идея':'Проблема',priority,status,isRegularCustomer:regular,created,updated:created+3600000,due:created+(priority==='urgent'?3600000:86400000),firstResponseAt:status==='new'?undefined:created+1800000,resolvedAt:status==='resolved'?created+7200000:undefined,resolution:status==='resolved'?'Демонстрационное решение':'',voters:[],benefit:'',faqTried:false});
    added++;
   }
-  return {ok:true,added};
+  return {ok:true,added,updated:existing.size};
  });return json(res,result);
 }
 if(b.action==='status'&&b.status==='work'&&!String(b.response||'').trim()){const state=(await readState()).data,ticket=state.tickets.find(t=>t.id===b.id);if(ticket&&canManage(account,ticket,state)&&!ticket.firstResponseAt)return json(res,{error:'Чтобы перевести заявку в работу, сначала ответьте по существу вопроса.'},422);}
