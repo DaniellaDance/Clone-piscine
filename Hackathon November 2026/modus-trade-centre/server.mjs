@@ -43,8 +43,8 @@ function csrfAllowed(req){const origin=req.headers.origin;if(!origin)return true
 
 function cookie(req){return (req.headers.cookie||'').split(';').map(x=>x.trim()).find(x=>x.startsWith('centre_session='))?.split('=')[1]}
 function account(req){return sessionUser(req)}
-function view(u,t){return u.role==='director'||u.role==='manager'||u.role==='staff'&&t.department===u.department||u.role==='client'&&t.ownerId===u.id}
-function edit(u,t){return u.role==='director'||u.role==='manager'||u.role==='staff'&&t.department===u.department}
+function view(u,t){return u.role==='director'||u.role==='manager'||u.role==='staff'&&(t.ownerId===u.id||t.department===u.department)||u.role==='client'&&t.ownerId===u.id}
+function edit(u,t){return u.role==='director'||u.role==='manager'}
 function send(res,body,status=200,extra={}){res.writeHead(status,{'content-type':'application/json; charset=utf-8','cache-control':'no-store',...extra});res.end(JSON.stringify(body))}
 function read(req){return new Promise((ok,fail)=>{let s='';req.on('data',c=>{s+=c;if(s.length>12000){fail(Error('Слишком большой запрос'));req.destroy()}});req.on('end',()=>{try{ok(JSON.parse(s))}catch{fail(Error('Неверный JSON'))}})})}
 function clean(x,max=3000){return String(x??'').trim().slice(0,max)}
