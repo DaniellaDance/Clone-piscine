@@ -31,8 +31,17 @@ let state=seed();let ready=false;
 async function init(){if(!pool){console.warn('DATABASE_URL absent; demo memory mode');ready=true;return}await pool.query("CREATE TABLE IF NOT EXISTS centre_state (id integer PRIMARY KEY CHECK(id=1),payload jsonb NOT NULL DEFAULT '{}'::jsonb,updated_at timestamptz NOT NULL DEFAULT now())");await pool.query("INSERT INTO centre_state(id,payload) VALUES(1,$1::jsonb) ON CONFLICT(id) DO NOTHING",[JSON.stringify(seed())]);let r=await pool.query('SELECT payload FROM centre_state WHERE id=1');state=r.rows[0].payload;if(!Array.isArray(state.tickets)){state=seed();await persist()}ready=true}
 async function persist(){if(pool)await pool.query('UPDATE centre_state SET payload=$1::jsonb,updated_at=now() WHERE id=1',[JSON.stringify(state)])}
 const sessions=new Map();const listeners=new Set();
+const demoPasswords=process.env.DEMO_ACCOUNT_PASSWORDS?JSON.parse(process.env.DEMO_ACCOUNT_PASSWORDS):{};
+const loginAttempts=new Map();
+const passwordHash=(password,salt)=>crypto.scryptSync(password,salt,64);
+const safeEqual=(a,b)=>a.length===b.length&&crypto.timingSafeEqual(a,b);
+const passwordRecords=new Map(users.map(u=>{const password=demoPasswords[u.id];if(!password)return [u.id,null];const salt=crypto.randomBytes(16);return [u.id,{salt,hash:passwordHash(password,salt)}]}));
+const sessionKey=(token)=>crypto.createHash('sha256').update(token||'').digest('hex');
+function sessionUser(req){const token=cookie(req);if(!token)return null;const rec=sessions.get(sessionKey(token));if(!rec||rec.expires<Date.now()){if(rec)sessions.delete(sessionKey(token));return null}return users.find(u=>u.id===rec.userId)||null}
+function csrfAllowed(req){const origin=req.headers.origin;if(!origin)return true;const host=req.headers.host;try{return new URL(origin).host===host}catch{return false}}
+
 function cookie(req){return (req.headers.cookie||'').split(';').map(x=>x.trim()).find(x=>x.startsWith('centre_session='))?.split('=')[1]}
-function account(req){let id=sessions.get(cookie(req));return users.find(u=>u.id===id)}
+function account(req){return sessionUser(req)}
 function view(u,t){return u.role==='director'||u.role==='manager'||u.role==='staff'&&t.department===u.department||u.role==='client'&&t.ownerId===u.id}
 function edit(u,t){return u.role==='director'||u.role==='manager'||u.role==='staff'&&t.department===u.department}
 function send(res,body,status=200,extra={}){res.writeHead(status,{'content-type':'application/json; charset=utf-8','cache-control':'no-store',...extra});res.end(JSON.stringify(body))}
@@ -48,9 +57,10 @@ if(path==='/health')return send(res,{ok:ready,database:pool?'neon':'memory'},rea
 if(path==='/manifest.webmanifest')return send(res,{name:'Modus Centre',short_name:'Modus Centre',start_url:'/',display:'standalone',theme_color:'#10273f',background_color:'#ffffff',icons:[{src:'/icon.svg',sizes:'any',type:'image/svg+xml'}]},200,{'content-type':'application/manifest+json'});
 if(path==='/icon.svg'){res.writeHead(200,{'content-type':'image/svg+xml'});return res.end('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="36" fill="#10273f"/><text x="96" y="125" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="90" fill="white">M</text></svg>')}
 if(!ready)return send(res,{error:'База данных загружается'},503);
-if(path==='/api/demo-users'&&req.method==='GET')return send(res,users.map(({id,name,role,department,organization})=>({id,name,role,department,organization})));
-if(path==='/api/login'&&req.method==='POST'){let b=await read(req);let u=users.find(x=>x.id===b.userId);if(!u)return send(res,{error:'Демо-пользователь не найден'},400);let sid=crypto.randomBytes(32).toString('hex');sessions.set(sid,u.id);return send(res,{user:u},200,{'set-cookie':'centre_session='+sid+'; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=86400'})}
-if(path==='/api/logout'&&req.method==='POST'){sessions.delete(cookie(req));return send(res,{ok:true},200,{'set-cookie':'centre_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0'})}
+if(path==='/api/demo-users'&&req.method==='GET')return send(res,users.filter(u=>passwordRecords.get(u.id)).map(({id,name,role,department,organization})=>({id,name,role,department,organization})));
+if(['POST','PATCH','PUT','DELETE'].includes(req.method)&&!csrfAllowed(req))return send(res,{error:'Недопустимый источник запроса'},403);
+if(path==='/api/login'&&req.method==='POST'){let b=await read(req);const id=clean(b.userId,100);const key=String(req.headers['x-forwarded-for']||req.socket.remoteAddress||'unknown').split(',')[0]+':'+id;const rate=loginAttempts.get(key)||{count:0,until:0};if(rate.until>Date.now())return send(res,{error:'Слишком много попыток входа. Повторите позже'},429);const u=users.find(x=>x.id===id),record=passwordRecords.get(id);const input=String(b.password||'');const valid=record&&input.length>=12&&input.length<=256&&safeEqual(passwordHash(input,record.salt),record.hash);if(!valid){rate.count++;rate.until=rate.count>=5?Date.now()+15*60*1000:0;loginAttempts.set(key,rate);return send(res,{error:'Неверный логин или пароль'},401)}loginAttempts.delete(key);const token=crypto.randomBytes(32).toString('hex');sessions.set(sessionKey(token),{userId:u.id,expires:Date.now()+8*3600*1000});return send(res,{user:u},200,{'set-cookie':'centre_session='+token+'; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=28800'})}
+if(path==='/api/logout'&&req.method==='POST'){sessions.delete(sessionKey(cookie(req)));return send(res,{ok:true},200,{'set-cookie':'centre_session=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0'})}
 let u=account(req);if(!u)return send(res,{error:'Требуется вход в кабинет'},401);
 if(path==='/api/me')return send(res,u);
 if(path==='/api/events'){res.writeHead(200,{'content-type':'text/event-stream','cache-control':'no-cache, no-transform','connection':'keep-alive'});res.write(': connected\n\n');listeners.add(res);let timer=setInterval(()=>{try{res.write(': ping\n\n')}catch{}},20000);req.on('close',()=>{clearInterval(timer);listeners.delete(res)});return}
