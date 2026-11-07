@@ -31,3 +31,12 @@ export function bonusReport(account,state){
  if(!canSeePayroll(account))return [];
  return state.employees.map(employee=>{const stats=employeeReport({role:'director'},employee,state.tickets);const baseCents=state.bonusPlans?.[employee.id]?.baseCents??null;return {employeeId:employee.id,name:employee.name,department:employee.department,baseCents,amountCents:baseCents===null||stats.coefficient===null?null:Math.round(baseCents*stats.coefficient/100),status:'Предварительный расчёт, не начисление',updated:state.bonusPlans?.[employee.id]?.updated??null};});
 }
+
+
+export function analyticsReport(account,state,now=Date.now()){
+ if(!isDirector(account)&&account.role!=='manager')return null;
+ const visible=scopedBoard(account,state);
+ const summarize=tickets=>({total:tickets.length,new:tickets.filter(t=>t.status==='new').length,work:tickets.filter(t=>t.status==='work').length,resolved:tickets.filter(t=>t.status==='resolved').length,overdue:tickets.filter(t=>t.status!=='resolved'&&t.due<now).length});
+ const departments=[...new Set([...visible.employees.map(e=>e.department),...visible.tickets.map(t=>t.department)])].sort();
+ return {summary:summarize(visible.tickets),departments:departments.map(department=>({department,...summarize(visible.tickets.filter(t=>t.department===department))})),employees:visible.employees.map(e=>({id:e.id,name:e.name,department:e.department,...summarize(visible.tickets.filter(t=>t.assigneeId===e.id))}))};
+}

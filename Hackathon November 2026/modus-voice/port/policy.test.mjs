@@ -20,3 +20,18 @@ a(!('coefficient' in bonusReport({role:'accountant'},bs)[0]));
 a.equal(bonusReport(own,bs).length,0);
 a.equal(bonusReport(boss,bs).length,0);
 console.log('PASS: bonus uses coefficient, money rounded in kopecks, employee/manager excluded from payroll');
+
+
+const {analyticsReport}=await import('./policy.mjs');
+const report=analyticsReport(manager,s,200);
+a.deepEqual(report.departments.map(d=>d.department),['A']);
+a.equal(report.summary.total,2);
+a.equal(report.employees.some(e=>e.id==='e3'),false);
+a.equal(analyticsReport(director,s,200).summary.total,3);
+a.equal(analyticsReport(employee,s,200),null);
+a.equal(analyticsReport({role:'manager',employee_id:null},s,200).summary.total,0);
+console.log('PASS: analytics limited to manager department, director sees all, employees have no analytics');
+
+const chartState={...s,tickets:[{id:'a',department:'A',assigneeId:'e2',status:'new',due:100},{id:'b',department:'A',assigneeId:'e2',status:'work',due:300},{id:'c',department:'A',assigneeId:'e1',status:'resolved',due:100},{id:'d',department:'B',assigneeId:'e3',status:'new',due:100}]};
+a.deepEqual(analyticsReport(manager,chartState,200).summary,{total:3,new:1,work:1,resolved:1,overdue:1});
+a.deepEqual(analyticsReport(manager,chartState,200).employees.find(e=>e.id==='e2'),{id:'e2',name:undefined,department:'A',total:2,new:1,work:1,resolved:0,overdue:1});
