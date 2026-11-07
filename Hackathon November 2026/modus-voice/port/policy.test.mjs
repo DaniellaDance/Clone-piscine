@@ -33,7 +33,5 @@ a.equal(analyticsReport({role:'manager',employee_id:null},s,200).summary.total,0
 console.log('PASS: analytics limited to manager department, director sees all, employees have no analytics');
 
 const chartState={...s,tickets:[{id:'a',department:'A',assigneeId:'e2',status:'new',due:100},{id:'b',department:'A',assigneeId:'e2',status:'work',due:300},{id:'c',department:'A',assigneeId:'e1',status:'resolved',due:100},{id:'d',department:'B',assigneeId:'e3',status:'new',due:100}]};
-a.deepEqual(analyticsReport(manager,chartState,200).summary,{total:3,new:1,review:0,work:1,resolved:1,overdue:1});
-a.deepEqual(analyticsReport(manager,chartState,200).employees.find(e=>e.id==='e2'),{id:'e2',name:undefined,department:'A',total:2,new:1,review:0,work:1,resolved:0,overdue:1});
-
-const reviewState={...chartState,tickets:[{id:'review-test',department:'A',assigneeId:'e2',status:'review',due:300}]};a.equal(analyticsReport(manager,reviewState,200).summary.review,1);a.equal(analyticsReport(manager,reviewState,200).summary.total,1);
+a.deepEqual(analyticsReport(manager,chartState,200).summary,{total:3,new:1,work:1,resolved:1,overdue:1});
+a.deepEqual(analyticsReport(manager,chartState,200).employees.find(e=>e.id==='e2'),{id:'e2',name:undefined,department:'A',total:2,new:1,work:1,resolved:0,overdue:1});

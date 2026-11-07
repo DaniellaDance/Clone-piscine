@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import './director.css';
-const STATES=[['new','Новые'],['review','На рассмотрении'],['work','В работе'],['resolved','Решённые']] as const;
+const STATES=[['new','Новые'],['work','В работе'],['resolved','Решённые']] as const;
 const day=(v:any)=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Almaty',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(v));
 export default function DirectorDashboard({board,onTickets}:any){
  const [department,D]=useState('Все отделы'),[period,S]=useState('all'),[view,V]=useState('statuses'),[page,P]=useState(0);
@@ -13,7 +13,7 @@ export default function DirectorDashboard({board,onTickets}:any){
  
  const rows=view==='team'?(board.employees||[]).filter((e:any)=>department==='Все отделы'||e.department===department).map((e:any)=>({id:e.id,title:e.name,subtitle:e.position,tickets:tickets.filter((t:any)=>t.assigneeId===e.id)})):departments.filter(d=>department==='Все отделы'||d===department).map(d=>({id:d,title:d,subtitle:'',tickets:tickets.filter((t:any)=>t.department===d)}));
  const perPage=2,max=Math.max(1,Math.ceil(rows.length/perPage)),current=Math.min(page,max-1);
- let stop=0;const colors=['#3478cb','#e9bf35','#e77c22','#2d9671'];const gradient=totals.map((x,i)=>{const start=stop;stop+=tickets.length?100*x.value/tickets.length:0;return `${colors[i]} ${start}% ${stop}%`}).join(',');
+ let stop=0;const colors=['#c62436','#e9bf35','#2d9671'];const gradient=totals.map((x,i)=>{const start=stop;stop+=tickets.length?100*x.value/tickets.length:0;return `${colors[i]} ${start}% ${stop}%`}).join(',');
  return <section className="director-desk" aria-label="Панель директора">
   <div className="desk-intro"><div><span className="desk-kicker">MODUS VOICE</span><h2>Центр управления заявками</h2><p>Все отделы. Каждый ответственный. Общий результат.</p></div><span className="desk-live"><i/>Данные из базы</span></div>
   <div className="desk-toolbar"><label><span>Отдел</span><select value={department} onChange={e=>{D(e.target.value);P(0)}}>{['Все отделы',...departments].map(d=><option key={d}>{d}</option>)}</select></label><label><span>Созданы за период</span><select value={period} onChange={e=>{S(e.target.value);P(0)}}><option value="all">Всё время</option><option value="today">Сегодня</option><option value="week">Последние 7 дней</option></select></label><button className="desk-today" onClick={()=>onTickets('today')}>Заявки за сегодня <b>{board.tickets.filter((t:any)=>day(t.created)===day(Date.now())).length}</b><span>↗</span></button></div>
