@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: horsecup
+    runtime: node
+    plan: free
+    rootDir: HorseCup
+    buildCommand: node --check server.mjs
+    startCommand: npm start
+    healthCheckPath: /healthz
