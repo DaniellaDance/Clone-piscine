@@ -2,6 +2,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import pg from 'pg';
+import {createCorporateAdapter} from './integrations/adapters.mjs';
 const port=process.env.PORT||3000;
 const pool=process.env.DATABASE_URL?new pg.Pool({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false},max:4}):null;
 const users=[
@@ -63,6 +64,8 @@ if(path==='/api/login'&&req.method==='POST'){let b=await read(req);const id=clea
 if(path==='/api/logout'&&req.method==='POST'){sessions.delete(sessionKey(cookie(req)));return send(res,{ok:true},200,{'set-cookie':'centre_session=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0'})}
 let u=account(req);if(!u)return send(res,{error:'Требуется вход в кабинет'},401);
 if(path==='/api/me')return send(res,u);
+if(path==='/api/integrations'&&req.method==='GET'){if(u.role!=='director')return send(res,{error:'Доступ запрещён'},403);try{const adapter=createCorporateAdapter();return send(res,{kind:adapter.kind,enabled:adapter.enabled,health:await adapter.health()})}catch(e){return send(res,{error:e.message},422)}}
+
 if(path==='/api/events'){res.writeHead(200,{'content-type':'text/event-stream','cache-control':'no-cache, no-transform','connection':'keep-alive'});res.write(': connected\n\n');listeners.add(res);let timer=setInterval(()=>{try{res.write(': ping\n\n')}catch{}},20000);req.on('close',()=>{clearInterval(timer);listeners.delete(res)});return}
 if(path==='/api/tickets'&&req.method==='GET')return send(res,state.tickets.filter(t=>view(u,t)));
 if(path==='/api/tickets'&&req.method==='POST'){let b=await read(req);if(!clean(b.title,140)||!clean(b.description))return send(res,{error:'Заполните тему и описание'},400);if(abuse(b.title)||abuse(b.description))return send(res,{error:'Смена тона увеличит скорость обработки заявки в 2 раза'},422);let t={id:crypto.randomUUID(),title:clean(b.title,140),description:clean(b.description),department:clean(b.department,100),type:clean(b.type,80),priority:b.priority==='urgent'?'urgent':'normal',status:'new',ownerId:u.id,author:u.name,created:new Date().toISOString(),history:[]};state.tickets.unshift(t);await persist();notify();return send(res,{id:t.id},201)}
