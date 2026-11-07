@@ -54,6 +54,7 @@ function statusLabel(x){return x==='work'?'Взята в работу':x==='reso
 const html=fs.readFileSync(new URL('./index.html',import.meta.url));
 http.createServer(async(req,res)=>{let path=new URL(req.url,'http://localhost').pathname;try{
 if(path==='/'||path==='/index.html'){res.writeHead(200,{'content-type':'text/html; charset=utf-8'});return res.end(html)}
+if(path==='/pitch'){res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'});return res.end(fs.readFileSync(new URL('./pitch.html',import.meta.url)))}
 if(path==='/health')return send(res,{ok:ready,database:pool?'neon':'memory'},ready?200:503);
 if(path==='/manifest.webmanifest')return send(res,{name:'Modus Centre',short_name:'Modus Centre',start_url:'/',display:'standalone',theme_color:'#10273f',background_color:'#ffffff',icons:[{src:'/icon.svg',sizes:'any',type:'image/svg+xml'}]},200,{'content-type':'application/manifest+json'});
 if(path==='/icon.svg'){res.writeHead(200,{'content-type':'image/svg+xml'});return res.end('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="36" fill="#10273f"/><text x="96" y="125" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="90" fill="white">M</text></svg>')}
