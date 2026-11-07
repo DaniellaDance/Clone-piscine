@@ -72,6 +72,33 @@ const sessionId=session(req);const [account]=sessionId?await sql`SELECT id,login
 if(req.method==='GET'){let {data:s}=await readState();if(escalations(structuredClone(s))){await mutate(x=>{escalations(x);return true});s=(await readState()).data;}const scoped=scopedBoard(account,s);const purchases=account.role==='client'?await sql.query('SELECT * FROM voice_purchases WHERE client_id=$1 ORDER BY purchased_on DESC',[user]):[];const registrations=canApproveEmployees?await sql.query("SELECT id,login,name,role,employee_id,purchase_reference AS reference FROM voice_accounts WHERE active=false AND role='employee' ORDER BY login",[]):[];const customers=isDirector(account)?await sql.query('SELECT id,name,email,phone,order_number,request_number,product,brand,purchased_on,warranty_until,account_id FROM voice_customer_registry ORDER BY id'):[];const regularIds=Object.keys(s.customerFlags||{}).filter(id=>s.customerFlags[id]?.regular===true);const regularAccounts=new Set((regularIds.length?await sql.query('SELECT account_id FROM voice_customer_registry WHERE id=ANY($1) AND account_id IS NOT NULL',[regularIds]):[]).map(c=>c.account_id));const delegates=[];
 return json(res,{...scoped,tickets:scoped.tickets.map(t=>{const specialist=s.employees.find(e=>e.id===t.assigneeId),manager=s.employees.find(e=>e.id===specialist?.managerId);const contact=e=>e?{name:e.name,email:e.email,position:e.position,department:e.department,demo:e.demo!==false}:null;const regular=regularAccounts.has(t.createdBy);return {...t,isRegularCustomer:regular,needsAttention:needsAttention(t,regular),mailRecipients:{specialist:contact(specialist),manager:contact(manager)}}}),analytics:analyticsReport(account,s),account,registrationPermissions:{employees:canApproveEmployees,clients:false},registrationDelegates:delegates,registrationStaff:canApproveEmployees?s.employees.filter(e=>registrations.some(r=>r.role==='employee'&&r.employee_id===e.id)).map(e=>({id:e.id,name:e.name,department:e.department})):[],registrations:registrations.map(r=>({...r,customer:customers.find(c=>'customer:'+c.id===r.reference)})),customers:customers.map(c=>({...c,regular:!!s.customerFlags?.[c.id]?.regular})),purchaseRecords:isDirector(account)?await sql.query('SELECT * FROM voice_purchases ORDER BY order_reference'):[],payroll:bonusReport(account,s),purchases:purchases.map(p=>({...p,purchased_on:dateISO(p.purchased_on),warranty_until:dateISO(p.warranty_until)})),employees:scoped.employees.map(e=>employeeReport(account,e,s.tickets)),outbox:scoped.outbox.reduce((a,e)=>{let r=a.find(x=>x.channel===e.channel&&x.status===e.status);if(r)r.count++;else a.push({channel:e.channel,status:e.status,count:1});return a;},[])});}
 if(req.method!=='POST')return json(res,{error:'Метод не поддерживается'},405);const b=JSON.parse(await body(req));if((b.action==='create'&&hasAbuse(b.ticket?.title,b.ticket?.description,b.ticket?.benefit))||(b.action==='comment'&&hasAbuse(b.body))||(b.action==='status'&&hasAbuse(b.response,b.resolution)))return json(res,{error:TEXT_POLICY_MESSAGE},422);
+if(b.action==='demo_seed'){
+ if(!isDirector(account))return json(res,{error:'Только директор может загрузить демонстрационные заявки'},403);
+ const result=await mutate(s=>{
+  const existing=new Set(s.tickets.filter(t=>t.demo===true).map(t=>t.demoKey));
+  const examples=[
+   ['Проверка пожарной сигнализации','Сервис безопасности','new','urgent',false,-2],
+   ['Замена датчика на объекте','Сервисный центр','work','normal',true,-28],
+   ['Уточнение сроков поставки','Логистика','resolved','normal',true,-80],
+   ['Предложение по обучению персонала','Обучение и персонал','new','normal',false,-6],
+   ['Исправление счёта по заказу','Продажи и бухгалтерия','work','normal',false,-44],
+   ['Ошибка авторизации в приложении','ИТ и интеграции','resolved','normal',false,-110],
+   ['Срочная диагностика оборудования','Сервисный центр','new','urgent',true,-1],
+   ['Улучшение процесса обработки заявок','Развитие и качество','resolved','normal',false,-200],
+   ['Нужна инструкция по эксплуатации','Обучение и персонал','work','normal',false,-19],
+   ['Задержка ответа на обращение','Диспетчер','new','normal',true,-50],
+   ['Проверка безопасности объекта','Сервис безопасности','resolved','normal',false,-130],
+   ['Повторная поставка комплектующих','Логистика','work','normal',true,-12]
+  ];
+  let added=0;
+  for(let i=0;i<examples.length;i++){const [title,department,status,priority,regular,hours]=examples[i],demoKey='modus-demo-'+i;if(existing.has(demoKey))continue;
+   const created=Date.now()+hours*3600000,assignee=responsible(s.employees,s.tickets,department);
+   s.tickets.push({id:crypto.randomUUID(),demo:true,demoKey,title:'[ДЕМО] '+title,description:'Учебная заявка для демонстрации работы Modus Voice. Не является реальным обращением.',category:title,department,assigneeId:assignee.id,assignee,author:'Демонстрационный пользователь',createdBy:'demo',audience:'Сотрудник',type:i===3||i===7?'Идея':'Проблема',priority,status,isRegularCustomer:regular,created,updated:created+3600000,due:created+(priority==='urgent'?3600000:86400000),firstResponseAt:status==='new'?undefined:created+1800000,resolvedAt:status==='resolved'?created+7200000:undefined,resolution:status==='resolved'?'Демонстрационное решение':'',voters:[],benefit:'',faqTried:false});
+   added++;
+  }
+  return {ok:true,added};
+ });return json(res,result);
+}
 if(b.action==='status'&&b.status==='work'&&!String(b.response||'').trim()){const state=(await readState()).data,ticket=state.tickets.find(t=>t.id===b.id);if(ticket&&canManage(account,ticket,state)&&!ticket.firstResponseAt)return json(res,{error:'Чтобы перевести заявку в работу, сначала ответьте по существу вопроса.'},422);}
 if(['registration_delegate','approve','reject'].includes(b.action))return json(res,{error:'Регистрация сотрудников выполняется автоматически'},410);
 if(b.action==='staff_save'){
