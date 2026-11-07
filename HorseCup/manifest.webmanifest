@@ -1,1 +1,32 @@
-{"id":"./","name":"HorseCup — кубок Tomorrow School","short_name":"HorseCup","lang":"ru","description":"Сетевые учебные скачки: создайте поле и соревнуйтесь с друзьями три минуты.","start_url":"./","scope":"./","display":"standalone","background_color":"#f7f4e9","theme_color":"#146447","icons":[{"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},{"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
+{
+  "id": "./",
+  "name": "HorseCup — кубок Tomorrow School",
+  "short_name": "HorseCup",
+  "lang": "ru",
+  "description": "Сетевые учебные скачки: создайте поле и соревнуйтесь с друзьями три минуты.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f4e9",
+  "theme_color": "#146447",
+  "icons": [
+    {
+      "src": "icons/ts-horse-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/ts-horse-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/ts-horse-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
