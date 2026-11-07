@@ -1,5 +1,7 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id),levels={easy:'Лёгкий',medium:'Средний',heavy:'Сложный'},coats=Object.keys(Horses.COATS);let mode='create',horse='bay',session=null,state=null,polling=false,offset=0,sending=false,lastQuestion='',lastPhase='',celebrated=false,laneKey='',enabled=true,audio=null,errorTimer;
+
+let installEvent=null;const dialog=$('installDialog');$('install').addEventListener('click',()=>dialog.showModal());$('closeInstall').addEventListener('click',()=>dialog.close());window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvent=e;$('installNow').disabled=false});$('installNow').addEventListener('click',async()=>{if(!installEvent)return;await installEvent.prompt();const result=await installEvent.userChoice;if(result.outcome==='accepted')dialog.close();installEvent=null;$('installNow').disabled=true});window.addEventListener('appinstalled',()=>{$('install').hidden=true;dialog.close()});if(matchMedia('(display-mode: standalone)').matches)$('install').hidden=true;if(new URLSearchParams(location.search).has('install'))dialog.showModal();navigator.serviceWorker?.register('sw.js').catch(()=>{});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function error(message){$('error').textContent=message;$('error').hidden=false;clearTimeout(errorTimer);errorTimer=setTimeout(()=>$('error').hidden=true,7000)}
 function show(id){for(const key of ['setup','lobby','race','result'])$(key).hidden=key!==id}
