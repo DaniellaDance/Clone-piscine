@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test mvp.test.mjs",
+    "test": "node --test mvp.test.mjs neon.test.mjs",
     "prestart": "npm test"
   },
   "engines": {
