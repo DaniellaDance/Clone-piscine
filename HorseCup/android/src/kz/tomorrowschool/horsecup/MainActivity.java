@@ -54,7 +54,7 @@ public final class MainActivity extends Activity {
         settings.setSafeBrowsingEnabled(true);
         settings.setSupportMultipleWindows(false);
         settings.setMediaPlaybackRequiresUserGesture(true);
-        settings.setUserAgentString(settings.getUserAgentString()+" HorseCupAndroid/1.0");
+        settings.setUserAgentString(settings.getUserAgentString()+" HorseCupAndroid/1.1");
         CookieManager.getInstance().setAcceptThirdPartyCookies(web,false);
         web.setWebChromeClient(new WebChromeClient(){
             @Override public void onProgressChanged(WebView view,int value){

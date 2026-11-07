@@ -9,3 +9,10 @@ dialog{border:1px solid #d3ddc6;border-radius:18px;max-width:min(440px,calc(100v
 
 .tabs>b{flex:1;font-size:12px;align-self:center;padding:9px}.tabs>button{flex:0 1 auto}
 .entry-side{min-width:0}.mode-picker{background:#fff;border:1px solid #dde3d7;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px}.mode-picker h2{font-size:22px;margin:0 0 5px}.play-mode{display:flex;flex-direction:column;gap:8px;text-align:left;padding:23px 20px;border:1px solid #dce4d5;background:#f3f7ed}.play-mode:hover{background:#e3eed9}.play-mode b{font-size:20px;color:#146447}.play-mode span{font-size:12px;line-height:1.5;font-weight:400;color:#69796a}.mode-back{background:transparent;text-align:left;padding:0;font-size:11px;color:#6a7e6c}.room-share{display:flex;flex-wrap:wrap;gap:9px}.apk-download{display:block;text-align:center;text-decoration:none;border-radius:10px;margin:15px 0}.lobby-intro h1{font-size:30px}@media(max-width:700px){.mode-picker{padding:18px}.mode-picker h2{font-size:19px}.play-mode{padding:18px}.play-mode b{font-size:18px}}
+
+/* Fixed lane height, only occupied lanes; questions directly follow the track. */
+.track{height:calc(48px + var(--lane-count,1)*47px)}
+.lanes{height:calc(var(--lane-count,1)*47px - 4px);grid-template-rows:repeat(var(--lane-count,1),1fr)}
+.question-stage{align-items:flex-start}.question pre{white-space:pre;tab-size:4;text-align:left;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;line-height:1.45;max-height:none;min-height:0;flex:0 1 auto}.options{flex:0 0 auto;margin-top:10px}#feedback{margin-top:8px}
+@media(max-width:700px){.track{height:calc(40px + var(--lane-count,1)*42px)}.lanes{height:calc(var(--lane-count,1)*42px - 4px)}.question pre{font-size:11px;line-height:1.4}}
+@media(max-height:650px){.track{height:calc(40px + var(--lane-count,1)*34px)}.lanes{height:calc(var(--lane-count,1)*34px - 4px)}.question pre{font-size:10px}.options{margin-top:5px}}

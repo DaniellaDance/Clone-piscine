@@ -24,5 +24,5 @@ import sys,zipfile
 with zipfile.ZipFile(sys.argv[1],'a',zipfile.ZIP_DEFLATED) as z:z.write(sys.argv[2],'classes.dex')
 PY
 "$android_build_tools/zipalign" -f 4 "$build_dir/unsigned.apk" "$build_dir/aligned.apk"
-java -jar "$android_build_tools/lib/apksigner.jar" sign --ks "$horsecup_keystore" --ks-key-alias horsecup --ks-pass env:HORSECUP_SIGNING_PASSWORD --out "$project_dir/../downloads/HorseCup-1.0.apk" "$build_dir/aligned.apk"
-java -jar "$android_build_tools/lib/apksigner.jar" verify --verbose "$project_dir/../downloads/HorseCup-1.0.apk"
+java -jar "$android_build_tools/lib/apksigner.jar" sign --ks "$horsecup_keystore" --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true --ks-key-alias horsecup --ks-pass env:HORSECUP_SIGNING_PASSWORD --out "$project_dir/../downloads/HorseCup-1.1.apk" "$build_dir/aligned.apk"
+java -jar "$android_build_tools/lib/apksigner.jar" verify --verbose "$project_dir/../downloads/HorseCup-1.1.apk"
