@@ -34,3 +34,10 @@ main{overflow:hidden;overscroll-behavior:none}.registry{flex:1;min-height:0}.reg
 .live-ticket-card>div button:first-child{background:#b92939;color:#fff}
 .sound-toggle{font-size:11px;padding:9px}
 @media(max-width:700px){.live-ticket-alerts{top:60px;right:8px}.sound-toggle{font-size:9px;padding:7px}.identity{gap:3px}}
+
+.ticket-tracking{margin:15px 0;padding:14px;border:1px solid #e1e7ed;background:#fff;border-radius:12px;color:#273544}
+.ticket-tracking h3{font-size:14px;margin:0 0 15px}.tracking-line{display:grid;gap:0}
+.tracking-step{position:relative;display:grid;grid-template-columns:22px 1fr;gap:10px;padding:0 0 18px}
+.tracking-step:not(:last-child):before{content:"";position:absolute;left:8px;top:15px;bottom:0;border-left:2px solid #d6e0e8}
+.tracking-dot{color:#2e79b7;font-size:16px;line-height:18px;z-index:1}.tracking-step.done .tracking-dot{color:#27945e}
+.tracking-step b{display:block;font-size:13px}.tracking-step small{display:block;color:#647488;font-size:11px;margin:3px 0}.tracking-step p{font-size:12px;margin:6px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
