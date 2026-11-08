@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const $=id=>document.getElementById(id),levels={easy:'Лёгкий',medium:'Средний',heavy:'Сложный',all:'Все уровни'},coats=Object.keys(Horses.COATS);let accountToken=localStorage.getItem('horsecup.account')||'',playMode=null,mode='create',horse='bay',session=null,state=null,polling=false,offset=0,sending=false,lastQuestion='',lastPhase='',celebrated=false,distanceShown=false,laneKey='',enabled=true,audio=null,errorTimer;
+const $=id=>document.getElementById(id),levels={easy:'Лёгкий',medium:'Средний',heavy:'Сложный',all:'Все уровни'},coats=['bay','black','chestnut','grey'];let accountToken=localStorage.getItem('horsecup.account')||'',playMode=null,mode='create',horse='bay',session=null,state=null,polling=false,offset=0,sending=false,lastQuestion='',lastPhase='',celebrated=false,distanceShown=false,laneKey='',enabled=true,audio=null,errorTimer;
 
 
 const DAILY_HORSE_QUOTES=["Сила коня — в ногах, сила человека — в уме.","Конь познаётся в езде, а человек — в деле.","Настоящая победа — не обогнать других, а превзойти себя.","Быстрый конь сокращает дорогу, острый ум — путь к победе.","Не бойся отстать на старте — бойся перестать двигаться вперёд.","Конь несёт всадника к цели, а знания открывают ему дорогу.","Каждый правильный ответ — ещё один шаг к финишу.","На скачках важен финиш, в учёбе — каждый пройденный путь."];
