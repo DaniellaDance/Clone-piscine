@@ -1,6 +1,6 @@
 import {randomBytes,randomInt} from 'node:crypto';
 export const COUNTDOWN_MS=3000,RACE_MS=180000;
-export const KM_PER_CORRECT={easy:100,medium:100,heavy:100};
+export const KM_PER_CORRECT={easy:100,medium:200,heavy:300};
 export const COATS=['bay','black','chestnut','grey','buckskin','palomino','pinto','roan','dun'];
 const TOPICS={1:'Терминал и основы Go',2:'Условия, циклы и типы данных',3:'Строки и Unicode (rune)',4:'Функции и аргументы',5:'Массивы и срезы',6:'Строки и обработка текста',7:'Рекурсия и математические алгоритмы',8:'Указатели и структуры',9:'Работа с памятью и указателями',10:'Связанные списки и структуры данных',11:'Битовые операции',12:'Тестирование, форматирование и отладка'};
 const fail=message=>{throw Error(message)};
