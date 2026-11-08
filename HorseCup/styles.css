@@ -274,3 +274,14 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 .track .runner{width:clamp(70px,15vw,135px)!important;height:100%!important;bottom:0!important;display:flex;align-items:flex-end;justify-content:center;overflow:visible}
 .track .runner .race-horse-photo{display:block;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center bottom!important;border:none!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;filter:drop-shadow(0 2px 2px #102f1955)}
 @media(max-width:700px){.track{height:clamp(240px,36dvh,350px)!important}.track .lane{min-height:40px}.track .runner{width:clamp(66px,20vw,95px)!important}.track .lane-score{font-size:9px!important}}
+
+/* Exact active horse count: one visible racing lane per participant.
+   Crop the TOP of the seasonal picture, keeping the grass and straight lanes. */
+.track{--active-lanes:1;height:min(calc(112px + var(--active-lanes)*68px),43dvh)!important;min-height:0!important;max-height:43dvh!important;background-size:cover!important;background-position:center bottom!important;padding:5px 6px!important}
+.track .track-head{flex:0 0 20px!important}
+.track .lanes{display:grid!important;grid-template-rows:repeat(var(--active-lanes),minmax(0,1fr))!important;grid-template-columns:minmax(0,1fr)!important;flex:1 1 auto!important;min-height:0!important;height:auto!important;gap:0!important;padding:0 0 4px!important;justify-content:stretch!important}
+.track .lane{display:grid!important;grid-template-columns:minmax(0,1fr)!important;flex:initial!important;min-height:0!important;max-height:none!important;height:100%!important;overflow:visible!important}
+.track .lane-road{height:100%!important;position:relative!important;overflow:visible!important}
+.track .runner{height:100%!important;width:min(22vw,130px)!important;max-height:86px!important;bottom:0!important}
+.track .runner .race-horse-photo{object-fit:contain!important}
+@media(max-width:700px){.track{height:min(calc(100px + var(--active-lanes)*63px),42dvh)!important;max-height:42dvh!important}.track .runner{width:min(25vw,105px)!important}}
