@@ -432,3 +432,45 @@ body:has(#setup.horsecup-splash:not([hidden])) main{max-width:none;width:100%;he
    background-position:center center!important;
  }
 }
+
+
+/* The approved portrait artwork already depicts the gold "Меню игры" button.
+   Keep the actual toggle interactive but visually transparent, aligned over it. */
+@media (orientation:portrait){
+ #setup.horsecup-splash #splashMenuToggle.splash-toggle{
+   position:absolute!important;
+   left:50%!important;
+   bottom:6.6dvh!important;
+   transform:translateX(-50%)!important;
+   width:min(58vw,340px)!important;
+   height:6.3dvh!important;
+   min-height:48px!important;
+   margin:0!important;
+   padding:0!important;
+   background:transparent!important;
+   background-image:none!important;
+   border:0!important;
+   box-shadow:none!important;
+   color:transparent!important;
+   font-size:0!important;
+   text-shadow:none!important;
+   opacity:1!important;
+   z-index:6!important;
+   cursor:pointer!important;
+ }
+ #setup.horsecup-splash #splashMenuToggle.splash-toggle:hover,
+ #setup.horsecup-splash #splashMenuToggle.splash-toggle:active,
+ #setup.horsecup-splash #splashMenuToggle.splash-toggle:focus{
+   background:transparent!important;
+   color:transparent!important;
+   box-shadow:none!important;
+ }
+ #setup.horsecup-splash #splashMenuToggle.splash-toggle:focus-visible{
+   outline:3px solid #fff!important;
+   outline-offset:2px!important;
+ }
+ #setup.horsecup-splash .splash-drawer:not([hidden]){
+   bottom:14dvh!important;
+   max-height:70dvh!important;
+ }
+}
