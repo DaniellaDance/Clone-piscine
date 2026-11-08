@@ -396,3 +396,12 @@ body:has(#setup.horsecup-splash:not([hidden])) main{max-width:none;width:100%;he
    background-position:center center!important;
  }
 }
+
+
+/* Landscape phones and desktop: proportional edge-to-edge fill, centered crop. */
+@media (orientation:landscape){
+ #setup.horsecup-splash:not([hidden]){
+   background-size:cover!important;
+   background-position:center center!important;
+ }
+}
