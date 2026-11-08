@@ -213,3 +213,20 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
  .options{gap:5px;min-height:0;flex-wrap:wrap}
  .answer-cloud{min-width:0;max-width:100%;font-size:clamp(10px,2.7vw,12px);padding:9px 6px;overflow-wrap:anywhere}
 }
+
+/* Selection highlight begins below the panorama title, never across the banner. */
+#setup #horses .horse-choice.selected,
+#setup #horses .horse-choice:focus-visible{
+ background:transparent!important;
+ box-shadow:none!important;
+ border:0!important;
+}
+#setup #horses .horse-choice{isolation:isolate}
+#setup #horses .horse-choice.selected::before,
+#setup #horses .horse-choice:focus-visible::before{
+ content:"";position:absolute;z-index:-1;pointer-events:none;
+ left:2px;right:2px;top:21%;bottom:0;
+ border:3px solid #ffd54b;border-top:0;
+ border-radius:0 0 10px 10px;
+ background:rgba(255,215,70,.12);
+}
