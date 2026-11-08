@@ -285,3 +285,10 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 .track .runner{height:100%!important;width:min(22vw,130px)!important;max-height:86px!important;bottom:0!important}
 .track .runner .race-horse-photo{object-fit:contain!important}
 @media(max-width:700px){.track{height:min(calc(100px + var(--active-lanes)*63px),42dvh)!important;max-height:42dvh!important}.track .runner{width:min(25vw,105px)!important}}
+
+/* Preserve the full upper scenery when 3–4 horses race; crop it for 1–2. */
+.track{background-position:center bottom!important}
+.track[data-horse-count="3"],.track[data-horse-count="4"]{background-size:100% 100%!important;background-position:center center!important}
+.track[data-horse-count="3"]{height:min(390px,46dvh)!important;max-height:46dvh!important}
+.track[data-horse-count="4"]{height:min(460px,52dvh)!important;max-height:52dvh!important}
+@media(max-width:700px){.track[data-horse-count="3"]{height:min(360px,43dvh)!important;max-height:43dvh!important}.track[data-horse-count="4"]{height:min(420px,49dvh)!important;max-height:49dvh!important}}
