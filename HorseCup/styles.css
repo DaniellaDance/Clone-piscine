@@ -123,3 +123,26 @@ body:has(#setup:not([hidden])) main{padding-top:8px;padding-bottom:6px}
 #setup #horses .horse-choice img{display:block;width:100%;height:100%;position:absolute;inset:0;object-fit:cover;object-position:center 35%;max-height:none;pointer-events:none}
 #setup #horses .horse-choice.selected,#setup #horses .horse-choice:focus-visible{border-color:#d8a21b;box-shadow:0 0 0 3px #ffdc71,0 4px 14px #a56d2870}
 @media(max-width:420px){#setup #horses .horse-choice{min-height:125px;aspect-ratio:1.45/1}}
+
+/* Compact phone layout: keep selection, four photos and start button on screen. */
+@media(max-width:700px){
+ body:has(#setup:not([hidden])) header{display:none}
+ body:has(#setup:not([hidden])) footer{display:none}
+ body:has(#setup:not([hidden])) main{padding:4px 10px}
+ #setup{min-height:calc(100dvh - 8px);height:calc(100dvh - 8px);justify-content:flex-start;gap:3px;overflow:hidden}
+ #setup .intro{flex:0 0 auto}
+ #setup .intro h1{font-size:clamp(23px,3.6dvh,34px);margin:0}
+ #setup .eyebrow{font-size:8px;line-height:1.1}
+ #setup .daily-horse-quote{font-size:clamp(10px,1.6dvh,14px);min-height:0;margin:1px auto 3px}
+ #setup .entry-side{flex:1;min-height:0}
+ #setup .entry{height:100%;padding:8px 10px;gap:clamp(2px,.55dvh,6px);overflow:hidden;border-radius:14px}
+ #setup .entry label{font-size:clamp(10px,1.4dvh,13px);gap:1px}
+ #setup .entry input,#setup .entry select{padding:clamp(3px,.6dvh,7px) 8px;font-size:clamp(12px,1.7dvh,15px)}
+ #setup .entry fieldset{flex:1;min-height:0;display:flex;flex-direction:column}
+ #setup #horses.horses{flex:1;min-height:0;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:5px}
+ #setup #horses .horse-choice{min-height:0;aspect-ratio:auto;border-width:3px;border-radius:12px}
+ #setup #horses .horse-choice img{height:100%;width:100%;object-fit:cover;object-position:center 37%}
+ #setup .entry .primary{flex:0 0 auto;padding:clamp(7px,1.1dvh,12px)}
+ #setup .entry .hint{display:none}
+ #setup .entry .mode-back{padding:3px 5px;text-align:left}
+}
