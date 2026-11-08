@@ -13,5 +13,9 @@ export async function authenticate(token){if(!/^[a-f0-9]{64}$/.test(token||''))t
 export async function logout(token){if(token)await pool.query('DELETE FROM player_sessions WHERE token_hash=$1',[digest(token)])}
 export const history={
  async used(ids){if(!ids.length)return new Set();const {rows}=await pool.query('SELECT DISTINCT question_key FROM correct_answers WHERE player_id=ANY($1::uuid[])',[ids]);return new Set(rows.map(r=>r.question_key))},
- async mark(id,key){await pool.query('INSERT INTO correct_answers(player_id,question_key) VALUES($1,$2) ON CONFLICT DO NOTHING',[id,key])}
+ async mark(id,key){await pool.query('INSERT INTO correct_answers(player_id,question_key) VALUES($1,$2) ON CONFLICT DO NOTHING',[id,key])},
+ async reward({roomCode,playerId,coins,horseshoes,mode,correct,keys}){const client=await pool.connect();try{await client.query('BEGIN');await client.query('INSERT INTO race_rewards(room_code,player_id,coins,horseshoes,mode,correct) VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING',[roomCode,playerId,coins,horseshoes,mode,correct]);for(const key of keys)await client.query('INSERT INTO correct_answers(player_id,question_key) VALUES($1,$2) ON CONFLICT DO NOTHING',[playerId,key]);await client.query('COMMIT')}catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}},
+ async totals(playerId){const {rows}=await pool.query('SELECT COALESCE(SUM(coins),0)::int AS coins,COALESCE(SUM(horseshoes),0)::int AS horseshoes,COUNT(*)::int AS races,COALESCE(SUM(correct),0)::int AS correct FROM race_rewards WHERE player_id=$1',[playerId]);return rows[0]},
+ async recent(playerId){const {rows}=await pool.query('SELECT room_code,coins,horseshoes,mode,finished_at FROM race_rewards WHERE player_id=$1 ORDER BY finished_at DESC LIMIT 20',[playerId]);return rows}
+
 };
