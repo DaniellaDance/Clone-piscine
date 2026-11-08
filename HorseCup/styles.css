@@ -45,3 +45,5 @@ dialog{border:1px solid #d3ddc6;border-radius:18px;max-width:min(440px,calc(100v
 .reward-sky{background:linear-gradient(180deg,#170e0d99,#170e0d40 38%,#160d0bba);border:2px solid #f4c76e80;box-shadow:0 0 40px #0008;border-radius:28px;padding:24px}
 .reward-sky:before{content:none!important}
 .reward-cinema-count,.reward-cinema-shoe strong{background:#231209c9;border:1px solid #f8d477;border-radius:18px;padding:10px 22px;box-shadow:0 5px 22px #0009;text-shadow:0 2px 5px #000}
+
+.reward-support-quote[hidden]{display:none!important}.reward-support-quote{position:relative;z-index:3;margin:4px 0 0;padding:12px 18px;max-width:660px;background:#24130bbd;border:1px solid #f5ce7c;border-radius:20px;color:#fff3d3;font:italic 600 clamp(17px,3.1vw,29px)/1.3 Georgia,serif;text-shadow:0 2px 8px #000;animation:shoe-appear .8s ease both}@media(max-height:650px){.reward-sky{gap:5px;padding:12px}.reward-support-quote{font-size:clamp(15px,2.5vw,20px);padding:7px}.reward-cinema-shoe .gold-horseshoe-art{height:60px;width:55px}}
