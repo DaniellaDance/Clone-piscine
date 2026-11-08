@@ -292,3 +292,9 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 .track[data-horse-count="3"]{height:min(390px,46dvh)!important;max-height:46dvh!important}
 .track[data-horse-count="4"]{height:min(460px,52dvh)!important;max-height:52dvh!important}
 @media(max-width:700px){.track[data-horse-count="3"]{height:min(360px,43dvh)!important;max-height:43dvh!important}.track[data-horse-count="4"]{height:min(420px,49dvh)!important;max-height:49dvh!important}}
+
+/* Keep horses on grass rather than on the front fence; do not stretch horse artwork. */
+.track .lanes{padding-bottom:clamp(20px,4.8vw,44px)!important}
+.track .runner{bottom:0!important;max-height:72px!important;transform-origin:center bottom!important}
+.track .runner .race-horse-photo{height:100%!important;width:100%!important;object-fit:contain!important;object-position:center bottom!important}
+@media(max-width:700px){.track .lanes{padding-bottom:clamp(22px,6vw,38px)!important}.track .runner{max-height:70px!important;width:min(24vw,100px)!important}}
