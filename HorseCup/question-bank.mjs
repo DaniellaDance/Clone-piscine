@@ -8,7 +8,7 @@ const canonical = value => String(value ?? '')
 export function expandBank(original) {
   const seen = new Set();
   return original.filter(q => {
-    const key = [q.lvl, q.quest, canonical(q.q), canonical(q.code)].join('|');
+    const key = [canonical(q.q), canonical(q.code)].join('|');
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
