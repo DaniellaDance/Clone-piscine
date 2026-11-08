@@ -301,3 +301,7 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 
 /* Rear up after a correct answer, keeping the hooves aligned with the lane. */
 .track .runner .rearing-horse{object-fit:contain!important;object-position:center bottom!important;transform:scale(1.18);transform-origin:center bottom;filter:drop-shadow(0 2px 3px #17361c66)}
+
+/* AI rival: blue luminous galloping horse, retaining the approved GIF motion. */
+.runner img.ai-blue-horse,.participant img.ai-blue-horse{filter:grayscale(1) sepia(1) saturate(7) hue-rotate(165deg) brightness(1.35) drop-shadow(0 0 7px #1aaeff) drop-shadow(0 0 13px #00bfff)!important;animation:ai-blue-glow 1.2s ease-in-out infinite alternate}
+@keyframes ai-blue-glow{from{filter:grayscale(1) sepia(1) saturate(7) hue-rotate(165deg) brightness(1.15) drop-shadow(0 0 5px #38bdf8)}to{filter:grayscale(1) sepia(1) saturate(7) hue-rotate(165deg) brightness(1.6) drop-shadow(0 0 12px #00aaff) drop-shadow(0 0 18px #38bdf8)}}
