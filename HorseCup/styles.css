@@ -262,3 +262,15 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 .track .runner .race-horse-photo{object-fit:contain!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important}
 @media(max-width:700px){.race{gap:8px}.race-toolbar{flex-wrap:wrap;height:auto;min-height:45px;gap:5px}.race-actions{gap:6px}.race-actions button{padding:8px 11px}.track{height:clamp(230px,31dvh,310px)!important;min-height:230px}.track .lane{flex-basis:44px}.track .runner{width:51px;height:42px}.question-stage{min-height:0}}
 @media(max-height:650px){.track{height:clamp(190px,31dvh,240px)!important;min-height:190px}}
+
+/* Full-body horses: each racer occupies its own straight horizontal lane. */
+.track{background-size:100% 100%!important}
+.track .lanes{justify-content:flex-end!important;padding-bottom:7px!important}
+.track .lane{position:relative;flex:1 1 0!important;min-height:42px;max-height:78px;grid-template-columns:0 minmax(0,1fr) 0!important;gap:0!important;background:transparent!important;border:0!important;overflow:visible}
+.track .lane-name{position:absolute;left:5px;top:0;z-index:5;max-width:42%;font-size:9px!important;line-height:1.15;pointer-events:none;display:none}
+.track .lane-score{position:absolute;right:3px;top:0;z-index:5;font-size:10px!important;pointer-events:none}
+.track .lane-road{width:100%;height:100%;min-width:0;overflow:visible;border:0!important;border-bottom:1px solid #ffffffb0!important;background:transparent!important;border-radius:0!important}
+.track .lane-road::after{display:none}
+.track .runner{width:clamp(70px,15vw,135px)!important;height:100%!important;bottom:0!important;display:flex;align-items:flex-end;justify-content:center;overflow:visible}
+.track .runner .race-horse-photo{display:block;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center bottom!important;border:none!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;filter:drop-shadow(0 2px 2px #102f1955)}
+@media(max-width:700px){.track{height:clamp(240px,36dvh,350px)!important}.track .lane{min-height:40px}.track .runner{width:clamp(66px,20vw,95px)!important}.track .lane-score{font-size:9px!important}}
