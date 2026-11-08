@@ -237,3 +237,15 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 #setup #horses .chosen-horse img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:#f9f3df}
 #setup #horses .chosen-horse .change-horse{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#176447;color:#fff;border:1px solid #f3d47a;padding:6px 12px;font-size:12px;border-radius:20px}
 @media(max-width:700px){#setup #horses.horses.horse-confirmed{min-height:0;flex:0 1 auto}#setup #horses .chosen-horse{height:clamp(130px,24dvh,215px)}}
+
+/* Seasonal hippodrome: select by the player's local calendar month. Background assets
+   are loaded from HorseCup/images/seasons/ when published. */
+.track{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/seasons/autumn.png");background-position:center;background-size:cover;background-repeat:no-repeat;box-shadow:inset 0 0 0 2px #ffffff88}
+.track[data-season="spring"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/seasons/spring.png")}
+.track[data-season="summer"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/seasons/summer.png")}
+.track[data-season="autumn"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/seasons/autumn.png")}
+.track[data-season="winter"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/seasons/winter.png")}
+.track .lane-road{background:transparent;border:0;border-radius:0;border-bottom:1px dashed #ffffffa8}
+.track .lane-road::after{background:#fff9;border-radius:2px}
+.track .lane-name,.track .lane-score,.track .track-head{color:#fff;text-shadow:0 1px 3px #17271b,0 0 5px #17271b}
+.track .lane-name small{color:#fff}
