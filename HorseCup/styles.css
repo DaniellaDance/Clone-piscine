@@ -334,3 +334,23 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 #setup.horsecup-splash .intro .eyebrow{font-size:12px}
 #setup.horsecup-splash .intro>p:not(.daily-horse-quote){display:none}
 #setup.horsecup-splash .splash-toggle{position:relative;z-index:2}
+
+
+/* Mobile fixes: visible racecourse and compact reward screen */
+.track{background-color:#8baf6a!important}
+.track[data-season]{background-repeat:no-repeat!important}
+.track .lane-road{border-bottom:2px dashed rgba(255,255,255,.85)!important}
+.track .runner{z-index:5!important;min-height:44px}
+.track .runner img{visibility:visible!important;opacity:1!important}
+@media(max-width:700px){
+  .race-toolbar .score{gap:9px;flex-wrap:nowrap}
+  .race-toolbar .score b{font-size:clamp(15px,4.5vw,22px)}
+  .race-toolbar h1{font-size:20px}
+  .race{height:auto;min-height:calc(100dvh - 150px)}
+  .question-stage{min-height:290px;overflow:auto}
+  .question pre,.question code{white-space:pre-wrap;overflow-wrap:anywhere}
+  .reward-sky{height:min(88dvh,650px);gap:9px}
+  .reward-sky h2{font-size:clamp(24px,7vw,36px)}
+  .reward-cinema-count{font-size:clamp(18px,5vw,28px)}
+  #setup.horsecup-splash{background-position:center center!important;background-color:#352b40}
+}
