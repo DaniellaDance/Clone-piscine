@@ -325,3 +325,12 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 @keyframes horseDrawer{from{opacity:0;transform:translateY(35px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:700px){#setup.horsecup-splash{min-height:calc(100dvh - 145px)}#setup.horsecup-splash .splash-drawer{max-height:65dvh;padding:9px}#setup.horsecup-splash .intro h1{font-size:48px}}
 @media(prefers-reduced-motion:reduce){#setup.horsecup-splash .splash-drawer{animation:none}}
+
+
+/* Approved uploaded HorseCup splash asset */
+#setup.horsecup-splash{background-image:linear-gradient(180deg,rgba(12,19,48,.04) 0%,rgba(12,19,48,.10) 48%,rgba(12,19,48,.75) 100%),url("images/Галоп к Кубку HorseCup.png");background-position:center;background-size:cover}
+#setup.horsecup-splash .intro{background:rgba(12,19,48,.58);border:1px solid #e5ba69;border-radius:20px;padding:10px 22px;backdrop-filter:blur(5px)}
+#setup.horsecup-splash .intro h1{display:none}
+#setup.horsecup-splash .intro .eyebrow{font-size:12px}
+#setup.horsecup-splash .intro>p:not(.daily-horse-quote){display:none}
+#setup.horsecup-splash .splash-toggle{position:relative;z-index:2}
