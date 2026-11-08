@@ -28,9 +28,9 @@ window.Horses = (function () {
     },
     grey: {
       title: 'Серая в яблоках', note: 'светло-серая, тёмная грива',
-      top: '#eff2f6', base: '#bec4cc', dark: '#8d959f', belly: '#787f89',
-      leg: '#aab1ba', mane: '#7c848f', maneLight: '#c3cad2',
-      muzzle: '#8a9199', hoof: '#3b4048', light: '#fbfdff', dapple: true
+      top: '#ffffff', base: '#f3f4f5', dark: '#d6d9df', belly: '#c6cbd2',
+      leg: '#edf0f3', mane: '#f5f6f8', maneLight: '#ffffff',
+      muzzle: '#d9dde2', hoof: '#969da5', light: '#ffffff', dapple: false
     },
     buckskin: {
       title: 'Буланая', note: 'песочно-золотая, тёмные грива и ноги',
@@ -65,6 +65,7 @@ window.Horses = (function () {
   };
 
   var BREEDS = {
+    kostanay:      { title: 'Костанайская', note: 'казахстанская верховая порода', transform: 'translate(0 0) scale(1.01 1.01)', mane: 'short', width: 1.02, leg: 1.04 },
     arabian:       { title: 'Арабская',              note: 'лёгкая, высоко несёт хвост', transform: '', mane: 'short', width: 1, leg: 1 },
     akhalteke:     { title: 'Ахалтекинская',        note: 'длинная шея, золотистый отлив', transform: 'translate(-2 -2) scale(1.03 1.02)', mane: 'sleek', width: 1, leg: 1, sheen: 0.1 },
     heavy:         { title: 'Владимирский тяжеловоз', note: 'массивный корпус, густая грива', transform: 'translate(1 2) scale(1 1.01)', mane: 'thick', width: 1.07, leg: 1.25 },
