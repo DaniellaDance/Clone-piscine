@@ -405,3 +405,30 @@ body:has(#setup.horsecup-splash:not([hidden])) main{max-width:none;width:100%;he
    background-position:center center!important;
  }
 }
+
+
+/* Approved portrait-specific artwork; preserve the original landscape artwork. */
+@media (orientation:portrait){
+ #setup.horsecup-splash:not([hidden]){
+   background-image:url("images/Скачки HorseCup на фоне гор.png")!important;
+   background-size:cover!important;
+   background-position:center center!important;
+ }
+ #setup.horsecup-splash .intro{display:none!important}
+ #setup.horsecup-splash .splash-toggle{
+   position:absolute!important;
+   bottom:max(12px,env(safe-area-inset-bottom,0px))!important;
+   left:50%!important;transform:translateX(-50%)!important;
+   margin:0!important;white-space:nowrap!important;
+ }
+ #setup.horsecup-splash .splash-drawer:not([hidden]){
+   bottom:clamp(66px,10dvh,110px)!important;
+ }
+}
+@media (orientation:landscape){
+ #setup.horsecup-splash:not([hidden]){
+   background-image:url("images/Галоп к Кубку HorseCup.png")!important;
+   background-size:cover!important;
+   background-position:center center!important;
+ }
+}
