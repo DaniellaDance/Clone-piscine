@@ -289,4 +289,137 @@ window.BANK.push(...[
     ],
     "a": 0
   }
+,
+{
+  "id": "h1-fill",
+  "lvl": "heavy",
+  "quest": 1,
+  "q": "Допишите ключевое слово для объявления пакета.",
+  "code": "??? main\n\nimport \"fmt\"\n\nfunc main() {\n    fmt.Print(\"ready\")\n}",
+  "kind": "fill",
+  "expected": "package",
+  "opts": [],
+  "a": 0
+},
+{
+  "id": "h2-fill",
+  "lvl": "heavy",
+  "quest": 2,
+  "q": "Допишите оператор сравнения в условии.",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    x := 5\n    if x ??? 5 { fmt.Print(\"yes\") }\n}",
+  "kind": "fill",
+  "expected": "==",
+  "opts": [],
+  "a": 0
+},
+{
+  "id": "h3-fill",
+  "lvl": "heavy",
+  "quest": 3,
+  "q": "Допишите тип, чтобы перебрать Unicode-символы.",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    chars := []???(\"кот\")\n    fmt.Print(len(chars))\n}",
+  "kind": "fill",
+  "expected": "rune",
+  "opts": [],
+  "a": 0
+},
+{
+  "id": "h4-fill",
+  "lvl": "heavy",
+  "quest": 4,
+  "q": "Допишите тип результата функции.",
+  "code": "package main\n\nfunc triple(x int) ??? {\n    return x * 3\n}",
+  "kind": "fill",
+  "expected": "int",
+  "opts": [],
+  "a": 0
+},
+{
+  "id": "h5-fill",
+  "lvl": "heavy",
+  "quest": 5,
+  "q": "Допишите встроенную функцию для длины среза.",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    xs := []int{1, 2, 3}\n    fmt.Print(???(xs))\n}",
+  "kind": "fill",
+  "expected": "len",
+  "opts": [],
+  "a": 0
+},
+{
+  "id": "h6-fill",
+  "lvl": "heavy",
+  "quest": 6,
+  "q": "Допишите операцию соединения строк.",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    s := \"Go\" ??? \"lang\"\n    fmt.Print(s)\n}",
+  "kind": "fill",
+  "expected": "+",
+  "opts": [],
+  "a": 0
+},
+{
+  "id": "h7-fill",
+  "lvl": "heavy",
+  "quest": 7,
+  "q": "Допишите рекурсивный вызов функции.",
+  "code": "package main\n\nfunc sum(n int) int {\n    if n == 0 { return 0 }\n    return n + ???(n-1)\n}",
+  "kind": "fill",
+  "expected": "sum",
+  "opts": [],
+  "a": 0
+},
+{
+  "id": "h8-fill",
+  "lvl": "heavy",
+  "quest": 8,
+  "q": "Допишите оператор разыменования указателя.",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    n := 7\n    ptr := &n\n    fmt.Print(???ptr)\n}",
+  "kind": "fill",
+  "expected": "*",
+  "opts": [],
+  "a": 0
+},
+{
+  "id": "h9-fill",
+  "lvl": "heavy",
+  "quest": 9,
+  "q": "Допишите оператор взятия адреса переменной.",
+  "code": "package main\n\nfunc main() {\n    n := 4\n    p := ???n\n    _ = p\n}",
+  "kind": "fill",
+  "expected": "&",
+  "opts": [],
+  "a": 0
+},
+{
+  "id": "h10-fill",
+  "lvl": "heavy",
+  "quest": 10,
+  "q": "Допишите имя поля структуры.",
+  "code": "package main\n\ntype Node struct { Value int }\nfunc main() {\n    node := Node{Value: 12}\n    _ = node.???\n}",
+  "kind": "fill",
+  "expected": "Value",
+  "opts": [],
+  "a": 0
+},
+{
+  "id": "h11-fill",
+  "lvl": "heavy",
+  "quest": 11,
+  "q": "Допишите оператор побитового исключающего ИЛИ.",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    fmt.Print(5 ??? 3)\n}",
+  "kind": "fill",
+  "expected": "^",
+  "opts": [],
+  "a": 0
+},
+{
+  "id": "h12-fill",
+  "lvl": "heavy",
+  "quest": 12,
+  "q": "Допишите проверку отсутствия ошибки.",
+  "code": "package main\n\nimport \"strconv\"\n\nfunc main() {\n    _, err := strconv.Atoi(\"12\")\n    if err != ??? { return }\n}",
+  "kind": "fill",
+  "expected": "nil",
+  "opts": [],
+  "a": 0
+}
 ]);
