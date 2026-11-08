@@ -230,3 +230,10 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
  border-radius:0 0 10px 10px;
  background:rgba(255,215,70,.12);
 }
+
+/* Once selected, show one horse only; allow changing selection. */
+#setup #horses.horses.horse-confirmed{display:flex;align-items:center;justify-content:center;background:none!important;aspect-ratio:auto;min-height:160px;overflow:visible}
+#setup #horses .chosen-horse{position:relative;width:min(100%,380px);height:clamp(155px,27dvh,270px);overflow:hidden;border-radius:15px;border:3px solid #e3b538;background:#f9f3df;box-shadow:0 5px 18px #42382022}
+#setup #horses .chosen-horse img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:#f9f3df}
+#setup #horses .chosen-horse .change-horse{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#176447;color:#fff;border:1px solid #f3d47a;padding:6px 12px;font-size:12px;border-radius:20px}
+@media(max-width:700px){#setup #horses.horses.horse-confirmed{min-height:0;flex:0 1 auto}#setup #horses .chosen-horse{height:clamp(130px,24dvh,215px)}}
