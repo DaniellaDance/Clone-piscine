@@ -11,7 +11,7 @@ function renderNotesPage(){
  const pages=[
   '<h3>'+esc(theory)+'</h3><p>'+esc(detail)+'</p>',
   '<h3>Синтаксис Go</h3><p>'+esc(syntax)+'</p><h3>Новый пример кода</h3><pre><code>'+esc(code)+'</code></pre>',
-  '<h3>Математика и важные определения</h3><p>'+esc(math)+'</p>'
+  '<h3>Определения и дополнительные объяснения по квесту '+(currentLessonIndex+1)+'</h3><p>'+esc(math)+'</p>'
  ];
  const active=pages.filter(Boolean);
  notesPage=Math.max(0,Math.min(notesPage,active.length-1));
@@ -23,7 +23,7 @@ function renderNotesPage(){
 }
 function showQuestNotes(){
  if(currentLessonIndex<0)return;
- $('questNotesTitle').textContent='Квест '+(currentLessonIndex+1)+' · '+LESSONS[currentLessonIndex][0];
+ $('questNotesTitle').textContent='Конспект квеста '+(currentLessonIndex+1)+' · '+LESSONS[currentLessonIndex][0];
  notesPage=0;renderNotesPage();$('lessonDialog').close();$('questNotesDialog').showModal()
 }
 $('notesPrev').addEventListener('click',()=>{notesPage--;renderNotesPage()});
