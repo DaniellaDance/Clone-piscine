@@ -1,6 +1,31 @@
 // Additional deterministic Go exercises. Every code example and answer is unique per pool.
 export function expandBank(original){const out=[],seen=new Set();function add(q){const key=q.code?'code:'+q.code.replace(/\s+/g,' ').trim():'text:'+q.q.replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();if(seen.has(key))return;seen.add(key);out.push(q)}original.forEach(add);
-function code(lvl,kind,n,body,answer,wrong){const opts=[String(answer),...wrong.map(String)];if(new Set(opts).size!==3)throw Error('Duplicate options');add({id:`generated-${lvl}-${kind}-${n}-${out.length}`,lvl,quest:kind,q:'Что выведет программа?',code:'package main\n\nimport "fmt"\n\n'+body+'\n',opts,a:0})}
+function code(lvl,kind,n,body,answer,wrong){
+  let q,opts,example;
+  if(lvl==='easy'){
+    const cases={
+      1:[`Как объявить переменную x со значением ${n} внутри функции Go?`,[`x := ${n}`,`x == ${n}`,`let x = ${n}`]],
+      2:[`Как увеличить переменную x на ${n} в Go?`,[`x += ${n}`,`x =+ ${n}`,`x ++ ${n}`]],
+      3:[`Как проверить, что строка s имеет длину ${n} байт?`,[`len(s) == ${n}`,`size(s) == ${n}`,`s.length == ${n}`]],
+      4:[`Как вызвать функцию twice с аргументом ${n}?`,[`twice(${n})`,`call twice ${n}`,`twice[${n}]`]],
+      5:[`Как создать срез целых чисел, содержащий ${n}?`,[`[]int{${n}}`,`int[]{${n}}`,`[int]${n}`]],
+      6:[`Как получить указатель на переменную x, равную ${n}?`,['&x','*x','@x']]
+    };[q,opts]=cases[kind];
+  }else if(lvl==='medium'){
+    const cases={
+      2:[`Дополните условие цикла, чтобы i принимало значения от 0 до ${n-1}: for i := 0; ???; i++ { }`,[`i < ${n}`,`i <= ${n}`,`i == ${n}`]],
+      5:[`Как добавить число ${n} в существующий срез a и сохранить результат?`,[`a = append(a, ${n})`,`append(a, ${n})`,`a += ${n}`]],
+      6:[`Как изменить значение переменной x на ${n} через указатель p := &x?`,[`*p = ${n}`,`p = ${n}`,`&p = ${n}`]],
+      4:[`Как объявить функцию f, возвращающую число ${n} типа int?`,[`func f() int { return ${n} }`,`func f() { return ${n} }`,`func f() int { print(${n}) }`]],
+      12:[`Как проверить, что у числа x установлен бит с маской ${n}?`,[`x & ${n} != 0`,`x && ${n} != 0`,`x | ${n} == 0`]],
+      3:[`Как преобразовать строку s в срез рун перед подсчётом символов?`,['r := []rune(s)','r := []byte(s)','r := rune(s)']]
+    };[q,opts]=cases[kind];
+  }else{
+    q='Что выведет программа?';opts=[String(answer),...wrong.map(String)];example='package main\\n\\nimport "fmt"\\n\\n'+body+'\\n';
+  }
+  if(new Set(opts).size!==3)throw Error('Duplicate options');
+  add({id:`generated-${lvl}-${kind}-${n}-${out.length}`,lvl,quest:kind,q, ...(example?{code:example}:{}),opts,a:0});
+}
 for(let n=1;n<=200;n++){
 code('easy',1,n,`func main() {
 	x := ${n}
