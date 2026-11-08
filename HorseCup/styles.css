@@ -47,3 +47,61 @@ dialog{border:1px solid #d3ddc6;border-radius:18px;max-width:min(440px,calc(100v
 .reward-cinema-count,.reward-cinema-shoe strong{background:#231209c9;border:1px solid #f8d477;border-radius:18px;padding:10px 22px;box-shadow:0 5px 22px #0009;text-shadow:0 2px 5px #000}
 
 .reward-support-quote[hidden]{display:none!important}.reward-support-quote{position:relative;z-index:3;margin:4px 0 0;padding:12px 18px;max-width:660px;background:#24130bbd;border:1px solid #f5ce7c;border-radius:20px;color:#fff3d3;font:italic 600 clamp(17px,3.1vw,29px)/1.3 Georgia,serif;text-shadow:0 2px 8px #000;animation:shoe-appear .8s ease both}@media(max-height:650px){.reward-sky{gap:5px;padding:12px}.reward-support-quote{font-size:clamp(15px,2.5vw,20px);padding:7px}.reward-cinema-shoe .gold-horseshoe-art{height:60px;width:55px}}
+
+
+/* HorseCup: keep the game-selection screen within the visible viewport. */
+body:has(#setup:not([hidden])){min-height:100dvh}
+body:has(#setup:not([hidden])) main{padding-top:8px;padding-bottom:6px}
+#setup{min-height:calc(100dvh - 130px);gap:clamp(10px,2vw,26px);align-items:center}
+#setup .intro h1{margin:8px 0}
+#setup .intro>p{margin:7px 0;font-size:clamp(11px,1.2vw,14px)}
+#setup .rules{margin-top:12px;gap:7px}
+#setup .mode-picker{padding:clamp(10px,1.5vw,18px);gap:9px}
+#setup .play-mode{padding:12px 14px;gap:3px}
+#setup .entry{padding:clamp(9px,1.2vw,16px);gap:7px}
+#setup .entry input,#setup .entry select{padding:7px 9px}
+#setup .entry .primary{padding:10px 12px}
+#setup .entry .horse-choice svg{height:clamp(30px,5.5vh,52px)}
+#setup .entry .horses{gap:3px}
+#setup .entry .horse-choice{padding:1px 3px}
+#setup .entry .hint{font-size:9px;line-height:1.25}
+@media(max-width:700px){
+ body:has(#setup:not([hidden])) header{height:46px}
+ body:has(#setup:not([hidden])) footer{height:18px;padding-top:2px;padding-bottom:2px}
+ #setup{min-height:calc(100dvh - 78px);display:flex;flex-direction:column;justify-content:center;gap:7px}
+ #setup .intro{width:100%;text-align:center}
+ #setup .intro h1{font-size:clamp(21px,4vh,30px);margin:2px 0}
+ #setup .intro>p{font-size:10px;line-height:1.25;margin:3px auto}
+ #setup .daily-horse-quote{font-size:10px;line-height:1.2}
+ #setup .rules{display:none}
+ #setup .entry-side{width:100%}
+ #setup .mode-picker{padding:12px;gap:8px}
+ #setup .mode-picker h2{font-size:17px}
+ #setup .play-mode{padding:11px 13px}
+ #setup .play-mode b{font-size:16px}
+ #setup .play-mode span{font-size:10px;line-height:1.25}
+ #setup .entry{padding:9px;gap:5px}
+ #setup .entry label{gap:2px;font-size:10px}
+ #setup .entry input,#setup .entry select{padding:5px 7px;font-size:12px}
+ #setup .entry .field-row{gap:6px}
+ #setup .entry fieldset legend{margin-bottom:3px}
+ #setup .entry .horse-choice svg{height:clamp(26px,4.5dvh,42px)}
+ #setup .entry .horse-choice span{font-size:8px}
+ #setup .entry .tabs{padding:2px}
+ #setup .entry .tabs button,#setup .entry .tabs b{padding:5px;font-size:10px}
+ #setup .entry .primary{padding:8px}
+}
+@media(max-width:700px) and (max-height:740px){
+ #setup .intro>p:not(.daily-horse-quote){display:none}
+ #setup .eyebrow{font-size:7px}
+ #setup .entry .hint{display:none}
+ #setup .entry .horse-choice svg{height:28px}
+ #setup .entry{gap:4px}
+}
+@media(max-height:540px) and (orientation:landscape){
+ #setup{grid-template-columns:minmax(0,.65fr) minmax(0,1.35fr);display:grid;min-height:calc(100dvh - 105px)}
+ #setup .intro>p,#setup .rules{display:none}
+ #setup .entry .horse-choice svg{height:26px}
+ #setup .entry{gap:3px}
+ #setup .entry .hint{display:none}
+}
