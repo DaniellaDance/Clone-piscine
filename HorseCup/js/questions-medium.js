@@ -445,4 +445,185 @@ window.BANK.push(...[
     ],
     "a": 0
   }
+,
+{
+  "id": "m1-error-line",
+  "lvl": "medium",
+  "quest": 1,
+  "q": "В какой строке ошибка объявления переменной?",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    var score int = \"seven\"\n    fmt.Print(score)\n}",
+  "kind": "line",
+  "opts": [
+    "Строка 6",
+    "Строка 5",
+    "Строка 7"
+  ],
+  "a": 0,
+  "numbered": true
+},
+{
+  "id": "m2-error-line",
+  "lvl": "medium",
+  "quest": 2,
+  "q": "В какой строке ошибочно записано условие?",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    n := 8\n    if n = 8 {\n        fmt.Print(n)\n    }\n}",
+  "kind": "line",
+  "opts": [
+    "Строка 7",
+    "Строка 6",
+    "Строка 8"
+  ],
+  "a": 0,
+  "numbered": true
+},
+{
+  "id": "m3-error-line",
+  "lvl": "medium",
+  "quest": 3,
+  "q": "В какой строке неверно преобразован тип?",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    word := \"Go\"\n    letters := []int(word)\n    fmt.Print(letters)\n}",
+  "kind": "line",
+  "opts": [
+    "Строка 7",
+    "Строка 6",
+    "Строка 8"
+  ],
+  "a": 0,
+  "numbered": true
+},
+{
+  "id": "m4-error-line",
+  "lvl": "medium",
+  "quest": 4,
+  "q": "В какой строке функция возвращает неверный тип?",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc twice(n int) int {\n    return \"2\"\n}\nfunc main() { fmt.Print(twice(2)) }",
+  "kind": "line",
+  "opts": [
+    "Строка 6",
+    "Строка 5",
+    "Строка 7"
+  ],
+  "a": 0,
+  "numbered": true
+},
+{
+  "id": "m5-error-line",
+  "lvl": "medium",
+  "quest": 5,
+  "q": "В какой строке ошибочно обращаются к массиву?",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    nums := [2]int{3, 4}\n    fmt.Print(nums[2])\n}",
+  "kind": "line",
+  "opts": [
+    "Строка 7",
+    "Строка 6",
+    "Строка 8"
+  ],
+  "a": 0,
+  "numbered": true
+},
+{
+  "id": "m6-error-line",
+  "lvl": "medium",
+  "quest": 6,
+  "q": "В какой строке используется неверная операция со строкой?",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    text := \"go\"\n    text[0] = 'G'\n    fmt.Print(text)\n}",
+  "kind": "line",
+  "opts": [
+    "Строка 7",
+    "Строка 6",
+    "Строка 8"
+  ],
+  "a": 0,
+  "numbered": true
+},
+{
+  "id": "m7-error-line",
+  "lvl": "medium",
+  "quest": 7,
+  "q": "В какой строке рекурсивная функция возвращает неверное значение типа?",
+  "code": "package main\n\nfunc factorial(n int) int {\n    if n <= 1 { return 1 }\n    return \"n\" * factorial(n-1)\n}",
+  "kind": "line",
+  "opts": [
+    "Строка 5",
+    "Строка 4",
+    "Строка 6"
+  ],
+  "a": 0,
+  "numbered": true
+},
+{
+  "id": "m8-error-line",
+  "lvl": "medium",
+  "quest": 8,
+  "q": "В какой строке указатель используется без разыменования?",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    x := 10\n    p := &x\n    fmt.Print(p + 1)\n}",
+  "kind": "line",
+  "opts": [
+    "Строка 8",
+    "Строка 7",
+    "Строка 9"
+  ],
+  "a": 0,
+  "numbered": true
+},
+{
+  "id": "m9-error-line",
+  "lvl": "medium",
+  "quest": 9,
+  "q": "В какой строке нарушена типизация указателя?",
+  "code": "package main\n\nfunc main() {\n    value := 9\n    var ptr *string = &value\n    _ = ptr\n}",
+  "kind": "line",
+  "opts": [
+    "Строка 5",
+    "Строка 4",
+    "Строка 6"
+  ],
+  "a": 0,
+  "numbered": true
+},
+{
+  "id": "m10-error-line",
+  "lvl": "medium",
+  "quest": 10,
+  "q": "В какой строке неправильно инициализировано поле структуры?",
+  "code": "package main\n\ntype Node struct { Value int }\nfunc main() {\n    n := Node{Value: \"7\"}\n    _ = n\n}",
+  "kind": "line",
+  "opts": [
+    "Строка 6",
+    "Строка 5",
+    "Строка 7"
+  ],
+  "a": 0,
+  "numbered": true
+},
+{
+  "id": "m11-error-line",
+  "lvl": "medium",
+  "quest": 11,
+  "q": "В какой строке неверно применяется побитовая операция?",
+  "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    n := \"5\"\n    fmt.Print(n & 3)\n}",
+  "kind": "line",
+  "opts": [
+    "Строка 7",
+    "Строка 6",
+    "Строка 8"
+  ],
+  "a": 0,
+  "numbered": true
+},
+{
+  "id": "m12-error-line",
+  "lvl": "medium",
+  "quest": 12,
+  "q": "В какой строке неправильно обработана ошибка преобразования?",
+  "code": "package main\n\nimport \"strconv\"\n\nfunc main() {\n    _, err := strconv.Atoi(\"42\")\n    if err == 0 { return }\n}",
+  "kind": "line",
+  "opts": [
+    "Строка 7",
+    "Строка 6",
+    "Строка 8"
+  ],
+  "a": 0,
+  "numbered": true
+}
 ]);
