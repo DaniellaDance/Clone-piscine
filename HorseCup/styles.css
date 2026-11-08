@@ -474,3 +474,52 @@ body:has(#setup.horsecup-splash:not([hidden])) main{max-width:none;width:100%;he
    max-height:70dvh!important;
  }
 }
+
+
+/* HorseCup splash menu: translucent midnight-blue glass, not a white sheet. */
+#setup.horsecup-splash .splash-drawer:not([hidden]){
+ background:linear-gradient(155deg,rgba(12,27,76,.91),rgba(39,22,79,.92))!important;
+ border:1px solid rgba(242,194,100,.9)!important;
+ box-shadow:0 16px 55px rgba(0,0,0,.46),inset 0 0 22px rgba(255,213,121,.06)!important;
+ backdrop-filter:blur(12px);
+ -webkit-backdrop-filter:blur(12px);
+ padding:clamp(9px,2vw,17px)!important;
+}
+#setup.horsecup-splash .splash-drawer .mode-picker,
+#setup.horsecup-splash .splash-drawer .entry{
+ background:rgba(12,25,65,.30)!important;
+ color:#fff5dc!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+#setup.horsecup-splash .splash-drawer h2,
+#setup.horsecup-splash .splash-drawer label,
+#setup.horsecup-splash .splash-drawer legend,
+#setup.horsecup-splash .splash-drawer .quest-range-title,
+#setup.horsecup-splash .splash-drawer .tabs b{
+ color:#fff3d3!important;
+}
+#setup.horsecup-splash .splash-drawer .play-mode{
+ background:rgba(32,55,106,.78)!important;
+ border:1px solid rgba(239,190,107,.66)!important;
+ border-radius:14px!important;
+ color:#fff!important;
+}
+#setup.horsecup-splash .splash-drawer .play-mode b{color:#ffdc92!important}
+#setup.horsecup-splash .splash-drawer .play-mode span{color:#e8e8f6!important}
+#setup.horsecup-splash .splash-drawer .play-mode:hover,
+#setup.horsecup-splash .splash-drawer .play-mode:focus-visible{
+ background:rgba(56,82,143,.92)!important;
+}
+#setup.horsecup-splash .splash-drawer .mode-back{color:#f6d89c!important}
+#setup.horsecup-splash .splash-drawer input,
+#setup.horsecup-splash .splash-drawer select{
+ background:rgba(255,251,235,.96)!important;
+ color:#1d3148!important;
+ border:1px solid #cfb778!important;
+}
+#setup.horsecup-splash .splash-drawer .hint{color:#e9e0cf!important}
+#setup.horsecup-splash .splash-drawer fieldset{
+ background:rgba(15,26,66,.26)!important;
+ border-color:rgba(241,197,110,.55)!important;
+}
