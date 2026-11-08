@@ -298,3 +298,6 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 .track .runner{bottom:0!important;max-height:72px!important;transform-origin:center bottom!important}
 .track .runner .race-horse-photo{height:100%!important;width:100%!important;object-fit:contain!important;object-position:center bottom!important}
 @media(max-width:700px){.track .lanes{padding-bottom:clamp(22px,6vw,38px)!important}.track .runner{max-height:70px!important;width:min(24vw,100px)!important}}
+
+/* Rear up after a correct answer, keeping the hooves aligned with the lane. */
+.track .runner .rearing-horse{object-fit:contain!important;object-position:center bottom!important;transform:scale(1.18);transform-origin:center bottom;filter:drop-shadow(0 2px 3px #17361c66)}
