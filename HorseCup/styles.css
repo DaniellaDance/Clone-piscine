@@ -249,3 +249,16 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 .track .lane-road::after{background:#fff9;border-radius:2px}
 .track .lane-name,.track .lane-score,.track .track-head{color:#fff;text-shadow:0 1px 3px #17271b,0 0 5px #17271b}
 .track .lane-name small{color:#fff}
+
+/* HorseCup mobile race: the approved hippodrome must remain visible even with one horse. */
+.track{height:clamp(240px,34dvh,360px)!important;min-height:240px;display:flex;flex-direction:column;background-size:100% 100%;background-position:center center;box-shadow:none!important;padding:7px 8px!important}
+.track-head{flex:0 0 22px}
+.track .lanes{flex:1;height:auto!important;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;padding-bottom:8px}
+.track .lane{flex:0 0 clamp(44px,6dvh,56px);min-height:0;grid-template-columns:52px minmax(0,1fr) 42px;align-items:center;background:rgba(20,48,26,.16);border-radius:6px}
+.track .lane-road{height:100%;border-bottom:1px solid rgba(255,255,255,.75)!important}
+.track .lane-name{color:white!important;text-shadow:0 1px 3px #132e1c,0 0 4px #132e1c}
+.track .lane-score{color:white!important;text-shadow:0 1px 3px #132e1c,0 0 4px #132e1c}
+.track .runner{height:46px;width:57px;bottom:0}
+.track .runner .race-horse-photo{object-fit:contain!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important}
+@media(max-width:700px){.race{gap:8px}.race-toolbar{flex-wrap:wrap;height:auto;min-height:45px;gap:5px}.race-actions{gap:6px}.race-actions button{padding:8px 11px}.track{height:clamp(230px,31dvh,310px)!important;min-height:230px}.track .lane{flex-basis:44px}.track .runner{width:51px;height:42px}.question-stage{min-height:0}}
+@media(max-height:650px){.track{height:clamp(190px,31dvh,240px)!important;min-height:190px}}
