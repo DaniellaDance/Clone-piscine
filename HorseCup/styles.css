@@ -168,3 +168,11 @@ body:has(#setup:not([hidden])) main{padding-top:8px;padding-bottom:6px}
  #setup #horses.horses{background-size:100% 100%;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:1fr;aspect-ratio:1648/928;min-height:0}
  #setup #horses .horse-choice{min-height:0;aspect-ratio:auto}
 }
+
+/* Race horses: selected coat, forward motion only after a correct answer. */
+.runner{transition:left .75s cubic-bezier(.18,.55,.3,1)}
+.runner .race-horse-photo{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 2px 2px #2b271c77);transform-origin:center 85%}
+.runner.galloping .race-horse-photo{animation:horse-stride .22s ease-in-out 3 alternate}
+@keyframes horse-stride{0%{transform:translateY(1px) rotate(-2deg) scaleX(1)}50%{transform:translateY(-5px) rotate(1deg) scaleX(1.04)}100%{transform:translateY(0) rotate(2deg) scaleX(.98)}}
+.participant .race-horse-photo,.place .race-horse-photo,.distance-row .race-horse-photo{width:85px;height:58px;object-fit:contain}
+@media(prefers-reduced-motion:reduce){.runner.galloping .race-horse-photo{animation:none}}
