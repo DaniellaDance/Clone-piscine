@@ -240,11 +240,11 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 
 /* Seasonal hippodrome: select by the player's local calendar month. Background assets
    are loaded from HorseCup/images/seasons/ when published. */
-.track{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/seasons/autumn.png");background-position:center;background-size:cover;background-repeat:no-repeat;box-shadow:inset 0 0 0 2px #ffffff88}
-.track[data-season="spring"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/seasons/spring.png")}
-.track[data-season="summer"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/seasons/summer.png")}
-.track[data-season="autumn"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/seasons/autumn.png")}
-.track[data-season="winter"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/seasons/winter.png")}
+.track{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%9E%D1%81%D0%B5%D0%BD%D0%BD%D0%B8%D0%B9%20%D0%B8%D0%BF%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%BC%20%D1%81%20%D0%B7%D0%BE%D0%BB%D0%BE%D1%82%D1%8B%D0%BC%20%D0%BA%D0%BE%D0%BD%D1%91%D0%BC-3.png");background-position:center;background-size:cover;background-repeat:no-repeat;box-shadow:inset 0 0 0 2px #ffffff88}
+.track[data-season="spring"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%92%D0%B5%D1%81%D0%B5%D0%BD%D0%BD%D0%B5%D0%B5%20%D1%81%D0%BF%D0%BE%D1%80%D1%82%D0%B8%D0%B2%D0%BD%D0%BE%D0%B5%20%D0%BF%D0%BE%D0%BB%D0%B5%20%D1%83%20%D0%B3%D0%BE%D1%80%D0%BD%D1%8B%D1%85%20%D0%B2%D0%B5%D1%80%D1%88%D0%B8%D0%BD-1.png")}
+.track[data-season="summer"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%A1%D0%BE%D0%BB%D0%BD%D0%B5%D1%87%D0%BD%D1%8B%D0%B9%20%D0%B8%D0%BF%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%BC%20%D1%81%20%D0%B7%D0%BE%D0%BB%D0%BE%D1%82%D1%8B%D0%BC%20%D0%BA%D0%BE%D0%BD%D1%91%D0%BC-2.png")}
+.track[data-season="autumn"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%9E%D1%81%D0%B5%D0%BD%D0%BD%D0%B8%D0%B9%20%D0%B8%D0%BF%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%BC%20%D1%81%20%D0%B7%D0%BE%D0%BB%D0%BE%D1%82%D1%8B%D0%BC%20%D0%BA%D0%BE%D0%BD%D1%91%D0%BC-3.png")}
+.track[data-season="winter"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%97%D0%B8%D0%BC%D0%BD%D0%B8%D0%B9%20%D0%B8%D0%BF%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%BC%20%D0%B2%20%D1%81%D0%BD%D0%B5%D0%B3%D1%83-4.png")}
 .track .lane-road{background:transparent;border:0;border-radius:0;border-bottom:1px dashed #ffffffa8}
 .track .lane-road::after{background:#fff9;border-radius:2px}
 .track .lane-name,.track .lane-score,.track .track-head{color:#fff;text-shadow:0 1px 3px #17271b,0 0 5px #17271b}
