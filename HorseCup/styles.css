@@ -354,3 +354,29 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
   .reward-cinema-count{font-size:clamp(18px,5vw,28px)}
   #setup.horsecup-splash{background-position:center center!important;background-color:#352b40}
 }
+
+
+/* Responsive full-image splash: no cropping on portrait, landscape or desktop. */
+body:has(#setup.horsecup-splash:not([hidden])){overflow:hidden;background:#171727}
+body:has(#setup.horsecup-splash:not([hidden]))>header,
+body:has(#setup.horsecup-splash:not([hidden]))>footer{display:none!important}
+body:has(#setup.horsecup-splash:not([hidden])) main{max-width:none;width:100%;height:100dvh;min-height:100dvh;margin:0;padding:0;overflow:hidden}
+#setup.horsecup-splash:not([hidden]){
+  width:100vw!important;height:100dvh!important;min-height:0!important;max-height:100dvh!important;
+  margin:0!important;padding:clamp(8px,2vmin,24px)!important;border:0!important;border-radius:0!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-end!important;
+  background-color:#171727!important;
+  background-image:url("images/Галоп к Кубку HorseCup.png")!important;
+  background-size:contain!important;background-repeat:no-repeat!important;background-position:center center!important;
+  overflow:hidden!important;gap:6px!important
+}
+#setup.horsecup-splash .intro{position:absolute;top:5px;left:50%;transform:translateX(-50%);max-width:90vw;padding:4px 10px;background:#16152b99;border:0}
+#setup.horsecup-splash .intro .eyebrow{font-size:clamp(8px,1.4vmin,11px)}
+#setup.horsecup-splash .intro .daily-horse-quote{display:none}
+#setup.horsecup-splash .splash-toggle{flex-shrink:0;font-size:clamp(13px,2.2vmin,19px);padding:clamp(8px,1.5vmin,14px) clamp(16px,4vmin,32px);margin-bottom:env(safe-area-inset-bottom,0px)}
+#setup.horsecup-splash .splash-drawer:not([hidden]){position:absolute;bottom:clamp(55px,9dvh,85px);left:50%;transform:translateX(-50%);width:min(850px,96vw);max-height:min(72dvh,720px);z-index:4;overflow-y:auto}
+@media(orientation:landscape) and (max-height:550px){
+ #setup.horsecup-splash .intro{display:none}
+ #setup.horsecup-splash .splash-toggle{padding:6px 16px;margin-bottom:0}
+ #setup.horsecup-splash .splash-drawer:not([hidden]){bottom:48px;max-height:calc(100dvh - 55px)}
+}
