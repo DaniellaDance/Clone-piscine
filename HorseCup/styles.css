@@ -105,3 +105,11 @@ body:has(#setup:not([hidden])) main{padding-top:8px;padding-bottom:6px}
  #setup .entry{gap:3px}
  #setup .entry .hint{display:none}
 }
+
+/* Four direct horse selection buttons: no visible labels, golden selection */
+#horses.horses{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#horses .horse-choice{display:flex;align-items:center;justify-content:center;min-width:0;padding:4px;border:3px solid transparent;border-radius:12px;background:#fff9e9;cursor:pointer;transition:border-color .16s,box-shadow .16s,transform .16s}
+#horses .horse-choice svg{width:100%;height:auto;max-height:105px;display:block}
+#horses .horse-choice.selected,#horses .horse-choice:focus-visible{border-color:#d8a21b;box-shadow:0 0 0 2px #ffdc71,0 3px 12px #a56d2870;background:#fff5d5}
+#horses .horse-choice:active{transform:scale(.97)}
+@media(max-width:420px){#horses.horses{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}}
