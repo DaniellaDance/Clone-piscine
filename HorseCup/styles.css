@@ -176,3 +176,7 @@ body:has(#setup:not([hidden])) main{padding-top:8px;padding-bottom:6px}
 @keyframes horse-stride{0%{transform:translateY(1px) rotate(-2deg) scaleX(1)}50%{transform:translateY(-5px) rotate(1deg) scaleX(1.04)}100%{transform:translateY(0) rotate(2deg) scaleX(.98)}}
 .participant .race-horse-photo,.place .race-horse-photo,.distance-row .race-horse-photo{width:85px;height:58px;object-fit:contain}
 @media(prefers-reduced-motion:reduce){.runner.galloping .race-horse-photo{animation:none}}
+
+/* Winning horse animation in final standings */
+.place .victory-horse-gif{display:block;width:clamp(100px,20vw,180px);height:clamp(85px,13vw,130px);object-fit:contain;flex-shrink:0;border-radius:10px;background:#fff}
+@media(max-width:700px){.place .victory-horse-gif{width:100px;height:80px}}
