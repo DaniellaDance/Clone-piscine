@@ -131,6 +131,25 @@ const facts={
  palomino:['Соловая масть','Соловая масть — золотистая шерсть в сочетании со светлыми, часто почти белыми гривой и хвостом.','Золотистый окрас особенно эффектно выглядит на солнце; соловая — масть, а не отдельная порода.']
 };
 let horseChoiceConfirmed=false;
+let horseFactTypingId=0;
+function revealHorseFacts(box){
+ const token=++horseFactTypingId;
+ const nodes=[...box.querySelectorAll('.horse-fact span')];
+ if(!nodes.length||lowPowerMode()||document.hidden||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+ const originals=nodes.map(n=>n.textContent);
+ nodes.forEach((n,i)=>{n.setAttribute('aria-label',originals[i]);n.textContent='';n.dataset.fullText=originals[i]});
+ let index=0,last=0;
+ const total=Math.max(...originals.map(t=>Array.from(t).length));
+ function frame(now){
+  if(token!==horseFactTypingId||!box.isConnected)return;
+  if(document.hidden||lowPowerMode()){nodes.forEach((n,i)=>n.textContent=originals[i]);return}
+  if(now-last<45){requestAnimationFrame(frame);return}
+  last=now;index=Math.min(index+1,total);
+  nodes.forEach((n,i)=>n.textContent=Array.from(originals[i]).slice(0,index).join(''));
+  if(index<total)requestAnimationFrame(frame);
+ }
+ requestAnimationFrame(frame);
+}
 function choose(){
  const box=$('horses');
  const labels={black:'Вороная',bay:'Гнедая костанайская',grey:'Белая арабская',palomino:'Соловая'};
@@ -139,6 +158,7 @@ function choose(){
  if(horseChoiceConfirmed){
   const gallops={black:"black.gif",bay:"bay_kostanay.gif",grey:"white_arabian.gif",palomino:"palomino.gif"};
   box.innerHTML=`<div class="chosen-horse"><aside class="horse-fact horse-fact-left"><b>${facts[horse][0]}</b><span>${facts[horse][1]}</span></aside><img class="gallop-gif selected-horse-animation" src="${lowPowerMode()?'images/'+photos[horse]:'images/animations/'+gallops[horse]}" alt="Скачущая лошадь — ${labels[horse]}" onerror="this.onerror=null;this.src=\'images/${photos[horse]}\'"><aside class="horse-fact horse-fact-right"><b>Интересный факт</b><span>${facts[horse][2]}</span></aside></div>`;
+  revealHorseFacts(box);
  }else{
   box.innerHTML=coats.map(c=>`<button type="button" class="horse-choice" data-horse="${c}" aria-label="Выбери меня — ${labels[c]}" title="${labels[c]}"><span>Выбери меня</span></button>`).join('');
  }
