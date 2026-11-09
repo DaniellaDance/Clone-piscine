@@ -963,3 +963,9 @@ body.low-power-mode .runner{will-change:auto!important}
 #race #options .answer-cloud{flex:1 1 29%!important;max-width:100%!important;min-width:0!important;margin:0!important}
 #race #options .skip-question{flex:0 0 auto!important;width:auto!important;min-width:115px!important;min-height:48px!important;padding:8px 18px!important;margin:0!important;font-size:17px!important}
 @media(max-width:700px){#race #options .answer-cloud{flex:1 1 29%!important;font-size:clamp(14px,3.5vw,18px)!important}#race #options .skip-question{flex:0 0 auto!important;min-width:105px!important}#race #questionText{font-size:clamp(21px,5.5vw,27px)!important}}
+
+/* Line-number quiz: compact two-digit answer */
+#race #options .exam-line-number{box-sizing:border-box!important;display:inline-block!important;flex:0 0 58px!important;width:58px!important;min-width:58px!important;max-width:58px!important;height:48px!important;min-height:48px!important;padding:5px 6px!important;border:2px solid #8ba88d!important;border-radius:10px!important;background:#fffef8!important;color:#253a2a!important;text-align:center!important;font-size:23px!important;font-weight:700!important;line-height:1.2!important;box-shadow:none!important;resize:none!important;overflow:hidden!important}
+#race #options:has(.exam-line-number){display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;align-items:center!important;justify-content:center!important;gap:10px!important}
+#race #options:has(.exam-line-number) .exam-editor-label{flex:0 1 auto!important;width:auto!important;font-size:clamp(15px,3.3vw,20px)!important}
+#race #options:has(.exam-line-number) .answer-cloud{flex:0 0 auto!important;min-height:48px!important;padding:8px 15px!important}
