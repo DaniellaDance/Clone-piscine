@@ -669,3 +669,43 @@ body:has(#setup.horsecup-splash:not([hidden])) main{max-width:none;width:100%;he
  }
  .question-stage .question h2{font-size:clamp(16px,4vw,21px)!important}
 }
+
+
+/* Seasonal hippodrome environment across the ENTIRE race screen. */
+body:has(#race:not([hidden])){
+ background-color:#172747!important;
+ background-image:linear-gradient(180deg,rgba(8,22,49,.72),rgba(15,30,53,.30) 40%,rgba(9,20,37,.76)),url("images/Осенний ипподром с золотым конём-3.png")!important;
+ background-position:center center!important;
+ background-size:cover!important;
+ background-attachment:fixed!important;
+ color:#fff4df!important;
+}
+body:has(#race:not([hidden]) .track[data-season="spring"]){
+ background-image:linear-gradient(180deg,rgba(8,22,49,.72),rgba(15,30,53,.30) 40%,rgba(9,20,37,.76)),url("images/Весеннее спортивное поле у горных вершин-1.png")!important;
+}
+body:has(#race:not([hidden]) .track[data-season="summer"]){
+ background-image:linear-gradient(180deg,rgba(8,22,49,.72),rgba(15,30,53,.30) 40%,rgba(9,20,37,.76)),url("images/Солнечный ипподром с золотым конём-2.png")!important;
+}
+body:has(#race:not([hidden]) .track[data-season="winter"]){
+ background-image:linear-gradient(180deg,rgba(8,22,49,.72),rgba(15,30,53,.30) 40%,rgba(9,20,37,.76)),url("images/Зимний ипподром с золотым конём-4.png")!important;
+}
+body:has(#race:not([hidden])) main{background:transparent!important}
+#race .race-toolbar{
+ background:linear-gradient(110deg,rgba(13,27,61,.88),rgba(39,39,80,.78))!important;
+ border:1px solid #d9ad5d!important;border-radius:16px!important;
+ padding:8px 14px!important;
+ height:auto!important;min-height:62px!important;
+ color:#fff4db!important;
+}
+#race .race-toolbar h1,#race .race-toolbar .score b{color:#ffda8e!important}
+#race .race-toolbar .score span,#race .race-toolbar .eyebrow{color:#e8e1d5!important}
+#race .track{border:2px solid #d6ad66!important;box-shadow:0 6px 25px #0713298a!important}
+#race .question-stage{
+ background:linear-gradient(155deg,rgba(14,29,70,.93),rgba(37,55,105,.91) 48%,rgba(42,30,78,.94))!important;
+ backdrop-filter:blur(6px);
+}
+#race .race-actions button{border:1px solid #d5ad65!important}
+@media(max-width:700px){
+ body:has(#race:not([hidden])){background-attachment:scroll!important}
+ #race .race-toolbar{padding:8px!important}
+}
