@@ -954,3 +954,12 @@ body.low-power-mode .runner{will-change:auto!important}
 @media(max-width:700px){#setup #horses .chosen-horse{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1fr)!important}#setup #horses .horse-fact{font-size:clamp(9px,2.2vw,12px);line-height:1.22;gap:4px;padding:4px}#setup #horses .horse-fact b{font-size:clamp(10px,2.5vw,13px)}}
 
 #setup .animation-preference{display:flex;align-items:center;gap:9px;margin:8px 0;padding:10px;border-radius:12px;background:#fff8df;color:#213a34;font-size:clamp(13px,2.6vw,16px);font-weight:700}#setup .animation-preference input{width:21px;height:21px;flex-shrink:0;accent-color:#176447}
+
+/* Compact, elegant and transparent race question panel */
+#race .question-stage{background:transparent!important;background-image:none!important;box-shadow:none!important;backdrop-filter:none!important;border:0!important;border-radius:0!important;padding:clamp(8px,2vw,15px)!important;min-height:0!important}
+#race .question-stage .question{background:transparent!important;background-image:none!important;box-shadow:none!important;min-height:0!important;padding:0!important}
+#race #questionText{font-size:clamp(22px,4.3vw,30px)!important;line-height:1.25!important;margin:8px 0 14px!important}
+#race #options{display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;align-content:flex-start!important;justify-content:center!important;gap:10px!important;min-height:0!important;flex:0 0 auto!important;padding:8px 0!important}
+#race #options .answer-cloud{flex:1 1 29%!important;max-width:100%!important;min-width:0!important;margin:0!important}
+#race #options .skip-question{flex:0 0 auto!important;width:auto!important;min-width:115px!important;min-height:48px!important;padding:8px 18px!important;margin:0!important;font-size:17px!important}
+@media(max-width:700px){#race #options .answer-cloud{flex:1 1 29%!important;font-size:clamp(14px,3.5vw,18px)!important}#race #options .skip-question{flex:0 0 auto!important;min-width:105px!important}#race #questionText{font-size:clamp(21px,5.5vw,27px)!important}}
