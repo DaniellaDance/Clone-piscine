@@ -1011,3 +1011,20 @@ body.low-power-mode .runner{will-change:auto!important}
  body[data-screen="race"] #race #code{font-size:clamp(11px,2.6dvh,14px)!important;line-height:1.25!important;max-height:24dvh!important;padding:6px!important}
  body[data-screen="race"] #race #feedback{font-size:11px!important;line-height:1.1!important;margin:2px 0!important}
 }
+
+/* Full-screen news while the team captain waits for players */
+#itNewsButton{background:linear-gradient(160deg,#fef4ce,#e7c875);color:#3b3520;border:2px solid #a18a48;border-radius:13px;font-weight:850;padding:10px 16px}
+.it-news-dialog{box-sizing:border-box;position:fixed;inset:0!important;margin:0!important;width:100vw!important;max-width:100vw!important;height:100dvh!important;max-height:100dvh!important;border:0!important;border-radius:0!important;background:#f6f9f5!important;color:#23352b!important;padding:clamp(12px,3vw,30px)!important;overflow-y:auto!important}
+.it-news-dialog::backdrop{background:#111c18b8}
+.it-news-head{display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:-12px;background:#f6f9f5;padding:8px 0;z-index:2}
+.it-news-head h2{font-size:clamp(23px,4vw,38px);margin:3px 0}
+.it-news-head span{font-size:13px;color:#55705b}
+.it-news-head button{flex:0 0 auto}
+.it-news-description{font-size:clamp(13px,2vw,17px);line-height:1.4;margin:8px 0 15px}
+.it-news-items{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:12px;margin-bottom:18px}
+.it-news-card{display:flex;flex-direction:column;gap:8px;background:white;border:1px solid #d5e4d8;border-radius:15px;padding:16px;min-width:0;box-shadow:0 3px 10px #1b38220b}
+.it-news-card small{color:#42785c;font-weight:700}
+.it-news-card a{font-size:clamp(16px,2vw,20px);line-height:1.35;color:#174b37;font-weight:750;text-decoration:none;overflow-wrap:anywhere}
+.it-news-card a:hover{text-decoration:underline}
+.it-news-card time{font-size:12px;color:#647469;margin-top:auto}
+@media(max-height:500px) and (orientation:landscape){.it-news-dialog{padding:8px 15px!important}.it-news-head h2{font-size:20px}.it-news-card{padding:10px}.it-news-items{gap:8px}}
