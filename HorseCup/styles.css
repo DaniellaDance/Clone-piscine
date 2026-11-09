@@ -744,3 +744,56 @@ body[data-season] #race .question-stage .answer-cloud:hover,body[data-season] #r
 body[data-season] #race .question-stage .answer-cloud{background:transparent url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22320%22%20height%3D%22110%22%20viewBox%3D%220%200%20320%20110%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M32%20100C-3%20100-4%2052%2025%2045C21%2016%2058%205%2080%2026C101%202%20141%207%20154%2028C178%207%20212%2014%20225%2036C254%2015%20291%2030%20289%2053C323%2058%20322%20100%20286%20100Z%22%20fill%3D%22%23d9efc9%22%20stroke%3D%22%2398bd80%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E") center/100% 100% no-repeat!important;border:0!important;border-radius:0!important;box-shadow:none!important;min-height:82px!important;padding:30px 22px 18px!important}
 body[data-season] #race .question-stage .answer-cloud:hover,body[data-season] #race .question-stage .answer-cloud:focus-visible{background-color:transparent!important;filter:brightness(.97);outline:2px solid #6b9e54!important;outline-offset:2px;border-radius:28px!important}
 .account-screen{max-width:440px;margin:20px auto;padding:12px}.account-screen .entry{gap:10px;background:#f5faef;border:1px solid #aacb95}.account-screen h2{margin:0;color:#254629}.account-screen p{margin:0 0 4px}.account-screen label{font-size:14px}.account-screen small{color:#586950;font-size:12px}.account-screen .show-password{display:flex;flex-direction:row;align-items:center;gap:8px}.account-screen .show-password input{width:18px;height:18px}.account-screen #accountError{color:#a12525;min-height:20px}.account-screen input{font-size:16px}
+
+/* Race layout is bounded by the browser's visible viewport in both orientations. */
+body[data-screen="race"]{height:100dvh!important;min-height:0!important;overflow:hidden!important}
+body[data-screen="race"]>header,body[data-screen="race"]>footer{display:none!important}
+body[data-screen="race"] main{width:100%!important;max-width:none!important;height:100dvh!important;min-height:0!important;margin:0!important;padding:calc(4px + env(safe-area-inset-top,0px)) calc(5px + env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) calc(5px + env(safe-area-inset-left,0px))!important;overflow:hidden!important}
+body[data-screen="race"] #race{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:42px 30px minmax(100px,27dvh) minmax(0,1fr)!important;width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;gap:5px!important;overflow:hidden!important;position:relative}
+body[data-screen="race"] #race .race-toolbar{grid-row:1;display:flex!important;flex-wrap:nowrap!important;min-height:0!important;height:100%!important;padding:4px 8px!important;border-radius:12px!important;gap:6px!important;overflow:hidden}
+body[data-screen="race"] #race .race-toolbar>div:first-child{min-width:0;flex:1}
+body[data-screen="race"] #race .race-toolbar h1{font-size:13px!important;line-height:1.05!important;margin:2px 0!important;white-space:nowrap}
+body[data-screen="race"] #race .race-toolbar .eyebrow{display:block;font-size:8px!important;line-height:1.1!important;letter-spacing:.3px!important}
+body[data-screen="race"] #race .score{gap:8px!important;flex:0 0 auto!important}
+body[data-screen="race"] #race .score span{font-size:8px!important;white-space:nowrap}
+body[data-screen="race"] #race .score b{font-size:16px!important;line-height:1.05!important}
+body[data-screen="race"] #race .race-actions{grid-row:2;margin:0!important;padding:0!important;display:flex!important;justify-content:center!important;gap:8px!important;min-height:0!important}
+body[data-screen="race"] #race .race-actions button{font-size:12px!important;line-height:1!important;padding:5px 12px!important;min-height:0!important;height:30px!important}
+body[data-screen="race"] #race .track{grid-row:3;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;border-radius:12px!important}
+body[data-screen="race"] #race .track .track-head{top:4px!important;font-size:9px!important}
+body[data-screen="race"] #race .track .runner{height:clamp(28px,5.8dvh,50px)!important;width:clamp(52px,17vw,90px)!important;min-height:0!important}
+body[data-screen="race"] #race .track .lane-score{font-size:9px!important;padding:2px 4px!important;bottom:1px!important}
+body[data-screen="race"] #race .question-stage{grid-row:4;height:100%!important;min-height:0!important;max-height:100%!important;padding:7px!important;overflow:hidden!important;border-radius:12px!important}
+body[data-screen="race"] #race .question{display:flex!important;flex-direction:column!important;gap:4px!important;height:100%!important;min-height:0!important;overflow:hidden!important}
+body[data-screen="race"] #race .question-meta{font-size:9px!important;line-height:1.2!important;gap:5px!important;flex:0 0 auto}
+body[data-screen="race"] #race .question h2{font-size:clamp(13px,3.7vw,18px)!important;line-height:1.2!important;margin:2px 0!important;flex:0 0 auto!important;overflow-wrap:anywhere}
+body[data-screen="race"] #race .question pre{width:100%!important;margin:0!important;padding:5px 8px!important;min-height:0!important;max-height:40%!important;flex:1 1 auto!important;font-size:clamp(10px,2.7vw,12px)!important;line-height:1.2!important;overflow:auto!important}
+body[data-screen="race"] #race .question-stage .options{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;align-items:stretch!important;align-content:center!important;gap:5px!important;flex:1 1 auto!important;min-height:0!important;padding:4px 0!important;width:100%!important}
+body[data-screen="race"] #race .question-stage .answer-cloud{width:100%!important;max-width:100%!important;min-width:0!important;min-height:58px!important;max-height:100%!important;height:auto!important;padding:18px 9px 10px!important;font-size:clamp(10px,2.9vw,14px)!important;line-height:1.2!important;overflow-wrap:anywhere!important;transform:none!important}
+body[data-screen="race"] #race #feedback{font-size:9px!important;line-height:1.1!important;min-height:11px!important;margin:0!important;flex:0 0 auto!important}
+body[data-screen="race"] #race .pause-notice{position:absolute!important;top:46px;left:0;right:0;z-index:10;margin:0!important;padding:6px!important;font-size:11px!important}
+@media(orientation:landscape) and (max-height:600px){
+ body[data-screen="race"] #race{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)!important;grid-template-rows:36px minmax(0,1fr) 28px!important;gap:4px!important}
+ body[data-screen="race"] #race .race-toolbar{grid-column:1/-1!important;grid-row:1!important}
+ body[data-screen="race"] #race .race-toolbar h1{display:inline!important;font-size:13px!important;margin-left:10px!important}
+ body[data-screen="race"] #race .race-toolbar .eyebrow{display:inline!important;font-size:9px!important}
+ body[data-screen="race"] #race .track{grid-column:1!important;grid-row:2!important}
+ body[data-screen="race"] #race .race-actions{grid-column:1!important;grid-row:3!important}
+ body[data-screen="race"] #race .race-actions button{height:28px!important}
+ body[data-screen="race"] #race .question-stage{grid-column:2!important;grid-row:2/4!important;padding:5px!important}
+ body[data-screen="race"] #race .question h2{font-size:14px!important}
+ body[data-screen="race"] #race .question pre{font-size:10px!important;max-height:43%!important}
+ body[data-screen="race"] #race .question-stage .answer-cloud{font-size:11px!important;min-height:54px!important;padding:18px 8px 8px!important}
+ body[data-screen="race"] #race .track .runner{height:clamp(30px,10dvh,48px)!important;width:70px!important}
+}
+body[data-screen="race"] #race #question[hidden]{display:none!important}
+@media(min-width:1000px) and (min-height:601px){
+ body[data-screen="race"] #race{grid-template-rows:48px 32px minmax(140px,29dvh) minmax(0,1fr)!important;gap:7px!important}
+ body[data-screen="race"] #race .race-toolbar h1{font-size:18px!important}
+ body[data-screen="race"] #race .score span{font-size:11px!important}
+ body[data-screen="race"] #race .score b{font-size:20px!important}
+ body[data-screen="race"] #race .question h2{font-size:22px!important}
+ body[data-screen="race"] #race .question-meta{font-size:12px!important}
+ body[data-screen="race"] #race .question-stage .answer-cloud{font-size:17px!important;min-height:72px!important;max-width:400px!important;justify-self:center}
+ body[data-screen="race"] #race .question pre{font-size:13px!important}
+}
