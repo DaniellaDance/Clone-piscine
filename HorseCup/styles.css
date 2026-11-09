@@ -894,3 +894,17 @@ body:has(#track.exam-track) .race{background:linear-gradient(180deg,#d9e9ec,#c8d
 .exam-horse{z-index:5!important;left:calc(5% + var(--climb)*6.1%)!important;bottom:calc(13% + var(--climb)*7.4%)!important;width:clamp(52px,15%,115px)!important;height:clamp(52px,12vh,85px)!important;filter:drop-shadow(2px 5px 3px #1b2526a8)}
 .exam-step-caption{z-index:6!important;bottom:1%!important}
 @media(max-width:700px){#track.exam-track,#examMountain{height:32dvh!important;min-height:245px!important;max-height:350px!important}.exam-step{height:18px!important;border-bottom-width:5px!important}.exam-horse{height:56px!important}}
+
+/* Royal stairway to the sun: Exam only, no hippodrome or step numbers. */
+#track.exam-track{border:2px solid #d8ad59!important;border-radius:24px!important;background:#f7e3b7!important}
+#examMountain{background:radial-gradient(circle at 73% 16%,#fffef3 0 4%,#fff3ad 5% 9%,#ffdc7e9c 12%,transparent 31%),radial-gradient(ellipse at 50% 90%,#fff4cf 0%,transparent 67%),linear-gradient(180deg,#8ec7e8 0%,#d5e8ef 38%,#f9dbb0 76%,#b59a77 100%)!important}
+#examMountain:before{content:"";inset:0!important;clip-path:none!important;z-index:0!important;background:repeating-conic-gradient(from 0deg at 73% 16%,#ffe4a140 0deg 7deg,transparent 8deg 20deg)!important;opacity:.8}
+#examMountain:after{content:"";inset:43% 0 0!important;clip-path:polygon(0 100%,0 58%,18% 66%,32% 39%,48% 65%,64% 35%,80% 55%,100% 25%,100% 100%)!important;background:linear-gradient(155deg,#e7d6b9,#b8a18b 52%,#806c61)!important;opacity:.55}
+.exam-peak{top:3%!important;left:73%!important;transform:translateX(-50%)!important;background:#fff7dbd9!important;color:#80531c!important;border:1px solid #d5a64f!important;box-shadow:0 0 18px #ffe5a5!important;font-size:clamp(12px,2.5vw,18px)!important}
+.exam-step{left:calc(5% + var(--step)*6.1%)!important;bottom:calc(10% + var(--step)*7.4%)!important;width:34%!important;height:clamp(19px,3.8vh,31px)!important;transform:perspective(190px) rotateX(18deg) skewX(-9deg)!important;border:2px solid #d6b777!important;border-bottom:8px solid #87674d!important;border-radius:5px 9px 5px 5px!important;background:linear-gradient(155deg,#fff8e7 0%,#f3dfb8 30%,#d4b98e 72%,#b38e64 100%)!important;box-shadow:0 7px 0 #8d6f53,0 12px 12px #5b453a78,inset 0 2px 0 #ffffffc9!important}
+.exam-step:before{content:"";position:absolute;inset:2px 7px;border-top:2px solid #fff9e5a8;border-left:3px solid #e8c98f;border-radius:3px}
+.exam-step.passed{background:linear-gradient(155deg,#fffce7,#f7dd93 55%,#e4b75b)!important;border-bottom-color:#a47936!important;box-shadow:0 7px 0 #a47936,0 0 17px #ffe7a4!important}
+.exam-step span{display:none!important}
+.exam-horse{z-index:6!important;filter:drop-shadow(0 5px 4px #4a332b8c)!important}
+.exam-step-caption{background:#fff5dfec!important;color:#79511f!important;border:1px solid #d5b57d!important;box-shadow:0 3px 10px #594a3855!important}
+@media(max-width:700px){.exam-peak{left:73%!important;font-size:11px!important;padding:4px 7px!important}.exam-step{height:20px!important;border-bottom-width:5px!important}}
