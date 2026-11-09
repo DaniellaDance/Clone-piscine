@@ -24,6 +24,16 @@ assert.ok(!(await req('/api/tickets','GET',undefined,client.cookie)).data.some(t
 assert.equal((await req('/api/tickets/'+id,'PATCH',{status:'resolved',detail:'Закрыто'},staff.cookie)).status,403);
 const updated=await req('/api/tickets/'+id,'PATCH',{status:'work',detail:'Назначен ответственный'},manager.cookie);assert.equal(updated.status,200);
 const ticket=(await req('/api/tickets','GET',undefined,staff.cookie)).data.find(t=>t.id===id);assert.equal(ticket.status,'work');assert.ok(ticket.history.some(h=>h.detail==='Назначен ответственный'));
+const clientCreated=await req('/api/tickets','POST',{title:'Клиентская заявка',description:'Проверка приватности',department:'Сервисный центр',type:'Сервисная заявка'},client.cookie);
+assert.equal(clientCreated.status,201);
+const clientId=clientCreated.data.id;
+assert.equal((await req('/api/tickets/'+clientId,'PATCH',{status:'work',detail:'Внутреннее обсуждение, секретная информация',audience:'internal'},manager.cookie)).status,200);
+let clientView=(await req('/api/tickets','GET',undefined,client.cookie)).data.find(t=>t.id===clientId);
+assert.equal(clientView.status,'work');
+assert.ok(!JSON.stringify(clientView).includes('секретная информация'),'Internal message must not reach client API');
+assert.equal((await req('/api/tickets/'+clientId,'PATCH',{status:'resolved',detail:'Ваша заявка выполнена',audience:'client'},manager.cookie)).status,200);
+clientView=(await req('/api/tickets','GET',undefined,client.cookie)).data.find(t=>t.id===clientId);
+assert.ok(JSON.stringify(clientView).includes('Ваша заявка выполнена'),'Client-directed message must be visible');
 assert.equal((await req('/api/integrations','GET',undefined,staff.cookie)).status,403);
 assert.equal((await req('/api/logout','POST',undefined,staff.cookie)).status,200);
 assert.equal((await req('/api/tickets','GET',undefined,staff.cookie)).status,401);
