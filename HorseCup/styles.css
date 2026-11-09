@@ -917,3 +917,25 @@ body:has(#track.exam-track) .race{background:linear-gradient(180deg,#d9e9ec,#c8d
 #examMountain .exam-horse img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:bottom center!important}
 #examMountain .exam-peak{left:73%!important;top:3%!important;max-width:62%!important;text-align:center!important;white-space:normal!important;line-height:1.15!important;font-weight:900!important;font-size:clamp(12px,2.7vw,19px)!important}
 @media(max-width:700px){#examMountain .exam-step{width:58%!important;height:22px!important;border-bottom-width:6px!important}#examMountain .exam-horse{width:clamp(66px,21%,100px)!important;height:clamp(58px,8vh,76px)!important}#examMountain .exam-peak{font-size:12px!important}}
+
+/* Final responsive race adjustments */
+body:has(#race:not([hidden])){background:#f4f7f1!important;background-image:none!important}
+body:has(#race:not([hidden])) main{background:transparent!important;background-image:none!important}
+body[data-season] #race .question-stage{background:transparent!important;backdrop-filter:none!important;box-shadow:none!important}
+body[data-season] #race .question{background:transparent!important}
+body[data-season] #race .question-stage .options{flex:0 0 auto!important;min-height:0!important;justify-content:center!important;align-content:start!important;align-items:center!important;gap:10px!important;padding:12px 5px!important}
+#race .question{justify-content:flex-start!important;height:auto!important;min-height:0!important}
+#race .question h2{font-size:clamp(21px,4vw,30px)!important;line-height:1.24!important;margin:9px 0 13px!important}
+#race #code{font-size:clamp(15px,2.8vw,20px)!important;line-height:1.55!important;max-height:30dvh!important;min-height:0!important;padding:12px!important;overflow:auto!important}
+#race #codeFill{font-size:inherit!important;min-width:6ch!important}
+#race .answer-cloud{font-size:clamp(15px,2.7vw,19px)!important;min-height:55px!important;padding:12px 14px!important}
+#race .skip-question{background:#fff9e8!important;color:#654519!important;border:2px solid #c79d50!important;border-radius:16px!important;min-height:50px!important;font-size:clamp(15px,2.7vw,19px)!important;padding:10px 18px!important;font-weight:800!important}
+#race #feedback{margin:4px 0!important;flex:0 0 auto!important}
+@media(max-width:700px){
+ #race .question-stage{overflow-y:auto!important;align-items:flex-start!important}
+ #race .question h2{font-size:clamp(21px,5.4vw,27px)!important}
+ #race #code{font-size:clamp(15px,3.9vw,19px)!important;max-height:25dvh!important}
+ #race .options{flex-wrap:wrap!important;gap:9px!important}
+ #race .answer-cloud{max-width:100%!important;flex:1 1 29%!important;min-width:0!important;transform:none!important}
+ #race .skip-question{flex:0 1 auto!important}
+}
