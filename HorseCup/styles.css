@@ -833,3 +833,9 @@ body[data-screen="race"] #race #question[hidden]{display:none!important}
    min-height:0!important;
  }
 }
+
+/* Keep the splash artwork clean: remove white header/footer pills and the redundant back-to-mode row. */
+body:has(#setup:not([hidden]))>header,body:has(#setup:not([hidden]))>footer{display:none!important}
+#setup.horsecup-splash #chooseMode{display:none!important}
+#setup.horsecup-splash #splashMenuToggle{cursor:pointer;pointer-events:auto!important;z-index:20!important}
+#setup.horsecup-splash #splashDrawer:not([hidden]){z-index:21!important}
