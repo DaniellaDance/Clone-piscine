@@ -952,3 +952,5 @@ body.low-power-mode .runner{will-change:auto!important}
 #setup #horses .horse-fact{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:7px;padding:clamp(5px,1.4vw,13px);font-size:clamp(10px,1.4vw,15px);line-height:1.35;color:#44321d;text-align:center;overflow-wrap:anywhere}
 #setup #horses .horse-fact b{font-size:clamp(11px,1.7vw,17px);color:#815017}
 @media(max-width:700px){#setup #horses .chosen-horse{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1fr)!important}#setup #horses .horse-fact{font-size:clamp(9px,2.2vw,12px);line-height:1.22;gap:4px;padding:4px}#setup #horses .horse-fact b{font-size:clamp(10px,2.5vw,13px)}}
+
+#setup .animation-preference{display:flex;align-items:center;gap:9px;margin:8px 0;padding:10px;border-radius:12px;background:#fff8df;color:#213a34;font-size:clamp(13px,2.6vw,16px);font-weight:700}#setup .animation-preference input{width:21px;height:21px;flex-shrink:0;accent-color:#176447}
