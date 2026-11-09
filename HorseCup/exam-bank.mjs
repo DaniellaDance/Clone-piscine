@@ -1,4 +1,4 @@
-/* 80 original Exam practice questions, based on concepts from the two user-provided Go Piscine textbooks; not copied exam solutions. */
+/* Original exam-style practice; 10 tasks for each Quest 2–9. */
 export const EXAM_BANK=[
   {
     "id": "exam-2-1",
@@ -36,9 +36,9 @@ export const EXAM_BANK=[
     "quest": 2,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    sum := 0\n    fmt.Prinln(sum += 5)\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    sum := 0\n    fmt.Prinln(sum += 5)\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 4
   },
   {
@@ -77,9 +77,9 @@ export const EXAM_BANK=[
     "quest": 2,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    done := false\n    fmt.Prinln(done = true)\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    done := false\n    fmt.Prinln(done = true)\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 8
   },
   {
@@ -138,9 +138,9 @@ export const EXAM_BANK=[
     "quest": 3,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    label := \"go\"\n    fmt.Prinln(len(label))\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    label := \"go\"\n    fmt.Prinln(len(label))\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 4
   },
   {
@@ -179,9 +179,9 @@ export const EXAM_BANK=[
     "quest": 3,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    symbol := 'Ж'\n    fmt.Prinln(rune(symbol))\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    symbol := 'Ж'\n    fmt.Prinln(rune(symbol))\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 8
   },
   {
@@ -240,9 +240,9 @@ export const EXAM_BANK=[
     "quest": 4,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    step := 4\n    fmt.Prinln(step - 1)\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    step := 4\n    fmt.Prinln(step - 1)\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 4
   },
   {
@@ -281,9 +281,9 @@ export const EXAM_BANK=[
     "quest": 4,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    index := 5\n    fmt.Prinln(index - 2)\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    index := 5\n    fmt.Prinln(index - 2)\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 8
   },
   {
@@ -342,9 +342,9 @@ export const EXAM_BANK=[
     "quest": 5,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    text := \"дом\"\n    fmt.Prinln(string([]rune(text)[0]))\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    text := \"дом\"\n    fmt.Prinln(string([]rune(text)[0]))\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 4
   },
   {
@@ -383,9 +383,9 @@ export const EXAM_BANK=[
     "quest": 5,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    phrase := \"ЗИМА\"\n    fmt.Prinln(strings.ToLower(phrase))\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    phrase := \"ЗИМА\"\n    fmt.Prinln(strings.ToLower(phrase))\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 8
   },
   {
@@ -444,9 +444,9 @@ export const EXAM_BANK=[
     "quest": 6,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    args := []string{\"app\", \"a\", \"b\"}\n    fmt.Prinln(len(args)-1)\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    args := []string{\"app\", \"a\", \"b\"}\n    fmt.Prinln(len(args)-1)\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 4
   },
   {
@@ -485,9 +485,9 @@ export const EXAM_BANK=[
     "quest": 6,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    args := []string{\"app\"}\n    fmt.Prinln(len(args) > 1)\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    args := []string{\"app\"}\n    fmt.Prinln(len(args) > 1)\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 8
   },
   {
@@ -546,9 +546,9 @@ export const EXAM_BANK=[
     "quest": 7,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    values := []int{1, 2, 3}\n    fmt.Prinln(values[1:])\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    values := []int{1, 2, 3}\n    fmt.Prinln(values[1:])\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 4
   },
   {
@@ -587,9 +587,9 @@ export const EXAM_BANK=[
     "quest": 7,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    values := make([]int, 2, 5)\n    fmt.Prinln(cap(values))\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    values := make([]int, 2, 5)\n    fmt.Prinln(cap(values))\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 8
   },
   {
@@ -648,9 +648,9 @@ export const EXAM_BANK=[
     "quest": 8,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    type Coord struct { Row int }\n    fmt.Prinln(Coord{Row: 3})\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    type Coord struct { Row int }\n    fmt.Prinln(Coord{Row: 3})\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 4
   },
   {
@@ -689,9 +689,9 @@ export const EXAM_BANK=[
     "quest": 8,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    type House struct { Floors int }\n    fmt.Prinln(House{Floors: 5})\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    type House struct { Floors int }\n    fmt.Prinln(House{Floors: 5})\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 8
   },
   {
@@ -750,9 +750,9 @@ export const EXAM_BANK=[
     "quest": 9,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    test := func(n int) bool { return n%2 == 0 }\n    fmt.Prinln(test(6))\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    test := func(n int) bool { return n%2 == 0 }\n    fmt.Prinln(test(6))\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 4
   },
   {
@@ -791,9 +791,9 @@ export const EXAM_BANK=[
     "quest": 9,
     "kind": "line",
     "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n    test := func(n int) bool { return n < 0 }\n    fmt.Prinln(test(-1))\n}",
+    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    test := func(n int) bool { return n < 0 }\n    fmt.Prinln(test(-1))\n}",
     "numbered": true,
-    "expected": "4",
+    "expected": "5",
     "stage": 8
   },
   {
