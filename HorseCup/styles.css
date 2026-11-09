@@ -945,3 +945,10 @@ body.low-power-mode *,body.low-power-mode *::before,body.low-power-mode *::after
 body.low-power-mode .track,body.low-power-mode #setup{background-attachment:scroll!important}
 body.low-power-mode .runner{will-change:auto!important}
 @media(prefers-reduced-motion:reduce){.runner,.gallop-gif,.selected-horse-animation{animation:none!important;transition:none!important}}
+
+/* Selected coat: readable facts on both sides without expanding mobile viewport */
+#setup #horses .chosen-horse{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.12fr) minmax(0,1fr)!important;align-items:stretch!important;gap:5px!important;width:100%!important;max-width:100%!important;overflow:hidden!important}
+#setup #horses .chosen-horse>img{width:100%!important;height:100%!important;min-width:0!important;object-fit:contain!important}
+#setup #horses .horse-fact{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:7px;padding:clamp(5px,1.4vw,13px);font-size:clamp(10px,1.4vw,15px);line-height:1.35;color:#44321d;text-align:center;overflow-wrap:anywhere}
+#setup #horses .horse-fact b{font-size:clamp(11px,1.7vw,17px);color:#815017}
+@media(max-width:700px){#setup #horses .chosen-horse{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1fr)!important}#setup #horses .horse-fact{font-size:clamp(9px,2.2vw,12px);line-height:1.22;gap:4px;padding:4px}#setup #horses .horse-fact b{font-size:clamp(10px,2.5vw,13px)}}
