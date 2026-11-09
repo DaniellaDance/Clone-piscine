@@ -105,7 +105,8 @@ function choose(){
  const photos={black:'voronaya.webp',bay:'gnedaya_kostanayskaya.webp',grey:'belaya_arabskaya.webp',palomino:'solovaya.webp'};
  box.classList.toggle('horse-confirmed',horseChoiceConfirmed);
  if(horseChoiceConfirmed){
-  box.innerHTML=`<div class="chosen-horse"><img src="images/${photos[horse]}" alt="${labels[horse]}"></div>`;
+  const gallops={black:"black.gif",bay:"bay_kostanay.gif",grey:"white_arabian.gif",palomino:"palomino.gif"};
+  box.innerHTML=`<div class="chosen-horse"><img class="gallop-gif selected-horse-animation" src="images/animations/${gallops[horse]}" alt="Скачущая лошадь — ${labels[horse]}" onerror="this.onerror=null;this.src=\'images/${photos[horse]}\'"></div>`;
  }else{
   box.innerHTML=coats.map(c=>`<button type="button" class="horse-choice" data-horse="${c}" aria-label="Выбери меня — ${labels[c]}" title="${labels[c]}"><span>Выбери меня</span></button>`).join('');
  }
