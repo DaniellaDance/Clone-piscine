@@ -1038,3 +1038,13 @@ body.low-power-mode .runner{will-change:auto!important}
 .players-ready-dialog p{font-size:clamp(14px,2.8vw,18px);line-height:1.45;margin:0}
 .players-ready-dialog button{min-height:48px;padding:10px 25px}
 @media(orientation:landscape) and (max-height:450px){.players-ready-dialog{padding:12px}.players-ready-content{gap:7px}.players-ready-symbol{font-size:27px}.players-ready-dialog h2{font-size:22px}.players-ready-dialog p{font-size:13px}}
+
+/* Compact playful joke of the day: integrated into mode selection, not a modal */
+#dailyJokePanel{width:100%;display:flex;justify-content:center;margin:10px auto 15px;padding:0;box-sizing:border-box}
+#dailyJokePanel .daily-joke-circle{width:min(100%,310px);aspect-ratio:1/1;border-radius:50%;box-sizing:border-box;padding:clamp(19px,5vw,34px);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;text-align:center;background:radial-gradient(circle at 32% 22%,#fffef0 0%,#fff1ba 58%,#f8d98a 100%);border:5px solid #f9b951;box-shadow:0 6px 0 #b77c31,0 13px 24px #173a2533,inset 0 0 0 3px #fff9df;overflow:hidden}
+#dailyJokePanel .daily-joke-heading{font-family:"Trebuchet MS","Comic Sans MS",system-ui,sans-serif;font-weight:1000;letter-spacing:-.065em;font-size:clamp(22px,5.2vw,31px);line-height:1.12;margin:0;white-space:nowrap;text-shadow:1px 2px 0 #fff8e0,2px 3px 0 #744b2033;transform:rotate(-3deg)}
+#dailyJokePanel .daily-joke-heading span:nth-child(5n+1){color:#e34e56}#dailyJokePanel .daily-joke-heading span:nth-child(5n+2){color:#177dce}#dailyJokePanel .daily-joke-heading span:nth-child(5n+3){color:#208c58}#dailyJokePanel .daily-joke-heading span:nth-child(5n+4){color:#a14dc1}#dailyJokePanel .daily-joke-heading span:nth-child(5n){color:#d17a14}
+#dailyJokePanel .daily-joke-heading .joke-space{display:inline-block;width:.24em}
+#dailyJokeInline{font-size:clamp(13px,3.2vw,16px);font-weight:650;line-height:1.38;color:#294332;margin:0;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:8;overflow:hidden;max-width:100%}
+@media(max-width:380px){#dailyJokePanel .daily-joke-circle{width:min(100%,270px);padding:23px}#dailyJokeInline{font-size:13px}}
+@media(orientation:landscape) and (max-height:520px){#dailyJokePanel .daily-joke-circle{width:min(100%,220px);padding:18px}#dailyJokeInline{font-size:12px;-webkit-line-clamp:6}#dailyJokePanel .daily-joke-heading{font-size:21px}}
