@@ -871,3 +871,11 @@ body:has(#setup:not([hidden]))>header,body:has(#setup:not([hidden]))>footer{disp
 .exam-horse img{width:100%;height:100%;object-fit:contain}
 .exam-step-caption{position:absolute;bottom:2%;left:50%;transform:translateX(-50%);background:#123b4bc9;border-radius:20px;color:white;font-weight:800;padding:5px 12px;white-space:nowrap;font-size:clamp(11px,2.7vw,15px)}
 @media(max-width:700px){#track.exam-track,#examMountain{min-height:290px;height:36dvh;max-height:420px}.exam-horse{height:75px}}
+
+/* Keep every team horse inside its own numbered lane, including on mobile. */
+#track:not(.exam-track) .lanes{grid-template-rows:repeat(var(--active-lanes,4),minmax(0,1fr));min-height:0}
+#track:not(.exam-track) .lane{min-height:0;position:relative;overflow:hidden;isolation:isolate}
+#track:not(.exam-track) .lane-road{min-height:0;overflow:hidden;isolation:isolate}
+#track:not(.exam-track) .runner{bottom:0;height:100%;max-height:100%;width:clamp(32px,7vw,65px);display:flex;align-items:center;justify-content:center;overflow:hidden}
+#track:not(.exam-track) .runner img,#track:not(.exam-track) .runner svg{display:block;width:100%;height:100%;max-height:100%;object-fit:contain;object-position:center}
+@media(max-width:600px){#track:not(.exam-track) .lane{grid-template-columns:58px minmax(0,1fr) 48px;gap:3px}#track:not(.exam-track) .lane-name{font-size:9px}#track:not(.exam-track) .lane-score{font-size:10px}}
