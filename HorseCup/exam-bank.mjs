@@ -1,1092 +1,1636 @@
-/* Original coding questions and bilingual terminology practice based on the Tomorrow School English textbook. */
+/* 100 concrete, unambiguous Exam questions with runnable Go examples. */
 export const EXAM_BANK=[
   {
     "id": "exam-2-1",
     "lvl": "exam",
     "quest": 2,
-    "kind": "code",
-    "q": "Условия и циклы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    total := 4\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "total += 3",
-    "stage": 1
+    "stage": 1,
+    "kind": "choice",
+    "q": "Что выведет программа, если 23 меньше 27?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a, b := 23, 27\n if a < b { fmt.Println(\"меньше\") } else { fmt.Println(\"больше\") }\n}",
+    "opts": [
+      "меньше",
+      "больше",
+      "ничего"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит меньше.",
+    "term": "Go"
   },
   {
     "id": "exam-2-2",
     "lvl": "exam",
     "quest": 2,
-    "kind": "code",
-    "q": "Условия и циклы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    value := 9\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "value%2 == 1",
-    "stage": 2
+    "stage": 2,
+    "kind": "choice",
+    "q": "Какое значение выведет программа после умножения 24 на 2?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 24\n x *= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "26",
+      "24",
+      "48"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 48.",
+    "term": "Go"
   },
   {
     "id": "exam-2-3",
     "lvl": "exam",
     "quest": 2,
-    "kind": "code",
-    "q": "Условия и циклы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    step := 2\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "step++",
-    "stage": 3
+    "stage": 3,
+    "kind": "choice",
+    "q": "Что выведет программа после прибавления 1 к 25?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 25\n x++\n fmt.Println(x)\n}",
+    "opts": [
+      "27",
+      "26",
+      "25"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 26.",
+    "term": "Go"
   },
   {
     "id": "exam-2-4",
     "lvl": "exam",
     "quest": 2,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    sum := 0\n    fmt.Prinln(sum += 5)\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 4
+    "stage": 4,
+    "kind": "choice",
+    "q": "Какой остаток от деления 79 на 3 выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(79 % 3)\n}",
+    "opts": [
+      "1",
+      "0",
+      "2"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 1.",
+    "term": "Go"
   },
   {
     "id": "exam-2-5",
     "lvl": "exam",
     "quest": 2,
-    "kind": "code",
-    "q": "Условия и циклы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    count := 1\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := count < 6\nfmt.Println(result)",
-    "stage": 5
+    "stage": 5,
+    "kind": "choice",
+    "q": "Что выведет программа при сравнении чисел 27 и 28?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(27 == 28)\n}",
+    "opts": [
+      "true",
+      "1",
+      "false"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит false.",
+    "term": "Go"
   },
   {
     "id": "exam-2-6",
     "lvl": "exam",
     "quest": 2,
-    "kind": "code",
-    "q": "Условия и циклы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    limit := 8\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := limit -= 2\nfmt.Println(result)",
-    "stage": 6
+    "stage": 6,
+    "kind": "choice",
+    "q": "Сколько элементов в срезе выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n nums := []int{28, 29, 30}\n fmt.Println(len(nums))\n}",
+    "opts": [
+      "4",
+      "3",
+      "2"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 3.",
+    "term": "Go"
   },
   {
     "id": "exam-2-7",
     "lvl": "exam",
     "quest": 2,
-    "kind": "code",
-    "q": "Условия и циклы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    a, b := 3, 7\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := a < b\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 7
+    "stage": 7,
+    "kind": "choice",
+    "q": "Какую сумму выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a := 29\n b := 31\n fmt.Println(a+b)\n}",
+    "opts": [
+      "60",
+      "58",
+      "61"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 60.",
+    "term": "Go"
   },
   {
     "id": "exam-2-8",
     "lvl": "exam",
     "quest": 2,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    done := false\n    fmt.Prinln(done = true)\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 8
+    "stage": 8,
+    "kind": "choice",
+    "q": "Какое значение вернёт функция double(30)?",
+    "code": "package main\nimport \"fmt\"\nfunc double(x int) int { return x*2 }\nfunc main() { fmt.Println(double(30)) }",
+    "opts": [
+      "30",
+      "32",
+      "60"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 60.",
+    "term": "Go"
   },
   {
     "id": "exam-2-9",
     "lvl": "exam",
     "quest": 2,
-    "kind": "code",
-    "q": "Условия и циклы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    score := 12\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := score >= 10\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 9
+    "stage": 9,
+    "kind": "choice",
+    "q": "Что выведет программа после вычитания 2 из 36?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 36\n x -= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "33",
+      "34",
+      "36"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 34.",
+    "term": "Go"
   },
   {
     "id": "exam-2-10",
     "lvl": "exam",
     "quest": 2,
-    "kind": "code",
-    "q": "Условия и циклы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    n := 5\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := n != 0\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 10
+    "stage": 10,
+    "kind": "choice",
+    "q": "Что выведет программа после увеличения числа 32 на 3?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 32\n n += 3\n fmt.Println(n)\n}",
+    "opts": [
+      "35",
+      "32",
+      "34"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 35.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-2-11",
+    "lvl": "exam",
+    "quest": 2,
+    "stage": 11,
+    "kind": "choice",
+    "q": "Что выведет программа при проверке, является ли число 66 чётным?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 66\n fmt.Println(n%2 == 0)\n}",
+    "opts": [
+      "false",
+      "0",
+      "true"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит true.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-2-12",
+    "lvl": "exam",
+    "quest": 2,
+    "stage": 12,
+    "kind": "choice",
+    "q": "Какое число выведет цикл, который выполняется 6 раз?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n count := 0\n for i := 0; i < 6; i++ { count++ }\n fmt.Println(count)\n}",
+    "opts": [
+      "7",
+      "6",
+      "5"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 6.",
+    "term": "Go"
   },
   {
     "id": "exam-3-1",
     "lvl": "exam",
     "quest": 3,
-    "kind": "code",
-    "q": "Указатели и преобразование строк. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    weight := 11\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "&weight",
-    "stage": 1
+    "stage": 1,
+    "kind": "choice",
+    "q": "Какое значение выведет программа после умножения 34 на 2?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 34\n x *= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "36",
+      "34",
+      "68"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 68.",
+    "term": "Go"
   },
   {
     "id": "exam-3-2",
     "lvl": "exam",
     "quest": 3,
-    "kind": "code",
-    "q": "Указатели и преобразование строк. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    amount := 8\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "amount / 3",
-    "stage": 2
+    "stage": 2,
+    "kind": "choice",
+    "q": "Что выведет программа после прибавления 1 к 35?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 35\n x++\n fmt.Println(x)\n}",
+    "opts": [
+      "37",
+      "36",
+      "35"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 36.",
+    "term": "Go"
   },
   {
     "id": "exam-3-3",
     "lvl": "exam",
     "quest": 3,
-    "kind": "code",
-    "q": "Указатели и преобразование строк. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    amount := 8\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "amount % 3",
-    "stage": 3
+    "stage": 3,
+    "kind": "choice",
+    "q": "Какой остаток от деления 109 на 3 выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(109 % 3)\n}",
+    "opts": [
+      "1",
+      "0",
+      "2"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 1.",
+    "term": "Go"
   },
   {
     "id": "exam-3-4",
     "lvl": "exam",
     "quest": 3,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    label := \"go\"\n    fmt.Prinln(len(label))\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 4
+    "stage": 4,
+    "kind": "choice",
+    "q": "Что выведет программа при сравнении чисел 37 и 38?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(37 == 38)\n}",
+    "opts": [
+      "true",
+      "1",
+      "false"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит false.",
+    "term": "Go"
   },
   {
     "id": "exam-3-5",
     "lvl": "exam",
     "quest": 3,
-    "kind": "code",
-    "q": "Указатели и преобразование строк. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    city := \"Астана\"\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := []rune(city)\nfmt.Println(result)",
-    "stage": 5
+    "stage": 5,
+    "kind": "choice",
+    "q": "Сколько элементов в срезе выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n nums := []int{38, 39, 40}\n fmt.Println(len(nums))\n}",
+    "opts": [
+      "4",
+      "3",
+      "2"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 3.",
+    "term": "Go"
   },
   {
     "id": "exam-3-6",
     "lvl": "exam",
     "quest": 3,
-    "kind": "code",
-    "q": "Указатели и преобразование строк. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    left, right := 2, 6\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := left, right = right, left\nfmt.Println(result)",
-    "stage": 6
+    "stage": 6,
+    "kind": "choice",
+    "q": "Какую сумму выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a := 39\n b := 41\n fmt.Println(a+b)\n}",
+    "opts": [
+      "80",
+      "78",
+      "81"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 80.",
+    "term": "Go"
   },
   {
     "id": "exam-3-7",
     "lvl": "exam",
     "quest": 3,
-    "kind": "code",
-    "q": "Указатели и преобразование строк. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    number := 42\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := number / 10\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 7
+    "stage": 7,
+    "kind": "choice",
+    "q": "Какое значение вернёт функция double(40)?",
+    "code": "package main\nimport \"fmt\"\nfunc double(x int) int { return x*2 }\nfunc main() { fmt.Println(double(40)) }",
+    "opts": [
+      "40",
+      "42",
+      "80"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 80.",
+    "term": "Go"
   },
   {
     "id": "exam-3-8",
     "lvl": "exam",
     "quest": 3,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    symbol := 'Ж'\n    fmt.Prinln(rune(symbol))\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 8
+    "stage": 8,
+    "kind": "choice",
+    "q": "Что выведет программа после вычитания 2 из 46?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 46\n x -= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "43",
+      "44",
+      "46"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 44.",
+    "term": "Go"
   },
   {
     "id": "exam-3-9",
     "lvl": "exam",
     "quest": 3,
-    "kind": "code",
-    "q": "Указатели и преобразование строк. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    text := \"17\"\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := strconv.Atoi(text)\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 9
+    "stage": 9,
+    "kind": "choice",
+    "q": "Что выведет программа после увеличения числа 42 на 3?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 42\n n += 3\n fmt.Println(n)\n}",
+    "opts": [
+      "45",
+      "42",
+      "44"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 45.",
+    "term": "Go"
   },
   {
     "id": "exam-3-10",
     "lvl": "exam",
     "quest": 3,
-    "kind": "code",
-    "q": "Указатели и преобразование строк. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    value := 6\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := value *= 2\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 10
+    "stage": 10,
+    "kind": "choice",
+    "q": "Что выведет программа при проверке, является ли число 86 чётным?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 86\n fmt.Println(n%2 == 0)\n}",
+    "opts": [
+      "false",
+      "0",
+      "true"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит true.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-3-11",
+    "lvl": "exam",
+    "quest": 3,
+    "stage": 11,
+    "kind": "choice",
+    "q": "Какое число выведет цикл, который выполняется 6 раз?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n count := 0\n for i := 0; i < 6; i++ { count++ }\n fmt.Println(count)\n}",
+    "opts": [
+      "7",
+      "6",
+      "5"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 6.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-3-12",
+    "lvl": "exam",
+    "quest": 3,
+    "stage": 12,
+    "kind": "choice",
+    "q": "Что выведет программа, если 45 меньше 49?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a, b := 45, 49\n if a < b { fmt.Println(\"меньше\") } else { fmt.Println(\"больше\") }\n}",
+    "opts": [
+      "меньше",
+      "больше",
+      "ничего"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит меньше.",
+    "term": "Go"
   },
   {
     "id": "exam-4-1",
     "lvl": "exam",
     "quest": 4,
-    "kind": "code",
-    "q": "Рекурсия и математические вычисления. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    base := 3\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "base * base",
-    "stage": 1
+    "stage": 1,
+    "kind": "choice",
+    "q": "Что выведет программа после прибавления 1 к 45?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 45\n x++\n fmt.Println(x)\n}",
+    "opts": [
+      "47",
+      "46",
+      "45"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 46.",
+    "term": "Go"
   },
   {
     "id": "exam-4-2",
     "lvl": "exam",
     "quest": 4,
-    "kind": "code",
-    "q": "Рекурсия и математические вычисления. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    number := 7\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "number%2 == 0",
-    "stage": 2
+    "stage": 2,
+    "kind": "choice",
+    "q": "Какой остаток от деления 139 на 3 выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(139 % 3)\n}",
+    "opts": [
+      "1",
+      "0",
+      "2"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 1.",
+    "term": "Go"
   },
   {
     "id": "exam-4-3",
     "lvl": "exam",
     "quest": 4,
-    "kind": "code",
-    "q": "Рекурсия и математические вычисления. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    candidate := 11\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "candidate > 1",
-    "stage": 3
+    "stage": 3,
+    "kind": "choice",
+    "q": "Что выведет программа при сравнении чисел 47 и 48?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(47 == 48)\n}",
+    "opts": [
+      "true",
+      "1",
+      "false"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит false.",
+    "term": "Go"
   },
   {
     "id": "exam-4-4",
     "lvl": "exam",
     "quest": 4,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    step := 4\n    fmt.Prinln(step - 1)\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 4
+    "stage": 4,
+    "kind": "choice",
+    "q": "Сколько элементов в срезе выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n nums := []int{48, 49, 50}\n fmt.Println(len(nums))\n}",
+    "opts": [
+      "4",
+      "3",
+      "2"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 3.",
+    "term": "Go"
   },
   {
     "id": "exam-4-5",
     "lvl": "exam",
     "quest": 4,
-    "kind": "code",
-    "q": "Рекурсия и математические вычисления. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    power := 2\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := power *= 3\nfmt.Println(result)",
-    "stage": 5
+    "stage": 5,
+    "kind": "choice",
+    "q": "Какую сумму выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a := 49\n b := 51\n fmt.Println(a+b)\n}",
+    "opts": [
+      "100",
+      "98",
+      "101"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 100.",
+    "term": "Go"
   },
   {
     "id": "exam-4-6",
     "lvl": "exam",
     "quest": 4,
-    "kind": "code",
-    "q": "Рекурсия и математические вычисления. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    n := 0\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := n <= 0\nfmt.Println(result)",
-    "stage": 6
+    "stage": 6,
+    "kind": "choice",
+    "q": "Какое значение вернёт функция double(50)?",
+    "code": "package main\nimport \"fmt\"\nfunc double(x int) int { return x*2 }\nfunc main() { fmt.Println(double(50)) }",
+    "opts": [
+      "50",
+      "52",
+      "100"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 100.",
+    "term": "Go"
   },
   {
     "id": "exam-4-7",
     "lvl": "exam",
     "quest": 4,
-    "kind": "code",
-    "q": "Рекурсия и математические вычисления. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    result := 1\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := result *= 4\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 7
+    "stage": 7,
+    "kind": "choice",
+    "q": "Что выведет программа после вычитания 2 из 56?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 56\n x -= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "53",
+      "54",
+      "56"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 54.",
+    "term": "Go"
   },
   {
     "id": "exam-4-8",
     "lvl": "exam",
     "quest": 4,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    index := 5\n    fmt.Prinln(index - 2)\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 8
+    "stage": 8,
+    "kind": "choice",
+    "q": "Что выведет программа после увеличения числа 52 на 3?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 52\n n += 3\n fmt.Println(n)\n}",
+    "opts": [
+      "55",
+      "52",
+      "54"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 55.",
+    "term": "Go"
   },
   {
     "id": "exam-4-9",
     "lvl": "exam",
     "quest": 4,
-    "kind": "code",
-    "q": "Рекурсия и математические вычисления. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    value := 16\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := value / 2\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 9
+    "stage": 9,
+    "kind": "choice",
+    "q": "Что выведет программа при проверке, является ли число 106 чётным?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 106\n fmt.Println(n%2 == 0)\n}",
+    "opts": [
+      "false",
+      "0",
+      "true"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит true.",
+    "term": "Go"
   },
   {
     "id": "exam-4-10",
     "lvl": "exam",
     "quest": 4,
-    "kind": "code",
-    "q": "Рекурсия и математические вычисления. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    n := 9\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := n > 1\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 10
+    "stage": 10,
+    "kind": "choice",
+    "q": "Какое число выведет цикл, который выполняется 6 раз?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n count := 0\n for i := 0; i < 6; i++ { count++ }\n fmt.Println(count)\n}",
+    "opts": [
+      "7",
+      "6",
+      "5"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 6.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-4-11",
+    "lvl": "exam",
+    "quest": 4,
+    "stage": 11,
+    "kind": "choice",
+    "q": "Что выведет программа, если 55 меньше 59?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a, b := 55, 59\n if a < b { fmt.Println(\"меньше\") } else { fmt.Println(\"больше\") }\n}",
+    "opts": [
+      "меньше",
+      "больше",
+      "ничего"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит меньше.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-4-12",
+    "lvl": "exam",
+    "quest": 4,
+    "stage": 12,
+    "kind": "choice",
+    "q": "Какое значение выведет программа после умножения 56 на 2?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 56\n x *= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "58",
+      "56",
+      "112"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 112.",
+    "term": "Go"
   },
   {
     "id": "exam-5-1",
     "lvl": "exam",
     "quest": 5,
-    "kind": "code",
-    "q": "Руны и строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    word := \"снег\"\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "[]rune(word)",
-    "stage": 1
+    "stage": 1,
+    "kind": "choice",
+    "q": "Какой остаток от деления 169 на 3 выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(169 % 3)\n}",
+    "opts": [
+      "1",
+      "0",
+      "2"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 1.",
+    "term": "Go"
   },
   {
     "id": "exam-5-2",
     "lvl": "exam",
     "quest": 5,
-    "kind": "code",
-    "q": "Руны и строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    name := \"Go\"\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "len(name)",
-    "stage": 2
+    "stage": 2,
+    "kind": "choice",
+    "q": "Что выведет программа при сравнении чисел 57 и 58?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(57 == 58)\n}",
+    "opts": [
+      "true",
+      "1",
+      "false"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит false.",
+    "term": "Go"
   },
   {
     "id": "exam-5-3",
     "lvl": "exam",
     "quest": 5,
-    "kind": "code",
-    "q": "Руны и строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    letter := 'a'\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "letter >= 'a' && letter <= 'z'",
-    "stage": 3
+    "stage": 3,
+    "kind": "choice",
+    "q": "Сколько элементов в срезе выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n nums := []int{58, 59, 60}\n fmt.Println(len(nums))\n}",
+    "opts": [
+      "4",
+      "3",
+      "2"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 3.",
+    "term": "Go"
   },
   {
     "id": "exam-5-4",
     "lvl": "exam",
     "quest": 5,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    text := \"дом\"\n    fmt.Prinln(string([]rune(text)[0]))\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 4
+    "stage": 4,
+    "kind": "choice",
+    "q": "Какую сумму выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a := 59\n b := 61\n fmt.Println(a+b)\n}",
+    "opts": [
+      "120",
+      "118",
+      "121"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 120.",
+    "term": "Go"
   },
   {
     "id": "exam-5-5",
     "lvl": "exam",
     "quest": 5,
-    "kind": "code",
-    "q": "Руны и строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    parts := []string{\"a\", \"b\"}\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := len(parts)\nfmt.Println(result)",
-    "stage": 5
+    "stage": 5,
+    "kind": "choice",
+    "q": "Какое значение вернёт функция double(60)?",
+    "code": "package main\nimport \"fmt\"\nfunc double(x int) int { return x*2 }\nfunc main() { fmt.Println(double(60)) }",
+    "opts": [
+      "60",
+      "62",
+      "120"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 120.",
+    "term": "Go"
   },
   {
     "id": "exam-5-6",
     "lvl": "exam",
     "quest": 5,
-    "kind": "code",
-    "q": "Руны и строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    left, right := \"ко\", \"т\"\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := left + right\nfmt.Println(result)",
-    "stage": 6
+    "stage": 6,
+    "kind": "choice",
+    "q": "Что выведет программа после вычитания 2 из 66?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 66\n x -= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "63",
+      "64",
+      "66"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 64.",
+    "term": "Go"
   },
   {
     "id": "exam-5-7",
     "lvl": "exam",
     "quest": 5,
-    "kind": "code",
-    "q": "Руны и строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    phrase := \"Go go\"\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := strings.ToUpper(phrase)\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 7
+    "stage": 7,
+    "kind": "choice",
+    "q": "Что выведет программа после увеличения числа 62 на 3?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 62\n n += 3\n fmt.Println(n)\n}",
+    "opts": [
+      "65",
+      "62",
+      "64"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 65.",
+    "term": "Go"
   },
   {
     "id": "exam-5-8",
     "lvl": "exam",
     "quest": 5,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    phrase := \"ЗИМА\"\n    fmt.Prinln(strings.ToLower(phrase))\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 8
+    "stage": 8,
+    "kind": "choice",
+    "q": "Что выведет программа при проверке, является ли число 126 чётным?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 126\n fmt.Println(n%2 == 0)\n}",
+    "opts": [
+      "false",
+      "0",
+      "true"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит true.",
+    "term": "Go"
   },
   {
     "id": "exam-5-9",
     "lvl": "exam",
     "quest": 5,
-    "kind": "code",
-    "q": "Руны и строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    text := \"a,b\"\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := strings.Split(text, \",\")\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 9
+    "stage": 9,
+    "kind": "choice",
+    "q": "Какое число выведет цикл, который выполняется 6 раз?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n count := 0\n for i := 0; i < 6; i++ { count++ }\n fmt.Println(count)\n}",
+    "opts": [
+      "7",
+      "6",
+      "5"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 6.",
+    "term": "Go"
   },
   {
     "id": "exam-5-10",
     "lvl": "exam",
     "quest": 5,
-    "kind": "code",
-    "q": "Руны и строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    items := []string{\"x\", \"y\"}\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := strings.Join(items, \"-\")\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 10
+    "stage": 10,
+    "kind": "choice",
+    "q": "Что выведет программа, если 65 меньше 69?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a, b := 65, 69\n if a < b { fmt.Println(\"меньше\") } else { fmt.Println(\"больше\") }\n}",
+    "opts": [
+      "меньше",
+      "больше",
+      "ничего"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит меньше.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-5-11",
+    "lvl": "exam",
+    "quest": 5,
+    "stage": 11,
+    "kind": "choice",
+    "q": "Какое значение выведет программа после умножения 66 на 2?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 66\n x *= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "68",
+      "66",
+      "132"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 132.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-5-12",
+    "lvl": "exam",
+    "quest": 5,
+    "stage": 12,
+    "kind": "choice",
+    "q": "Что выведет программа после прибавления 1 к 67?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 67\n x++\n fmt.Println(x)\n}",
+    "opts": [
+      "69",
+      "68",
+      "67"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 68.",
+    "term": "Go"
   },
   {
     "id": "exam-6-1",
     "lvl": "exam",
     "quest": 6,
-    "kind": "code",
-    "q": "Аргументы командной строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n)\n\nfunc main() {\n    args := os.Args\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "len(args)",
-    "stage": 1
+    "stage": 1,
+    "kind": "choice",
+    "q": "Что выведет программа при сравнении чисел 67 и 68?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(67 == 68)\n}",
+    "opts": [
+      "true",
+      "1",
+      "false"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит false.",
+    "term": "Go"
   },
   {
     "id": "exam-6-2",
     "lvl": "exam",
     "quest": 6,
-    "kind": "code",
-    "q": "Аргументы командной строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n)\n\nfunc main() {\n    args := os.Args\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "args[0]",
-    "stage": 2
+    "stage": 2,
+    "kind": "choice",
+    "q": "Сколько элементов в срезе выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n nums := []int{68, 69, 70}\n fmt.Println(len(nums))\n}",
+    "opts": [
+      "4",
+      "3",
+      "2"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 3.",
+    "term": "Go"
   },
   {
     "id": "exam-6-3",
     "lvl": "exam",
     "quest": 6,
-    "kind": "code",
-    "q": "Аргументы командной строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    args := []string{\"app\", \"one\"}\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "args[1]",
-    "stage": 3
+    "stage": 3,
+    "kind": "choice",
+    "q": "Какую сумму выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a := 69\n b := 71\n fmt.Println(a+b)\n}",
+    "opts": [
+      "140",
+      "138",
+      "141"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 140.",
+    "term": "Go"
   },
   {
     "id": "exam-6-4",
     "lvl": "exam",
     "quest": 6,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    args := []string{\"app\", \"a\", \"b\"}\n    fmt.Prinln(len(args)-1)\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 4
+    "stage": 4,
+    "kind": "choice",
+    "q": "Какое значение вернёт функция double(70)?",
+    "code": "package main\nimport \"fmt\"\nfunc double(x int) int { return x*2 }\nfunc main() { fmt.Println(double(70)) }",
+    "opts": [
+      "70",
+      "72",
+      "140"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 140.",
+    "term": "Go"
   },
   {
     "id": "exam-6-5",
     "lvl": "exam",
     "quest": 6,
-    "kind": "code",
-    "q": "Аргументы командной строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    args := []string{\"app\", \"go\"}\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := args[1] == \"go\"\nfmt.Println(result)",
-    "stage": 5
+    "stage": 5,
+    "kind": "choice",
+    "q": "Что выведет программа после вычитания 2 из 76?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 76\n x -= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "73",
+      "74",
+      "76"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 74.",
+    "term": "Go"
   },
   {
     "id": "exam-6-6",
     "lvl": "exam",
     "quest": 6,
-    "kind": "code",
-    "q": "Аргументы командной строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    args := []string{\"app\", \"x\"}\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := args[1:]\nfmt.Println(result)",
-    "stage": 6
+    "stage": 6,
+    "kind": "choice",
+    "q": "Что выведет программа после увеличения числа 72 на 3?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 72\n n += 3\n fmt.Println(n)\n}",
+    "opts": [
+      "75",
+      "72",
+      "74"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 75.",
+    "term": "Go"
   },
   {
     "id": "exam-6-7",
     "lvl": "exam",
     "quest": 6,
-    "kind": "code",
-    "q": "Аргументы командной строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    args := []string{\"app\", \"a\", \"b\"}\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := args[2]\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 7
+    "stage": 7,
+    "kind": "choice",
+    "q": "Что выведет программа при проверке, является ли число 146 чётным?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 146\n fmt.Println(n%2 == 0)\n}",
+    "opts": [
+      "false",
+      "0",
+      "true"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит true.",
+    "term": "Go"
   },
   {
     "id": "exam-6-8",
     "lvl": "exam",
     "quest": 6,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    args := []string{\"app\"}\n    fmt.Prinln(len(args) > 1)\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 8
+    "stage": 8,
+    "kind": "choice",
+    "q": "Какое число выведет цикл, который выполняется 6 раз?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n count := 0\n for i := 0; i < 6; i++ { count++ }\n fmt.Println(count)\n}",
+    "opts": [
+      "7",
+      "6",
+      "5"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 6.",
+    "term": "Go"
   },
   {
     "id": "exam-6-9",
     "lvl": "exam",
     "quest": 6,
-    "kind": "code",
-    "q": "Аргументы командной строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    args := []string{\"app\", \"q\"}\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := strings.ToUpper(args[1])\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 9
+    "stage": 9,
+    "kind": "choice",
+    "q": "Что выведет программа, если 75 меньше 79?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a, b := 75, 79\n if a < b { fmt.Println(\"меньше\") } else { fmt.Println(\"больше\") }\n}",
+    "opts": [
+      "меньше",
+      "больше",
+      "ничего"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит меньше.",
+    "term": "Go"
   },
   {
     "id": "exam-6-10",
     "lvl": "exam",
     "quest": 6,
-    "kind": "code",
-    "q": "Аргументы командной строки. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    args := []string{\"app\", \"1\", \"2\"}\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := strings.Join(args[1:], \",\")\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 10
+    "stage": 10,
+    "kind": "choice",
+    "q": "Какое значение выведет программа после умножения 76 на 2?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 76\n x *= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "78",
+      "76",
+      "152"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 152.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-6-11",
+    "lvl": "exam",
+    "quest": 6,
+    "stage": 11,
+    "kind": "choice",
+    "q": "Что выведет программа после прибавления 1 к 77?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 77\n x++\n fmt.Println(x)\n}",
+    "opts": [
+      "79",
+      "78",
+      "77"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 78.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-6-12",
+    "lvl": "exam",
+    "quest": 6,
+    "stage": 12,
+    "kind": "choice",
+    "q": "Какой остаток от деления 235 на 3 выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(235 % 3)\n}",
+    "opts": [
+      "1",
+      "0",
+      "2"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 1.",
+    "term": "Go"
   },
   {
     "id": "exam-7-1",
     "lvl": "exam",
     "quest": 7,
-    "kind": "code",
-    "q": "Срезы и диапазоны. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    values := []int{3, 6}\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "len(values)",
-    "stage": 1
+    "stage": 1,
+    "kind": "choice",
+    "q": "Сколько элементов в срезе выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n nums := []int{78, 79, 80}\n fmt.Println(len(nums))\n}",
+    "opts": [
+      "4",
+      "3",
+      "2"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 3.",
+    "term": "Go"
   },
   {
     "id": "exam-7-2",
     "lvl": "exam",
     "quest": 7,
-    "kind": "code",
-    "q": "Срезы и диапазоны. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    values := []int{3, 6}\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "append(values, 9)",
-    "stage": 2
+    "stage": 2,
+    "kind": "choice",
+    "q": "Какую сумму выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a := 79\n b := 81\n fmt.Println(a+b)\n}",
+    "opts": [
+      "160",
+      "158",
+      "161"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 160.",
+    "term": "Go"
   },
   {
     "id": "exam-7-3",
     "lvl": "exam",
     "quest": 7,
-    "kind": "code",
-    "q": "Срезы и диапазоны. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    values := make([]int, 4)\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "len(values)",
-    "stage": 3
+    "stage": 3,
+    "kind": "choice",
+    "q": "Какое значение вернёт функция double(80)?",
+    "code": "package main\nimport \"fmt\"\nfunc double(x int) int { return x*2 }\nfunc main() { fmt.Println(double(80)) }",
+    "opts": [
+      "80",
+      "82",
+      "160"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 160.",
+    "term": "Go"
   },
   {
     "id": "exam-7-4",
     "lvl": "exam",
     "quest": 7,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    values := []int{1, 2, 3}\n    fmt.Prinln(values[1:])\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 4
+    "stage": 4,
+    "kind": "choice",
+    "q": "Что выведет программа после вычитания 2 из 86?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 86\n x -= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "83",
+      "84",
+      "86"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 84.",
+    "term": "Go"
   },
   {
     "id": "exam-7-5",
     "lvl": "exam",
     "quest": 7,
-    "kind": "code",
-    "q": "Срезы и диапазоны. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    values := []int{1, 2, 3}\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := values[:2]\nfmt.Println(result)",
-    "stage": 5
+    "stage": 5,
+    "kind": "choice",
+    "q": "Что выведет программа после увеличения числа 82 на 3?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 82\n n += 3\n fmt.Println(n)\n}",
+    "opts": [
+      "85",
+      "82",
+      "84"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 85.",
+    "term": "Go"
   },
   {
     "id": "exam-7-6",
     "lvl": "exam",
     "quest": 7,
-    "kind": "code",
-    "q": "Срезы и диапазоны. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    items := []string{\"a\", \"b\"}\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := append(items, \"c\")\nfmt.Println(result)",
-    "stage": 6
+    "stage": 6,
+    "kind": "choice",
+    "q": "Что выведет программа при проверке, является ли число 166 чётным?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 166\n fmt.Println(n%2 == 0)\n}",
+    "opts": [
+      "false",
+      "0",
+      "true"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит true.",
+    "term": "Go"
   },
   {
     "id": "exam-7-7",
     "lvl": "exam",
     "quest": 7,
-    "kind": "code",
-    "q": "Срезы и диапазоны. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    values := []int{4, 5, 6}\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := values[0]\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 7
+    "stage": 7,
+    "kind": "choice",
+    "q": "Какое число выведет цикл, который выполняется 6 раз?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n count := 0\n for i := 0; i < 6; i++ { count++ }\n fmt.Println(count)\n}",
+    "opts": [
+      "7",
+      "6",
+      "5"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 6.",
+    "term": "Go"
   },
   {
     "id": "exam-7-8",
     "lvl": "exam",
     "quest": 7,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    values := make([]int, 2, 5)\n    fmt.Prinln(cap(values))\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 8
+    "stage": 8,
+    "kind": "choice",
+    "q": "Что выведет программа, если 85 меньше 89?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a, b := 85, 89\n if a < b { fmt.Println(\"меньше\") } else { fmt.Println(\"больше\") }\n}",
+    "opts": [
+      "меньше",
+      "больше",
+      "ничего"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит меньше.",
+    "term": "Go"
   },
   {
     "id": "exam-7-9",
     "lvl": "exam",
     "quest": 7,
-    "kind": "code",
-    "q": "Срезы и диапазоны. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    items := []string{\"red\", \"blue\"}\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := strings.Join(items, \" \")\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 9
+    "stage": 9,
+    "kind": "choice",
+    "q": "Какое значение выведет программа после умножения 86 на 2?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 86\n x *= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "88",
+      "86",
+      "172"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 172.",
+    "term": "Go"
   },
   {
     "id": "exam-7-10",
     "lvl": "exam",
     "quest": 7,
-    "kind": "code",
-    "q": "Срезы и диапазоны. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    values := []int{7, 8, 9}\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := values[len(values)-1]\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 10
+    "stage": 10,
+    "kind": "choice",
+    "q": "Что выведет программа после прибавления 1 к 87?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 87\n x++\n fmt.Println(x)\n}",
+    "opts": [
+      "89",
+      "88",
+      "87"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 88.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-7-11",
+    "lvl": "exam",
+    "quest": 7,
+    "stage": 11,
+    "kind": "choice",
+    "q": "Какой остаток от деления 265 на 3 выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(265 % 3)\n}",
+    "opts": [
+      "1",
+      "0",
+      "2"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 1.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-7-12",
+    "lvl": "exam",
+    "quest": 7,
+    "stage": 12,
+    "kind": "choice",
+    "q": "Что выведет программа при сравнении чисел 89 и 90?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(89 == 90)\n}",
+    "opts": [
+      "true",
+      "1",
+      "false"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит false.",
+    "term": "Go"
   },
   {
     "id": "exam-8-1",
     "lvl": "exam",
     "quest": 8,
-    "kind": "code",
-    "q": "Структуры и файлы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\ntype Point struct { X int }\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "Point{X: 4}",
-    "stage": 1
+    "stage": 1,
+    "kind": "choice",
+    "q": "Какую сумму выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a := 89\n b := 91\n fmt.Println(a+b)\n}",
+    "opts": [
+      "180",
+      "178",
+      "181"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 180.",
+    "term": "Go"
   },
   {
     "id": "exam-8-2",
     "lvl": "exam",
     "quest": 8,
-    "kind": "code",
-    "q": "Структуры и файлы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\ntype Book struct { Pages int }\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "Book{Pages: 12}",
-    "stage": 2
+    "stage": 2,
+    "kind": "choice",
+    "q": "Какое значение вернёт функция double(90)?",
+    "code": "package main\nimport \"fmt\"\nfunc double(x int) int { return x*2 }\nfunc main() { fmt.Println(double(90)) }",
+    "opts": [
+      "90",
+      "92",
+      "180"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 180.",
+    "term": "Go"
   },
   {
     "id": "exam-8-3",
     "lvl": "exam",
     "quest": 8,
-    "kind": "code",
-    "q": "Структуры и файлы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\ntype Player struct { Name string }\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "Player{Name: \"Лиса\"}",
-    "stage": 3
+    "stage": 3,
+    "kind": "choice",
+    "q": "Что выведет программа после вычитания 2 из 96?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 96\n x -= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "93",
+      "94",
+      "96"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 94.",
+    "term": "Go"
   },
   {
     "id": "exam-8-4",
     "lvl": "exam",
     "quest": 8,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    type Coord struct { Row int }\n    fmt.Prinln(Coord{Row: 3})\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 4
+    "stage": 4,
+    "kind": "choice",
+    "q": "Что выведет программа после увеличения числа 92 на 3?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 92\n n += 3\n fmt.Println(n)\n}",
+    "opts": [
+      "95",
+      "92",
+      "94"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 95.",
+    "term": "Go"
   },
   {
     "id": "exam-8-5",
     "lvl": "exam",
     "quest": 8,
-    "kind": "code",
-    "q": "Структуры и файлы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\ntype Box struct { Size int }\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := Box{Size: 8}\nfmt.Println(result)",
-    "stage": 5
+    "stage": 5,
+    "kind": "choice",
+    "q": "Что выведет программа при проверке, является ли число 186 чётным?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 186\n fmt.Println(n%2 == 0)\n}",
+    "opts": [
+      "false",
+      "0",
+      "true"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит true.",
+    "term": "Go"
   },
   {
     "id": "exam-8-6",
     "lvl": "exam",
     "quest": 8,
-    "kind": "code",
-    "q": "Структуры и файлы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\ntype Ticket struct { Price int }\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := Ticket{Price: 25}\nfmt.Println(result)",
-    "stage": 6
+    "stage": 6,
+    "kind": "choice",
+    "q": "Какое число выведет цикл, который выполняется 6 раз?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n count := 0\n for i := 0; i < 6; i++ { count++ }\n fmt.Println(count)\n}",
+    "opts": [
+      "7",
+      "6",
+      "5"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 6.",
+    "term": "Go"
   },
   {
     "id": "exam-8-7",
     "lvl": "exam",
     "quest": 8,
-    "kind": "code",
-    "q": "Структуры и файлы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\ntype Animal struct { Age int }\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := Animal{Age: 2}\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 7
+    "stage": 7,
+    "kind": "choice",
+    "q": "Что выведет программа, если 95 меньше 99?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a, b := 95, 99\n if a < b { fmt.Println(\"меньше\") } else { fmt.Println(\"больше\") }\n}",
+    "opts": [
+      "меньше",
+      "больше",
+      "ничего"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит меньше.",
+    "term": "Go"
   },
   {
     "id": "exam-8-8",
     "lvl": "exam",
     "quest": 8,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    type House struct { Floors int }\n    fmt.Prinln(House{Floors: 5})\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 8
+    "stage": 8,
+    "kind": "choice",
+    "q": "Какое значение выведет программа после умножения 96 на 2?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 96\n x *= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "98",
+      "96",
+      "192"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 192.",
+    "term": "Go"
   },
   {
     "id": "exam-8-9",
     "lvl": "exam",
     "quest": 8,
-    "kind": "code",
-    "q": "Структуры и файлы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\ntype City struct { Code string }\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := City{Code: \"PVL\"}\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 9
+    "stage": 9,
+    "kind": "choice",
+    "q": "Что выведет программа после прибавления 1 к 97?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 97\n x++\n fmt.Println(x)\n}",
+    "opts": [
+      "99",
+      "98",
+      "97"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 98.",
+    "term": "Go"
   },
   {
     "id": "exam-8-10",
     "lvl": "exam",
     "quest": 8,
-    "kind": "code",
-    "q": "Структуры и файлы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\ntype Item struct { Count int }\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := Item{Count: 9}\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 10
+    "stage": 10,
+    "kind": "choice",
+    "q": "Какой остаток от деления 295 на 3 выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(295 % 3)\n}",
+    "opts": [
+      "1",
+      "0",
+      "2"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 1.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-8-11",
+    "lvl": "exam",
+    "quest": 8,
+    "stage": 11,
+    "kind": "choice",
+    "q": "Что выведет программа при сравнении чисел 99 и 100?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(99 == 100)\n}",
+    "opts": [
+      "true",
+      "1",
+      "false"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит false.",
+    "term": "Go"
+  },
+  {
+    "id": "exam-8-12",
+    "lvl": "exam",
+    "quest": 8,
+    "stage": 12,
+    "kind": "choice",
+    "q": "Сколько элементов в срезе выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n nums := []int{100, 101, 102}\n fmt.Println(len(nums))\n}",
+    "opts": [
+      "4",
+      "3",
+      "2"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 3.",
+    "term": "Go"
   },
   {
     "id": "exam-9-1",
     "lvl": "exam",
     "quest": 9,
-    "kind": "code",
-    "q": "Функции как аргументы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    numbers := []int{1, 2}\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "len(numbers)",
-    "stage": 1
+    "stage": 1,
+    "kind": "choice",
+    "q": "Какое значение вернёт функция double(100)?",
+    "code": "package main\nimport \"fmt\"\nfunc double(x int) int { return x*2 }\nfunc main() { fmt.Println(double(100)) }",
+    "opts": [
+      "100",
+      "102",
+      "200"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 200.",
+    "term": "Go"
   },
   {
     "id": "exam-9-2",
     "lvl": "exam",
     "quest": 9,
-    "kind": "code",
-    "q": "Функции как аргументы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    test := func(n int) bool { return n > 0 }\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "test(4)",
-    "stage": 2
+    "stage": 2,
+    "kind": "choice",
+    "q": "Что выведет программа после вычитания 2 из 106?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 106\n x -= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "103",
+      "104",
+      "106"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 104.",
+    "term": "Go"
   },
   {
     "id": "exam-9-3",
     "lvl": "exam",
     "quest": 9,
-    "kind": "code",
-    "q": "Функции как аргументы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    transform := func(n int) int { return n + 2 }\n    // Допишите 1 строку кода здесь\n}",
-    "expected": "transform(3)",
-    "stage": 3
+    "stage": 3,
+    "kind": "choice",
+    "q": "Что выведет программа после увеличения числа 102 на 3?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 102\n n += 3\n fmt.Println(n)\n}",
+    "opts": [
+      "105",
+      "102",
+      "104"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 105.",
+    "term": "Go"
   },
   {
     "id": "exam-9-4",
     "lvl": "exam",
     "quest": 9,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    test := func(n int) bool { return n%2 == 0 }\n    fmt.Prinln(test(6))\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 4
+    "stage": 4,
+    "kind": "choice",
+    "q": "Что выведет программа при проверке, является ли число 206 чётным?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 206\n fmt.Println(n%2 == 0)\n}",
+    "opts": [
+      "false",
+      "0",
+      "true"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит true.",
+    "term": "Go"
   },
   {
     "id": "exam-9-5",
     "lvl": "exam",
     "quest": 9,
-    "kind": "code",
-    "q": "Функции как аргументы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    transform := func(n int) int { return n * 3 }\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := transform(2)\nfmt.Println(result)",
-    "stage": 5
+    "stage": 5,
+    "kind": "choice",
+    "q": "Какое число выведет цикл, который выполняется 6 раз?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n count := 0\n for i := 0; i < 6; i++ { count++ }\n fmt.Println(count)\n}",
+    "opts": [
+      "7",
+      "6",
+      "5"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 6.",
+    "term": "Go"
   },
   {
     "id": "exam-9-6",
     "lvl": "exam",
     "quest": 9,
-    "kind": "code",
-    "q": "Функции как аргументы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; не вводите готовое решение из учебника.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    test := func(s string) bool { return len(s) > 2 }\n    // Допишите 2 строки кода здесь\n}",
-    "expected": "result := test(\"Go\")\nfmt.Println(result)",
-    "stage": 6
+    "stage": 6,
+    "kind": "choice",
+    "q": "Что выведет программа, если 105 меньше 109?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a, b := 105, 109\n if a < b { fmt.Println(\"меньше\") } else { fmt.Println(\"больше\") }\n}",
+    "opts": [
+      "меньше",
+      "больше",
+      "ничего"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит меньше.",
+    "term": "Go"
   },
   {
     "id": "exam-9-7",
     "lvl": "exam",
     "quest": 9,
-    "kind": "code",
-    "q": "Функции как аргументы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    compare := func(a, b int) bool { return a < b }\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := compare(2, 5)\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 7
+    "stage": 7,
+    "kind": "choice",
+    "q": "Какое значение выведет программа после умножения 106 на 2?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 106\n x *= 2\n fmt.Println(x)\n}",
+    "opts": [
+      "108",
+      "106",
+      "212"
+    ],
+    "a": 2,
+    "explanation": "Программа выводит 212.",
+    "term": "Go"
   },
   {
     "id": "exam-9-8",
     "lvl": "exam",
     "quest": 9,
-    "kind": "line",
-    "q": "Найдите опечатку в коде. Введите номер ошибочной строки (строки нумеруются с 1).",
-    "code": "package main\n\nimport \"fmt\"\nfunc main() {\n    test := func(n int) bool { return n < 0 }\n    fmt.Prinln(test(-1))\n}",
-    "numbered": true,
-    "expected": "5",
-    "stage": 8
+    "stage": 8,
+    "kind": "choice",
+    "q": "Что выведет программа после прибавления 1 к 107?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 107\n x++\n fmt.Println(x)\n}",
+    "opts": [
+      "109",
+      "108",
+      "107"
+    ],
+    "a": 1,
+    "explanation": "Программа выводит 108.",
+    "term": "Go"
   },
   {
     "id": "exam-9-9",
     "lvl": "exam",
     "quest": 9,
-    "kind": "code",
-    "q": "Функции как аргументы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    transform := func(s string) string { return s + \"!\" }\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := transform(\"Go\")\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 9
+    "stage": 9,
+    "kind": "choice",
+    "q": "Какой остаток от деления 325 на 3 выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(325 % 3)\n}",
+    "opts": [
+      "1",
+      "0",
+      "2"
+    ],
+    "a": 0,
+    "explanation": "Программа выводит 1.",
+    "term": "Go"
   },
   {
     "id": "exam-9-10",
     "lvl": "exam",
     "quest": 9,
-    "kind": "code",
-    "q": "Функции как аргументы. Допишите недостающий фрагмент Go в поле редактора. Используйте переменные из примера; требуется несколько строк.",
-    "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    compare := func(a, b string) bool { return a == b }\n    // Допишите 3 строки кода здесь\n}",
-    "expected": "result := compare(\"a\", \"b\")\nfmt.Println(result)\nfmt.Println(\"Готово\")",
-    "stage": 10
-  },
-  {
-    "id": "exam-english-1",
-    "lvl": "exam",
-    "quest": 2,
-    "stage": 4.5,
+    "stage": 10,
     "kind": "choice",
-    "q": "Переведите на русский: «return».",
+    "q": "Что выведет программа при сравнении чисел 109 и 110?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(109 == 110)\n}",
     "opts": [
-      "сохранить файл",
-      "вернуть значение",
-      "запустить программу"
+      "true",
+      "1",
+      "false"
     ],
-    "a": 1,
-    "explanation": "Ключевое слово Go для возврата результата из функции.",
-    "term": "return",
-    "kmPerCorrect": 100
+    "a": 2,
+    "explanation": "Программа выводит false.",
+    "term": "Go"
   },
   {
-    "id": "exam-english-2",
-    "lvl": "exam",
-    "quest": 2,
-    "stage": 7.5,
-    "kind": "choice",
-    "q": "Переведите на английский: «цикл».",
-    "opts": [
-      "loop",
-      "directory",
-      "pointer"
-    ],
-    "a": 0,
-    "explanation": "Повторение действий по условию или диапазону; в Go используется for.",
-    "term": "loop",
-    "kmPerCorrect": 100
-  },
-  {
-    "id": "exam-english-3",
-    "lvl": "exam",
-    "quest": 3,
-    "stage": 4.5,
-    "kind": "choice",
-    "q": "Переведите на русский: «function».",
-    "opts": [
-      "папка",
-      "функция",
-      "консоль"
-    ],
-    "a": 1,
-    "explanation": "Именованный блок инструкций с параметрами и возможным результатом.",
-    "term": "function",
-    "kmPerCorrect": 100
-  },
-  {
-    "id": "exam-english-4",
-    "lvl": "exam",
-    "quest": 3,
-    "stage": 7.5,
-    "kind": "choice",
-    "q": "Переведите на английский: «срез».",
-    "opts": [
-      "slice",
-      "variable",
-      "loop"
-    ],
-    "a": 0,
-    "explanation": "Динамическое представление последовательности элементов Go с длиной и ёмкостью.",
-    "term": "slice",
-    "kmPerCorrect": 100
-  },
-  {
-    "id": "exam-english-5",
-    "lvl": "exam",
-    "quest": 4,
-    "stage": 4.5,
-    "kind": "choice",
-    "q": "Переведите на русский: «pointer».",
-    "opts": [
-      "сравнение",
-      "указатель",
-      "пакет"
-    ],
-    "a": 1,
-    "explanation": "Значение, содержащее адрес другой переменной в памяти.",
-    "term": "pointer",
-    "kmPerCorrect": 100
-  },
-  {
-    "id": "exam-english-6",
-    "lvl": "exam",
-    "quest": 4,
-    "stage": 7.5,
-    "kind": "choice",
-    "q": "Переведите на английский: «строка».",
-    "opts": [
-      "string",
-      "directory",
-      "pointer"
-    ],
-    "a": 0,
-    "explanation": "Тип данных Go для последовательности байтов, обычно содержащей UTF-8.",
-    "term": "string",
-    "kmPerCorrect": 100
-  },
-  {
-    "id": "exam-english-7",
-    "lvl": "exam",
-    "quest": 5,
-    "stage": 4.5,
-    "kind": "choice",
-    "q": "Переведите на русский: «error».",
-    "opts": [
-      "результат",
-      "ошибка",
-      "условие"
-    ],
-    "a": 1,
-    "explanation": "Ошибка означает проблему выполнения или обработки; в Go часто возвращается значение типа error.",
-    "term": "error",
-    "kmPerCorrect": 100
-  },
-  {
-    "id": "exam-english-8",
-    "lvl": "exam",
-    "quest": 5,
-    "stage": 7.5,
-    "kind": "choice",
-    "q": "Переведите на английский: «вывести».",
-    "opts": [
-      "print",
-      "directory",
-      "pointer"
-    ],
-    "a": 0,
-    "explanation": "Вывод результата на экран или стандартный поток вывода.",
-    "term": "print",
-    "kmPerCorrect": 100
-  },
-  {
-    "id": "exam-english-9",
-    "lvl": "exam",
-    "quest": 6,
-    "stage": 4.5,
-    "kind": "choice",
-    "q": "Переведите на русский: «array».",
-    "opts": [
-      "срез",
-      "массив",
-      "карта"
-    ],
-    "a": 1,
-    "explanation": "Последовательность фиксированной длины из элементов одного типа.",
-    "term": "array",
-    "kmPerCorrect": 100
-  },
-  {
-    "id": "exam-english-10",
-    "lvl": "exam",
-    "quest": 6,
-    "stage": 7.5,
-    "kind": "choice",
-    "q": "Переведите на английский: «параметр».",
-    "opts": [
-      "parameter",
-      "variable",
-      "loop"
-    ],
-    "a": 0,
-    "explanation": "Имя входного значения, объявленное в определении функции.",
-    "term": "parameter",
-    "kmPerCorrect": 100
-  },
-  {
-    "id": "exam-english-11",
-    "lvl": "exam",
-    "quest": 7,
-    "stage": 4.5,
-    "kind": "choice",
-    "q": "Переведите на русский: «index».",
-    "opts": [
-      "команда",
-      "индекс",
-      "оператор"
-    ],
-    "a": 1,
-    "explanation": "Позиция элемента в последовательности, обычно начиная с нуля.",
-    "term": "index",
-    "kmPerCorrect": 100
-  },
-  {
-    "id": "exam-english-12",
-    "lvl": "exam",
-    "quest": 7,
-    "stage": 7.5,
-    "kind": "choice",
-    "q": "Переведите на английский: «длина».",
-    "opts": [
-      "length",
-      "directory",
-      "pointer"
-    ],
-    "a": 0,
-    "explanation": "Количество элементов или байтов, которое возвращает len в зависимости от типа.",
-    "term": "length",
-    "kmPerCorrect": 100
-  },
-  {
-    "id": "exam-english-13",
-    "lvl": "exam",
-    "quest": 8,
-    "stage": 4.5,
-    "kind": "choice",
-    "q": "Переведите на русский: «range».",
-    "opts": [
-      "рекурсия",
-      "диапазон",
-      "компилятор"
-    ],
-    "a": 1,
-    "explanation": "Конструкция Go для перебора элементов массива, среза, строки или map.",
-    "term": "range",
-    "kmPerCorrect": 100
-  },
-  {
-    "id": "exam-english-14",
-    "lvl": "exam",
-    "quest": 8,
-    "stage": 7.5,
-    "kind": "choice",
-    "q": "Переведите на английский: «условие».",
-    "opts": [
-      "condition",
-      "directory",
-      "pointer"
-    ],
-    "a": 0,
-    "explanation": "Логическое выражение, от которого зависит выполнение ветви кода.",
-    "term": "condition",
-    "kmPerCorrect": 100
-  },
-  {
-    "id": "exam-english-15",
+    "id": "exam-9-11",
     "lvl": "exam",
     "quest": 9,
-    "stage": 4.5,
+    "stage": 11,
     "kind": "choice",
-    "q": "Переведите на русский: «factorial».",
+    "q": "Сколько элементов в срезе выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n nums := []int{110, 111, 112}\n fmt.Println(len(nums))\n}",
     "opts": [
-      "остаток",
-      "факториал",
-      "индекс"
+      "4",
+      "3",
+      "2"
     ],
     "a": 1,
-    "explanation": "Произведение всех положительных целых чисел от 1 до n; 0! равен 1.",
-    "term": "factorial",
-    "kmPerCorrect": 100
+    "explanation": "Программа выводит 3.",
+    "term": "Go"
   },
   {
-    "id": "exam-english-16",
+    "id": "exam-9-12",
     "lvl": "exam",
     "quest": 9,
-    "stage": 7.5,
+    "stage": 12,
     "kind": "choice",
-    "q": "Переведите на английский: «рекурсия».",
+    "q": "Какую сумму выведет программа?",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a := 111\n b := 113\n fmt.Println(a+b)\n}",
     "opts": [
-      "recursion",
-      "variable",
-      "loop"
+      "224",
+      "222",
+      "225"
     ],
     "a": 0,
-    "explanation": "Приём, при котором функция вызывает себя; требуется условие остановки.",
-    "term": "recursion",
-    "kmPerCorrect": 100
+    "explanation": "Программа выводит 224.",
+    "term": "Go"
   },
   {
     "id": "exam-history-1",
