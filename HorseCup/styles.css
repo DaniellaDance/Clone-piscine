@@ -846,3 +846,11 @@ body:has(#setup:not([hidden]))>header,body:has(#setup:not([hidden]))>footer{disp
 .exam-term-dialog{max-width:min(90vw,470px);border:2px solid #80b995;border-radius:18px;padding:22px;background:#f4fff5;color:#173c2c;box-shadow:0 12px 45px #0005}.exam-term-dialog::backdrop{background:#001b1280}.exam-term-dialog button{background:#27734a;color:white;border:0;border-radius:12px;padding:12px 24px;font-weight:700}
 
 .horse-tournament{box-sizing:border-box;width:min(92vw,540px);max-height:90dvh;overflow:auto;padding:20px;border:2px solid #caa657;border-radius:18px;background:#fffaf0;color:#3b2b13;box-shadow:0 12px 45px #0006}.horse-tournament::backdrop{background:#081e1ad9}.horse-tournament h2{font-size:clamp(19px,4vw,28px);margin:0 0 8px}.horse-tournament p{font-size:13px;margin:0 0 12px}.tournament-rows{display:grid;gap:5px}.tournament-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;border-radius:8px;background:#fff0c9;font-size:clamp(12px,2.8vw,16px)}.tournament-row span{white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* Splash/menu hit-area correction: only the painted gold button opens the menu. */
+@media (orientation:portrait){
+ #setup.horsecup-splash:not([hidden]){min-height:100dvh!important;height:100dvh!important;margin:0!important;padding:0!important;border-radius:0!important;gap:0!important;background-position:center center!important}
+ #setup.horsecup-splash:not(:has(.splash-drawer:not([hidden]))) #splashMenuToggle.splash-toggle{position:absolute!important;left:50%!important;top:79%!important;bottom:auto!important;transform:translate(-50%,-50%)!important;width:55%!important;height:6%!important;min-height:0!important;max-height:70px!important;padding:0!important;margin:0!important;opacity:1!important;background:transparent!important;border:0!important;box-shadow:none!important;color:transparent!important;font-size:0!important;z-index:20!important}
+ #setup.horsecup-splash .splash-drawer .entry .tabs{background:transparent!important;box-shadow:none!important;border:0!important;padding:0!important;min-height:0!important}
+ #setup.horsecup-splash .splash-drawer .entry .tabs #entryModeTitle{background:transparent!important;color:#fff2c9!important;padding:0!important;border:0!important}
+}
