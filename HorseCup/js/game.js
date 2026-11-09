@@ -228,7 +228,7 @@ function choose(){
  if(horseChoiceConfirmed){
   const gallops={black:"black.gif",bay:"bay_kostanay.gif",grey:"white_arabian.gif",palomino:"palomino.gif"};
   const story=selectedHorseStory||nextHorseStory(horse);
-  box.innerHTML=`<div class="chosen-horse"><aside class="horse-fact horse-fact-left"><b>${story[0]}</b><span>${story[1]}</span></aside><img class="gallop-gif selected-horse-animation" src="${lowPowerMode()?'images/'+photos[horse]:'images/animations/'+gallops[horse]}" alt="Скачущая лошадь — ${labels[horse]}" onerror="this.onerror=null;this.src=\'images/${photos[horse]}\'"><aside class="horse-fact horse-fact-right"><b>История и Казахстан</b><span>${story[2]}</span></aside></div>`;
+  box.innerHTML=`<div class="chosen-horse"><aside class="horse-fact horse-fact-left"><b>${story[0]}</b><span>${story[1]}</span></aside><img class="gallop-gif selected-horse-animation" src="${lowPowerMode()?'images/'+photos[horse]:'images/animations/'+gallops[horse]}" alt="Скачущая лошадь — ${labels[horse]}" onerror="this.onerror=null;this.src=\'images/${photos[horse]}\'"></div>`;
   revealHorseFacts(box);
  }else{
   box.innerHTML=coats.map(c=>`<button type="button" class="horse-choice" data-horse="${c}" aria-label="Выбери меня — ${labels[c]}" title="${labels[c]}"><span>Выбери меня</span></button>`).join('');
