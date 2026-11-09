@@ -270,7 +270,7 @@ let jokeLoadPromise=null;
 async function loadDailyJoke(){
  const panel=$('dailyJokeInline');if(!panel||jokeLoadPromise)return;
  const day=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Almaty',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
- const key='horsecup.joke.today.'+day;
+ const key='horsecup.joke.v2.today.'+day;
  try{const saved=localStorage.getItem(key);if(saved){panel.textContent=saved;return}}catch{}
  jokeLoadPromise=(async()=>{try{const response=await fetch('api/daily-joke',{method:'POST'});if(!response.ok)throw Error('Недоступно');const data=await response.json();const joke=data.exhausted?'Все шутки на сегодня уже прочитаны игроками. Загляните завтра!':data.joke;panel.textContent=joke;try{localStorage.setItem(key,joke)}catch{}}catch{panel.textContent='Шутка дня временно недоступна.'}finally{jokeLoadPromise=null}})();
 }
