@@ -1,4 +1,4 @@
-const CACHE='horsecup-shell-v54-joke-circle';const FILES=['./','./styles.css','./js/game.js','./js/horses.js','./js/jokes.js','./manifest.webmanifest'];
+const CACHE='horsecup-shell-v55-better-jokes';const FILES=['./','./styles.css','./js/game.js','./js/horses.js','./js/jokes.js','./manifest.webmanifest'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('horsecup-shell-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{
  const u=new URL(e.request.url);
