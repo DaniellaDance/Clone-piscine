@@ -115,7 +115,10 @@ const durationLabel=n=>n===1?'1 минуту':n===3?'3 минуты':'5 мину
 const km=n=>Number(n||0).toLocaleString('ru-RU')+' м';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function error(message){if(document.body.dataset.screen==='setup'&&!$('entry').hidden){const status=$('entryStatus');status.textContent=message;status.hidden=false;status.style.color='#fff';status.style.background='#a42b38';status.style.padding='12px';status.style.borderRadius='12px';status.scrollIntoView({block:'nearest',behavior:'smooth'});} $('error').textContent=message;$('error').hidden=false;clearTimeout(errorTimer);errorTimer=setTimeout(()=>$('error').hidden=true,7000)}
-let sharedItNewsRoom='';
+let exitNewsPending=false;
+function askExitNews(){exitNewsPending=true;const dialog=$('exitNewsPrompt');if(!dialog.open)dialog.showModal()}
+async function finishExitNews(){exitNewsPending=false;if($('exitNewsPrompt').open)$('exitNewsPrompt').close();if($('itNewsDialog').open)$('itNewsDialog').close();const previous=session;if(previous){try{await api('leave',{})}catch(e){console.warn('Could not leave room',e)}}resetSetup()}
+
 let readyAnnouncedRoom='';
 function announceReadyPlayers(d){
  const dialog=$('allPlayersReadyDialog');
@@ -127,7 +130,7 @@ function announceReadyPlayers(d){
  if(!dialog.open)dialog.showModal();
 }
 
-function updateItNewsButton(){const b=$('itNewsButton');if(b)b.hidden=!(state?.phase==='lobby'&&state?.isHost&&session?.code===sharedItNewsRoom)}
+function updateItNewsButton(){}
 async function loadItNews(){
  const panel=$('itNewsItems');panel.textContent='Загружаем свежие заголовки…';
  try{
@@ -146,7 +149,7 @@ async function loadItNews(){
   }
  }catch{panel.textContent='Не удалось загрузить новости. Проверьте интернет и попробуйте ещё раз.'}
 }
-function show(id){if(id!=='lobby'&&$('itNewsDialog')?.open)$('itNewsDialog').close();if(id!=='lobby'&&$('allPlayersReadyDialog')?.open)$('allPlayersReadyDialog').close();if(id!=='setup')horseFactTypingId++;document.body.dataset.screen=id;for(const key of ['accountScreen','setup','lobby','race','result'])$(key).hidden=key!==id}
+function show(id){if(id!=='result'&&$('itNewsDialog')?.open)$('itNewsDialog').close();if(id!=='lobby'&&$('allPlayersReadyDialog')?.open)$('allPlayersReadyDialog').close();if(id!=='setup')horseFactTypingId++;document.body.dataset.screen=id;for(const key of ['accountScreen','setup','lobby','race','result'])$(key).hidden=key!==id}
 const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
 function lowPowerMode(){if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent))return false;if(localStorage.getItem('horsecup.alwaysAnimate')==='yes')return false;return !!(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||connection?.saveData||['slow-2g','2g','3g'].includes(connection?.effectiveType)||(navigator.deviceMemory&&navigator.deviceMemory<=2)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=2))}
 function syncPerformance(){const low=lowPowerMode();document.body.classList.toggle('low-power-mode',low);document.querySelectorAll('img.gallop-gif,img.victory-horse-gif').forEach(img=>{if(low&&img.src.includes('/animations/')){const name=img.closest('[data-lane]')?.dataset.lane;const player=state?.players?.find(p=>p.id===name);const coat=player?.horse||horse||'black';img.src='images/'+({black:'voronaya.webp',bay:'gnedaya_kostanayskaya.webp',grey:'belaya_arabskaya.webp',palomino:'solovaya.webp'}[coat]||'voronaya.webp')}})}
@@ -264,13 +267,17 @@ $('options').addEventListener('click',async e=>{const b=e.target.closest('[data-
 $('horses').addEventListener('click',e=>{const b=e.target.closest('[data-horse]');if(b){horse=b.dataset.horse;selectedHorseStory=nextHorseStory(horse);horseChoiceConfirmed=true;choose();if(playMode==='solo'||playMode==='exam')$('entryButton').disabled=false}});document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));
 $('closeDistance').addEventListener('click',()=>$('distanceDialog').close());$('sound').addEventListener('click',()=>{enabled=!enabled;if(enabled)unlock();$('sound').textContent=enabled?'Звук включён':'Звук выключен'});
 $('copyCode').addEventListener('click',async()=>{if(nativeApp){location.href='horsecup-copy://room?room='+session.code;return}try{await navigator.clipboard.writeText(session.code);$('copyCode').textContent='Номер скопирован'}catch{error('Номер комнаты: '+session.code)}});
-$('shareRoom').addEventListener('click',async()=>{const url=new URL('./',location.href);url.searchParams.set('room',session.code);if(nativeApp){location.href='horsecup-share://room?room='+session.code;return}try{if(navigator.share)await navigator.share({title:'HorseCup · комната '+session.code,text:'Присоединяйся к заезду! Комната '+session.code,url:url.href});else{await navigator.clipboard.writeText(url.href);$('shareRoom').textContent='Ссылка скопирована'}sharedItNewsRoom=session.code;updateItNewsButton()}catch(e){if(e.name!=='AbortError')error('Ссылка на комнату: '+url.href)}});
+$('shareRoom').addEventListener('click',async()=>{const url=new URL('./',location.href);url.searchParams.set('room',session.code);if(nativeApp){location.href='horsecup-share://room?room='+session.code;return}try{if(navigator.share)await navigator.share({title:'HorseCup · комната '+session.code,text:'Присоединяйся к заезду! Комната '+session.code,url:url.href});else{await navigator.clipboard.writeText(url.href);$('shareRoom').textContent='Ссылка скопирована'}}catch(e){if(e.name!=='AbortError')error('Ссылка на комнату: '+url.href)}});
 $('readyReturnToLobby').addEventListener('click',()=>{if($('allPlayersReadyDialog').open)$('allPlayersReadyDialog').close();if($('itNewsDialog').open)$('itNewsDialog').close();$('start').focus()});
-$('itNewsButton').addEventListener('click',()=>{if(!state?.isHost||state.phase!=='lobby'||session?.code!==sharedItNewsRoom)return;$('itNewsDialog').showModal();loadItNews()});
+$('acceptExitNews').addEventListener('click',()=>{if($('exitNewsPrompt').open)$('exitNewsPrompt').close();$('itNewsDialog').showModal();loadItNews()});
+$('declineExitNews').addEventListener('click',finishExitNews);
+$('finishAfterNews').addEventListener('click',finishExitNews);
+$('cancelExitNews').addEventListener('click',()=>{exitNewsPending=false;$('exitNewsPrompt').close()});
+$('exitAfterRace').addEventListener('click',askExitNews);
 $('closeItNews').addEventListener('click',()=>$('itNewsDialog').close());
 $('refreshItNews').addEventListener('click',loadItNews);
-$('pauseRace').addEventListener('click',async()=>{if(!session||sending)return;sending=true;$('pauseRace').disabled=true;try{render(await api('pause',{}))}catch(e){error(e.message)}finally{sending=false;$('pauseRace').disabled=false}});$('exitRace').addEventListener('click',()=>{if(!session)return;const currentSession=session;resetSetup();fetch('api/leave',{method:'POST',headers:{'Content-Type':'application/json','X-Account':accountToken,Authorization:'Bearer '+currentSession.token,'X-Room':currentSession.code},body:'{}',keepalive:true}).catch(()=>{});});
-$('leave').addEventListener('click',async()=>{try{await api('leave',{})}catch(e){error(e.message)}resetSetup()});$('again').addEventListener('click',resetSetup);
+$('pauseRace').addEventListener('click',async()=>{if(!session||sending)return;sending=true;$('pauseRace').disabled=true;try{render(await api('pause',{}))}catch(e){error(e.message)}finally{sending=false;$('pauseRace').disabled=false}});$('exitRace').addEventListener('click',askExitNews);
+$('leave').addEventListener('click',askExitNews);$('again').addEventListener('click',resetSetup);
 $('recoverPlayerButton').addEventListener('click',()=>{$('recoveryForm').elements.name.value=$('entry').elements.name.value;$('recoveryError').textContent='';$('recoveryDialog').showModal()});$('closeRecovery').addEventListener('click',()=>$('recoveryDialog').close());$('closeRecoveryCode').addEventListener('click',()=>$('recoveryCodeDialog').close());$('copyRecoveryCode').addEventListener('click',()=>{navigator.clipboard?.writeText($('newRecoveryCode').textContent).then(()=>{$('copyRecoveryCode').textContent='Скопировано'}).catch(()=>{})});$('recoveryForm').addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.currentTarget);try{const recovered=await accountRequest('recover-name',{name:f.get('name'),recoveryCode:f.get('recoveryCode')});accountToken=recovered.token;localStorage.setItem('horsecup.account',accountToken);localStorage.setItem('horsecup.playerName',String(f.get('name')).trim());$('entry').elements.name.value=String(f.get('name')).trim();$('recoveryDialog').close();error('Результаты восстановлены. Выберите режим игры.')}catch(e){$('recoveryError').textContent=e.message}});
 $('soloMode').addEventListener('click',()=>selectMode('solo'));$('teamMode').addEventListener('click',()=>selectMode('team'));$('examMode').addEventListener('click',()=>selectMode('exam'));$('chooseMode').addEventListener('click',()=>{playMode=null;$('entry').hidden=true;$('modePicker').hidden=false});
 document.addEventListener('keydown',e=>{if(!['1','2','3'].includes(e.key)||['INPUT','SELECT','TEXTAREA'].includes(document.activeElement?.tagName))return;const b=$('options').querySelector('[data-answer="'+(Number(e.key)-1)+'"]');if(state?.phase==='race'&&!b?.disabled)b?.click()});$('entry').elements.capacity.addEventListener('change',rivalField);window.addEventListener('resize',position);setInterval(refresh,1500);setInterval(updateDailyHorseQuote,60000);setInterval(()=>{if(!document.hidden)tick()},lowPowerMode()?1000:250);document.addEventListener('visibilitychange',()=>{if(document.hidden){audio?.suspend().catch(()=>{})}else refresh()});window.addEventListener('pagehide',save);clearRewardAnimation();stopLossCinema();syncPerformance();choose();
