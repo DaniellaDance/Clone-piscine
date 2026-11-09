@@ -52,7 +52,7 @@ function showRewardCinema(key,coins,shoe){
    pile.append(item);
  }
  if(shoe)rewardTimers.push(setTimeout(hoofSound,750));
- const duration=3800;
+ const duration=5000; // Results are visible first; review topics appear five seconds later.
  rewardTimers.push(setTimeout(()=>el.classList.add('reward-fade'),duration-600));
  rewardTimers.push(setTimeout(()=>{clearRewardAnimation();revealRaceResults();},duration));
 }
