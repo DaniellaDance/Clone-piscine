@@ -1,8 +1,9 @@
+import {EXAM_BANK} from './exam-bank.mjs';
 import {register,login,authenticate,logout,history} from './accounts.mjs';
 import pg from 'pg';
 import {expandBank} from './question-bank.mjs';
 import http from 'node:http';import{readFile}from'node:fs/promises';import{fileURLToPath}from'node:url';import{dirname,join}from'node:path';import vm from'node:vm';import{RaceEngine}from'./race-engine.mjs';
-const root=dirname(fileURLToPath(import.meta.url)),sandbox={window:{BANK:[]}};for(const level of ['easy','medium','heavy'])vm.runInNewContext(await readFile(join(root,'js/questions-'+level+'.js'),'utf8'),sandbox);const engine=new RaceEngine(expandBank(sandbox.window.BANK),Date.now,history);const raceDb=new pg.Pool({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false},max:3});
+const root=dirname(fileURLToPath(import.meta.url)),sandbox={window:{BANK:[]}};for(const level of ['easy','medium','heavy'])vm.runInNewContext(await readFile(join(root,'js/questions-'+level+'.js'),'utf8'),sandbox);const engine=new RaceEngine([...expandBank(sandbox.window.BANK),...EXAM_BANK],Date.now,history);const raceDb=new pg.Pool({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false},max:3});
 await raceDb.query('CREATE TABLE IF NOT EXISTS active_horsecup_rooms (code text PRIMARY KEY, payload jsonb NOT NULL, updated_at timestamptz DEFAULT now())');
 async function restoreRoom(code){if(!code||engine.rooms.has(String(code)))return;const {rows}=await raceDb.query('SELECT payload FROM active_horsecup_rooms WHERE code=$1',[String(code)]);if(rows.length){const r=rows[0].payload;if(r&&r.players&&r.deck){engine.rooms.set(String(code),r)}}}
 async function persistRoom(code){const r=engine.rooms.get(String(code));if(!r)return;await raceDb.query('INSERT INTO active_horsecup_rooms(code,payload,updated_at) VALUES($1,$2::jsonb,now()) ON CONFLICT(code) DO UPDATE SET payload=EXCLUDED.payload,updated_at=now()',[String(code),JSON.stringify({...r,finalizing:null})]);}
