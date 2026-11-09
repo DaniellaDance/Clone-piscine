@@ -136,19 +136,21 @@ let horseChoiceConfirmed=false;
 let horseFactTypingId=0;
 function revealHorseFacts(box){
  const token=++horseFactTypingId;
- const nodes=[...box.querySelectorAll('.horse-fact span')];
+ const nodes=[box.querySelector('.horse-fact-left span'),box.querySelector('.horse-fact-right span')].filter(Boolean);
  if(!nodes.length||lowPowerMode()||document.hidden||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
  const originals=nodes.map(n=>n.textContent);
+ const letters=originals.map(t=>Array.from(t));
  nodes.forEach((n,i)=>{n.setAttribute('aria-label',originals[i]);n.textContent='';n.dataset.fullText=originals[i]});
- let index=0,last=0;
- const total=Math.max(...originals.map(t=>Array.from(t).length));
+ let side=0,index=0,last=0;
  function frame(now){
   if(token!==horseFactTypingId||!box.isConnected)return;
   if(document.hidden||lowPowerMode()){nodes.forEach((n,i)=>n.textContent=originals[i]);return}
-  if(now-last<45){requestAnimationFrame(frame);return}
-  last=now;index=Math.min(index+1,total);
-  nodes.forEach((n,i)=>n.textContent=Array.from(originals[i]).slice(0,index).join(''));
-  if(index<total)requestAnimationFrame(frame);
+  if(now-last<135){requestAnimationFrame(frame);return}
+  last=now;
+  index=Math.min(index+1,letters[side].length);
+  nodes[side].textContent=letters[side].slice(0,index).join('');
+  if(index>=letters[side].length){side++;index=0}
+  if(side<nodes.length)requestAnimationFrame(frame);
  }
  requestAnimationFrame(frame);
 }
