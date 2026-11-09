@@ -267,12 +267,21 @@ $('start').addEventListener('click',async()=>{unlock();$('start').disabled=true;
 $('options').addEventListener('click',async e=>{const b=e.target.closest('[data-answer],[data-fill-submit],[data-skip-question]');if(!b||sending||state?.paused||!state?.question)return;unlock();sending=true;const buttons=[...$('options').querySelectorAll('button')];buttons.forEach(b=>b.disabled=true);try{const skipping=!!b.dataset.skipQuestion;const d=await api(skipping?'skip':'answer',{questionId:state.question.id,...(['fill','code','line'].includes(state.question.kind)?{typed:$('codeFill').value}:{choice:Number(b.dataset.answer)})});$('feedback').textContent=skipping?'Вопрос пропущен. Баллы не начислены.':d.correct?'Верно! Персонаж продвигается вперёд.':'Неверно. Следующий вопрос!';render(d);}catch(e){error(e.message)}finally{sending=false;$('options').querySelectorAll('button').forEach(b=>b.disabled=false)}});
 $('horses').addEventListener('click',e=>{const b=e.target.closest('[data-horse]');if(b){horse=b.dataset.horse;selectedHorseStory=nextHorseStory(horse);horseChoiceConfirmed=true;choose();if(playMode==='solo'||playMode==='exam')$('entryButton').disabled=false}});document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));
 let jokeLoadPromise=null;
+let jokeLoadedForVisit=false;
 async function loadDailyJoke(){
- const panel=$('dailyJokeInline');if(!panel||jokeLoadPromise)return;
- const day=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Almaty',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
- const key='horsecup.joke.v2.today.'+day;
- try{const saved=localStorage.getItem(key);if(saved){panel.textContent=saved;return}}catch{}
- jokeLoadPromise=(async()=>{try{const response=await fetch('api/daily-joke',{method:'POST'});if(!response.ok)throw Error('Недоступно');const data=await response.json();const joke=data.exhausted?'Все шутки на сегодня уже прочитаны игроками. Загляните завтра!':data.joke;panel.textContent=joke;try{localStorage.setItem(key,joke)}catch{}}catch{panel.textContent='Шутка дня временно недоступна.'}finally{jokeLoadPromise=null}})();
+ const panel=$('dailyJokeInline');
+ if(!panel||jokeLoadedForVisit||jokeLoadPromise)return;
+ jokeLoadedForVisit=true;
+ jokeLoadPromise=(async()=>{
+  try{
+   const response=await fetch('api/daily-joke',{method:'POST',cache:'no-store'});
+   if(!response.ok)throw Error('Недоступно');
+   const data=await response.json();
+   panel.textContent=data.exhausted?'Все 100 анекдотов на сегодня уже показаны игрокам. Новые будут завтра!':data.joke;
+  }catch{
+   panel.textContent='Анекдот временно недоступен.';
+  }finally{jokeLoadPromise=null}
+ })();
 }
 $('closeDistance').addEventListener('click',()=>$('distanceDialog').close());$('sound').addEventListener('click',()=>{enabled=!enabled;if(enabled){unlock();startHorseMusic()}else stopHorseMusic();$('sound').textContent=enabled?'Звук включён':'Звук выключен'});
 $('copyCode').addEventListener('click',async()=>{if(nativeApp){location.href='horsecup-copy://room?room='+session.code;return}try{await navigator.clipboard.writeText(session.code);$('copyCode').textContent='Номер скопирован'}catch{error('Номер комнаты: '+session.code)}});
