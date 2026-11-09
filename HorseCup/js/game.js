@@ -157,7 +157,24 @@ const horseHistory={
  ['Хафлингер · Альпы','Хафлингеры происходят из исторического Тироля. Их золотистая шерсть и светлая грива напоминают соловую масть, хотя генетически это обычно игреневая окраска.','Казахстан: при описании золотистых лошадей важно различать соловую, буланую и игреневую масти. Окрас не позволяет определить породу или конезавод.']
  ]
 };
-const horseHistoryStep={black:0,bay:0,grey:0,palomino:0};
+// Keep a shuffled, non-repeating queue per coat across visits in this browser.
+let selectedHorseStory=null;
+function nextHorseStory(coat){
+ const entries=horseHistory[coat]||[];
+ if(!entries.length)return ['','',''];
+ const key='horsecup.history.v1.'+coat;
+ let progress={queue:[],last:-1};
+ try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(saved&&Array.isArray(saved.queue)&&saved.queue.every(i=>Number.isInteger(i)&&i>=0&&i<entries.length)&&new Set(saved.queue).size===saved.queue.length){progress={queue:saved.queue,last:Number.isInteger(saved.last)?saved.last:-1}}}catch(_){}
+ if(!progress.queue.length){
+  progress.queue=entries.map((_,i)=>i);
+  for(let i=progress.queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[progress.queue[i],progress.queue[j]]=[progress.queue[j],progress.queue[i]]}
+  if(progress.queue.length>1&&progress.queue[0]===progress.last){const j=1+Math.floor(Math.random()*(progress.queue.length-1));[progress.queue[0],progress.queue[j]]=[progress.queue[j],progress.queue[0]]}
+ }
+ const index=progress.queue.shift();
+ progress.last=index;
+ try{localStorage.setItem(key,JSON.stringify(progress))}catch(_){}
+ return entries[index];
+}
 let horseChoiceConfirmed=false;
 let horseFactTypingId=0;
 function revealHorseFacts(box){
@@ -187,7 +204,7 @@ function choose(){
  box.classList.toggle('horse-confirmed',horseChoiceConfirmed);
  if(horseChoiceConfirmed){
   const gallops={black:"black.gif",bay:"bay_kostanay.gif",grey:"white_arabian.gif",palomino:"palomino.gif"};
-  const story=horseHistory[horse][horseHistoryStep[horse]++%horseHistory[horse].length];
+  const story=selectedHorseStory||nextHorseStory(horse);
   box.innerHTML=`<div class="chosen-horse"><aside class="horse-fact horse-fact-left"><b>${story[0]}</b><span>${story[1]}</span></aside><img class="gallop-gif selected-horse-animation" src="${lowPowerMode()?'images/'+photos[horse]:'images/animations/'+gallops[horse]}" alt="Скачущая лошадь — ${labels[horse]}" onerror="this.onerror=null;this.src=\'images/${photos[horse]}\'"><aside class="horse-fact horse-fact-right"><b>История и Казахстан</b><span>${story[2]}</span></aside></div>`;
   revealHorseFacts(box);
  }else{
@@ -213,7 +230,7 @@ $('entry').elements.level.addEventListener('change',e=>{if(e.target.value==='exa
 $('entry').addEventListener('submit',async e=>{e.preventDefault();if(sending)return;horseFactTypingId++;unlock();sending=true;$('entryButton').disabled=true;const entryStatus=$('entryStatus');entryStatus.hidden=false;entryStatus.textContent='Подключаемся к игре…';entryStatus.style.color='#1b3445';entryStatus.style.background='#e6f2e9';entryStatus.style.padding='12px';entryStatus.style.borderRadius='12px';try{const f=new FormData(e.currentTarget);const playerName=String(f.get('name')||'').trim();if(!playerName)throw Error('Введите имя игрока');let claimed;try{claimed=await accountRequest('claim-name',{name:playerName})}catch(nameError){if(playMode!=='exam')throw nameError;claimed=await accountRequest('guest',{});entryStatus.textContent='Запускаем Exam без регистрации…';}entryStatus.textContent='Имя подтверждено. Запускаем Exam…';accountToken=claimed.token;localStorage.setItem('horsecup.account',accountToken);localStorage.setItem('horsecup.playerName',playerName);if(claimed.recoveryCode){$('newRecoveryCode').textContent=claimed.recoveryCode;localStorage.setItem('horsecup.recoveryCode',claimed.recoveryCode)}if(playMode==='exam'){f.set('level','exam');f.set('questFrom','2');f.set('questTo','9');f.set('capacity','1');f.set('rival','none');mode='create';if(![15,30,45,60].includes(Number(f.get('durationMinutes'))))f.set('durationMinutes','60')}entryStatus.textContent='Создаём игру и загружаем вопросы…';session=await api(mode==='create'?'rooms':'join',{name:f.get('name'),horse,code:String(f.get('code')||'').trim(),level:f.get('level'),durationMinutes:Number(f.get('durationMinutes')),questFrom:Number(f.get('questFrom')),questTo:Number(f.get('questTo')),capacity:(playMode==='solo'||playMode==='exam')?1:Number(f.get('capacity')),rival:f.get('rival')});save();lastQuestion='';celebrated=false;distanceShown=false;if(playMode==='solo'||playMode==='exam')render(await api('start',{}));else render(await api('room'));entryStatus.hidden=true;if(claimed.recoveryCode)$('recoveryCodeDialog').showModal()}catch(e){session=null;save();if(/Это имя уже занято|Это устройство уже закреплено/.test(e.message)){error(e.message+' Если это ваше имя, нажмите «Вернуть мои результаты с другого устройства» и введите код восстановления.')}else error('Не удалось начать игру: '+(e.message||'Неизвестная ошибка'))}finally{sending=false;$('entryButton').disabled=false}});
 $('start').addEventListener('click',async()=>{unlock();$('start').disabled=true;try{render(await api('start',{}))}catch(e){error(e.message);refresh()}});
 $('options').addEventListener('click',async e=>{const b=e.target.closest('[data-answer],[data-fill-submit],[data-skip-question]');if(!b||sending||state?.paused||!state?.question)return;unlock();sending=true;const buttons=[...$('options').querySelectorAll('button')];buttons.forEach(b=>b.disabled=true);try{const skipping=!!b.dataset.skipQuestion;const d=await api(skipping?'skip':'answer',{questionId:state.question.id,...(['fill','code','line'].includes(state.question.kind)?{typed:$('codeFill').value}:{choice:Number(b.dataset.answer)})});$('feedback').textContent=skipping?'Вопрос пропущен. Баллы не начислены.':d.correct?'Верно! Персонаж продвигается вперёд.':'Неверно. Следующий вопрос!';render(d);}catch(e){error(e.message)}finally{sending=false;$('options').querySelectorAll('button').forEach(b=>b.disabled=false)}});
-$('horses').addEventListener('click',e=>{const b=e.target.closest('[data-horse]');if(b){horse=b.dataset.horse;horseChoiceConfirmed=true;choose();if(playMode==='solo'||playMode==='exam')$('entryButton').disabled=false}});document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));
+$('horses').addEventListener('click',e=>{const b=e.target.closest('[data-horse]');if(b){horse=b.dataset.horse;selectedHorseStory=nextHorseStory(horse);horseChoiceConfirmed=true;choose();if(playMode==='solo'||playMode==='exam')$('entryButton').disabled=false}});document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));
 $('closeDistance').addEventListener('click',()=>$('distanceDialog').close());$('sound').addEventListener('click',()=>{enabled=!enabled;if(enabled)unlock();$('sound').textContent=enabled?'Звук включён':'Звук выключен'});
 $('copyCode').addEventListener('click',async()=>{if(nativeApp){location.href='horsecup-copy://room?room='+session.code;return}try{await navigator.clipboard.writeText(session.code);$('copyCode').textContent='Номер скопирован'}catch{error('Номер комнаты: '+session.code)}});
 $('shareRoom').addEventListener('click',async()=>{const url=new URL('./',location.href);url.searchParams.set('room',session.code);if(nativeApp){location.href='horsecup-share://room?room='+session.code;return}try{if(navigator.share)await navigator.share({title:'HorseCup · комната '+session.code,text:'Присоединяйся к заезду! Комната '+session.code,url:url.href});else{await navigator.clipboard.writeText(url.href);$('shareRoom').textContent='Ссылка скопирована'}}catch(e){if(e.name!=='AbortError')error('Ссылка на комнату: '+url.href)}});
