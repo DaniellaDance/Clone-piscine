@@ -213,6 +213,12 @@ function nextHorseStory(coat){
 }
 let horseChoiceConfirmed=false;
 let horseFactTypingId=0;
+const FAMOUS_HORSE_PEOPLE={
+ black:['Кино и вороные лошади','Антонио Бандерас ездил верхом на вороных лошадях в фильмах о Зорро. Это пример известного всадника, а не подтверждение личного владения фризской лошадью.'],
+ bay:['Знаменитый гнедой скакун','Американский предприниматель Чарльз С. Говард владел знаменитым гнедым скакуном Сухарём (Seabiscuit). Это другая порода, не костанайская.'],
+ grey:['Наполеон и Маренго','Наполеон Бонапарт ездил на знаменитом сером арабском коне Маренго. Его история связана с военными походами начала XIX века.'],
+ palomino:['Рой Роджерс и Триггер','Актёр и певец Рой Роджерс владел золотистым конём Триггером, прославившимся в вестернах XX века. Триггер был паломино по масти.']
+};
 function revealHorseFacts(box){
  // Show both horse-history facts immediately; no letter-by-letter animation.
  horseFactTypingId++;
@@ -228,7 +234,7 @@ function choose(){
  if(horseChoiceConfirmed){
   const gallops={black:"black.gif",bay:"bay_kostanay.gif",grey:"white_arabian.gif",palomino:"palomino.gif"};
   const story=selectedHorseStory||nextHorseStory(horse);
-  box.innerHTML=`<div class="chosen-horse"><aside class="horse-fact horse-fact-left"><b>${story[0]}</b><span>${story[1]}</span></aside><img class="gallop-gif selected-horse-animation" src="${lowPowerMode()?'images/'+photos[horse]:'images/animations/'+gallops[horse]}" alt="Скачущая лошадь — ${labels[horse]}" onerror="this.onerror=null;this.src=\'images/${photos[horse]}\'"></div>`;
+  box.innerHTML=`<div class="chosen-horse"><aside class="horse-fact horse-fact-left"><b>${story[0]}</b><span>${story[1]}</span></aside><img class="gallop-gif selected-horse-animation" src="${lowPowerMode()?'images/'+photos[horse]:'images/animations/'+gallops[horse]}" alt="Скачущая лошадь — ${labels[horse]}" onerror="this.onerror=null;this.src=\'images/${photos[horse]}\'"><aside class="horse-fact horse-fact-right"><b>${FAMOUS_HORSE_PEOPLE[horse][0]}</b><span>${FAMOUS_HORSE_PEOPLE[horse][1]}</span></aside></div>`;
   revealHorseFacts(box);
  }else{
   box.innerHTML=coats.map(c=>`<button type="button" class="horse-choice" data-horse="${c}" aria-label="Выбери меня — ${labels[c]}" title="${labels[c]}"><span>Выбери меня</span></button>`).join('');
