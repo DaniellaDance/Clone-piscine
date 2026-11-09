@@ -1028,3 +1028,13 @@ body.low-power-mode .runner{will-change:auto!important}
 .it-news-card a:hover{text-decoration:underline}
 .it-news-card time{font-size:12px;color:#647469;margin-top:auto}
 @media(max-height:500px) and (orientation:landscape){.it-news-dialog{padding:8px 15px!important}.it-news-head h2{font-size:20px}.it-news-card{padding:10px}.it-news-items{gap:8px}}
+
+/* All players arrived: accessible modal above IT News */
+.players-ready-dialog{box-sizing:border-box;position:fixed;inset:0;margin:auto;max-width:min(94vw,540px);width:calc(100% - 24px);max-height:90dvh;border:2px solid #c69a3b;border-radius:22px;padding:clamp(18px,4vw,32px);background:linear-gradient(165deg,#fffdf0,#f7e9bf);color:#3c3828;box-shadow:0 15px 50px #0005;text-align:center;overflow:auto}
+.players-ready-dialog::backdrop{background:#16261db0}
+.players-ready-content{display:flex;flex-direction:column;align-items:center;gap:13px}
+.players-ready-symbol{font-size:clamp(35px,8vw,60px)}
+.players-ready-dialog h2{font-size:clamp(23px,5vw,34px);line-height:1.2;margin:0}
+.players-ready-dialog p{font-size:clamp(14px,2.8vw,18px);line-height:1.45;margin:0}
+.players-ready-dialog button{min-height:48px;padding:10px 25px}
+@media(orientation:landscape) and (max-height:450px){.players-ready-dialog{padding:12px}.players-ready-content{gap:7px}.players-ready-symbol{font-size:27px}.players-ready-dialog h2{font-size:22px}.players-ready-dialog p{font-size:13px}}
