@@ -939,3 +939,9 @@ body[data-season] #race .question-stage .options{flex:0 0 auto!important;min-hei
  #race .answer-cloud{max-width:100%!important;flex:1 1 29%!important;min-width:0!important;transform:none!important}
  #race .skip-question{flex:0 1 auto!important}
 }
+
+/* Automatic low-bandwidth and low-power experience */
+body.low-power-mode *,body.low-power-mode *::before,body.low-power-mode *::after{animation:none!important;transition:none!important;backdrop-filter:none!important;scroll-behavior:auto!important}
+body.low-power-mode .track,body.low-power-mode #setup{background-attachment:scroll!important}
+body.low-power-mode .runner{will-change:auto!important}
+@media(prefers-reduced-motion:reduce){.runner,.gallop-gif,.selected-horse-animation{animation:none!important;transition:none!important}}
