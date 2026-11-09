@@ -575,3 +575,16 @@ body:has(#setup.horsecup-splash:not([hidden])) main{max-width:none;width:100%;he
    height:50px!important;
  }
 }
+
+
+/* Final approved splash art: no premature "Играть" printed on either image. */
+@media (orientation:portrait){
+ #setup.horsecup-splash:not([hidden]){
+  background-image:url("images/a_vibrant_high_detail_game_splash_screen_menu_f.png")!important;
+ }
+}
+@media (orientation:landscape){
+ #setup.horsecup-splash:not([hidden]){
+  background-image:url("images/a_vibrant_detailed_widescreen_game_title_splash_f.png")!important;
+ }
+}
