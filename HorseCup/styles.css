@@ -797,3 +797,14 @@ body[data-screen="race"] #race #question[hidden]{display:none!important}
  body[data-screen="race"] #race .question-stage .answer-cloud{font-size:17px!important;min-height:72px!important;max-width:400px!important;justify-self:center}
  body[data-screen="race"] #race .question pre{font-size:13px!important}
 }
+
+
+/* Aspect-ratio safe splash: never stretch horses or the HorseCup lettering. */
+@media (orientation:portrait),(orientation:landscape){
+ #setup.horsecup-splash:not([hidden]){
+   background-size:contain!important;
+   background-position:center center!important;
+   background-repeat:no-repeat!important;
+   background-color:#121e47!important;
+ }
+}
