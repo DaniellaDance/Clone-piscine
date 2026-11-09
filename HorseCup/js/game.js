@@ -117,6 +117,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 function error(message){if(document.body.dataset.screen==='setup'&&!$('entry').hidden){const status=$('entryStatus');status.textContent=message;status.hidden=false;status.style.color='#fff';status.style.background='#a42b38';status.style.padding='12px';status.style.borderRadius='12px';status.scrollIntoView({block:'nearest',behavior:'smooth'});} $('error').textContent=message;$('error').hidden=false;clearTimeout(errorTimer);errorTimer=setTimeout(()=>$('error').hidden=true,7000)}
 let exitNewsPending=false;
 function askExitNews(){exitNewsPending=true;const dialog=$('exitNewsPrompt');if(!dialog.open)dialog.showModal()}
+function openNewsReader(){const prompt=$('exitNewsPrompt');if(prompt.open)prompt.close();const news=$('itNewsDialog');if(!news.open)news.showModal();loadItNews()}
+
 async function finishExitNews(){exitNewsPending=false;if($('exitNewsPrompt').open)$('exitNewsPrompt').close();if($('itNewsDialog').open)$('itNewsDialog').close();const previous=session;if(previous){try{await api('leave',{})}catch(e){console.warn('Could not leave room',e)}}resetSetup()}
 
 let readyAnnouncedRoom='';
@@ -134,10 +136,10 @@ function updateItNewsButton(){}
 async function loadItNews(){
  const panel=$('itNewsItems');panel.textContent='Загружаем свежие заголовки…';
  try{
-  const response=await fetch('api/it-news',{cache:'no-store',signal:AbortSignal.timeout(12000)});
+  const response=await fetch('api/it-news',{cache:'no-store',signal:typeof AbortSignal.timeout==='function'?AbortSignal.timeout(12000):undefined});
   if(!response.ok)throw Error('Не удалось получить новости');
   const data=await response.json();
-  if(!data.items?.length){panel.textContent='Свежие заголовки временно недоступны. Попробуйте обновить позже.';return}
+  if(!data.items?.length){panel.innerHTML='<p>Свежие заголовки временно недоступны.</p><a href="https://news.google.com/search?q=technology%20AI&hl=ru&gl=KZ&ceid=KZ%3Aru" target="_blank" rel="noopener noreferrer">Открыть IT-новости в Google News</a>';return}
   panel.replaceChildren();
   for(const item of data.items){
    if(!/^https:\/\//.test(item.url))continue;
@@ -147,7 +149,7 @@ async function loadItNews(){
    const time=document.createElement('time');const d=new Date(item.published);time.textContent=Number.isNaN(d.getTime())?'':d.toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
    article.append(tag,link,time);panel.append(article);
   }
- }catch{panel.textContent='Не удалось загрузить новости. Проверьте интернет и попробуйте ещё раз.'}
+ }catch{panel.innerHTML='<p>Не удалось загрузить заголовки. Попробуйте обновить.</p><a href="https://news.google.com/search?q=technology%20AI&hl=ru&gl=KZ&ceid=KZ%3Aru" target="_blank" rel="noopener noreferrer">Читать IT-новости в Google News</a>'}
 }
 function show(id){if(id!=='result'&&$('itNewsDialog')?.open)$('itNewsDialog').close();if(id!=='lobby'&&$('allPlayersReadyDialog')?.open)$('allPlayersReadyDialog').close();if(id!=='setup')horseFactTypingId++;document.body.dataset.screen=id;for(const key of ['accountScreen','setup','lobby','race','result'])$(key).hidden=key!==id}
 const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
@@ -256,7 +258,8 @@ $('closeDistance').addEventListener('click',()=>$('distanceDialog').close());$('
 $('copyCode').addEventListener('click',async()=>{if(nativeApp){location.href='horsecup-copy://room?room='+session.code;return}try{await navigator.clipboard.writeText(session.code);$('copyCode').textContent='Номер скопирован'}catch{error('Номер комнаты: '+session.code)}});
 $('shareRoom').addEventListener('click',async()=>{const url=new URL('./',location.href);url.searchParams.set('room',session.code);if(nativeApp){location.href='horsecup-share://room?room='+session.code;return}try{if(navigator.share)await navigator.share({title:'HorseCup · комната '+session.code,text:'Присоединяйся к заезду! Комната '+session.code,url:url.href});else{await navigator.clipboard.writeText(url.href);$('shareRoom').textContent='Ссылка скопирована'}}catch(e){if(e.name!=='AbortError')error('Ссылка на комнату: '+url.href)}});
 $('readyReturnToLobby').addEventListener('click',()=>{if($('allPlayersReadyDialog').open)$('allPlayersReadyDialog').close();if($('itNewsDialog').open)$('itNewsDialog').close();$('start').focus()});
-$('acceptExitNews').addEventListener('click',()=>{if($('exitNewsPrompt').open)$('exitNewsPrompt').close();$('itNewsDialog').showModal();loadItNews()});
+$('acceptExitNews').addEventListener('click',openNewsReader);
+$('openResultNews').addEventListener('click',openNewsReader);
 $('declineExitNews').addEventListener('click',finishExitNews);
 $('finishAfterNews').addEventListener('click',finishExitNews);
 $('cancelExitNews').addEventListener('click',()=>{exitNewsPending=false;$('exitNewsPrompt').close()});
