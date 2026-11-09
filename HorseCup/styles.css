@@ -710,3 +710,37 @@ body[data-season] #race .question-stage .answer-cloud:hover,body[data-season] #r
 .runner img.ai-blue-horse,.participant img.ai-blue-horse{animation:none!important;filter:grayscale(1) sepia(1) saturate(5) hue-rotate(165deg) brightness(1.3) drop-shadow(0 0 5px #1aaeff)!important}
 .track .runner.galloping .race-horse-photo{animation:none!important}
 @media(max-width:700px){body[data-season] #race .question-stage .options{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))!important;gap:12px!important}body[data-season] #race .question-stage .answer-cloud{width:100%!important;max-width:100%!important;min-width:0!important;font-size:14px!important;padding:15px 12px!important}}
+
+/* Stable grass coordinates: the painted scenery occupies the upper 44%. */
+body[data-season] #race .track{position:relative!important;display:block!important;height:clamp(250px,39dvh,410px)!important;max-height:none!important;min-height:250px!important;background-size:100% 100%!important;background-position:center!important;padding:8px!important}
+#race .track .track-head{position:absolute;top:9px;left:12px;right:12px;height:20px!important;z-index:6}
+#race .track .lanes{position:absolute!important;top:44%!important;bottom:18%!important;left:12px!important;right:12px!important;height:auto!important;width:auto!important;padding:0!important;display:grid!important;grid-template-rows:repeat(var(--active-lanes),minmax(0,1fr))!important;gap:0!important}
+#race .track .lane{min-height:0!important;height:100%!important;align-items:stretch!important}
+#race .track .lane-road{border:0!important;height:100%!important}
+#race .track .runner{bottom:0!important;width:clamp(68px,18vw,115px)!important;height:clamp(46px,7.5dvh,72px)!important;min-height:0!important;max-height:none!important}
+#race .track .runner img{object-fit:contain!important;object-position:center bottom!important}
+#race .track .lane-score{top:auto!important;bottom:4px!important;right:2px!important;font-size:11px!important;background:#254829b8;border-radius:8px;padding:3px 6px}
+/* A single cloud silhouette keeps the green puffs behind the answer text. */
+body[data-season] #race .question-stage{background:#f0f8e9!important;border-color:#a5c88b!important}
+body[data-season] #race .question-stage .options{align-content:center!important;align-items:center!important;gap:18px!important;padding:14px 4px!important}
+body[data-season] #race .question-stage .answer-cloud{
+ background: #d9efc9!important;
+ background-image:none!important;
+ color:#254629!important;
+ border:2px solid #98bd80!important;
+ border-radius:38px!important;
+ box-shadow:0 4px 0 #83a76c38!important;
+ transform:none!important;
+ min-height:68px!important;
+ padding:20px 18px!important;
+ line-height:1.4!important;
+ position:relative;
+ isolation:isolate;
+}
+body[data-season] #race .question-stage .answer-cloud::before,body[data-season] #race .question-stage .answer-cloud::after{content:none!important;display:none!important}
+body[data-season] #race .question-stage .answer-cloud:hover,body[data-season] #race .question-stage .answer-cloud:focus-visible{background:#c7e7b2!important;border-color:#6b9e54!important;outline-color:#6b9e54!important}
+@media(max-width:700px){body[data-season] #race .question-stage .options{grid-template-columns:1fr!important;gap:12px!important;flex:0 0 auto!important}body[data-season] #race .question-stage .answer-cloud{min-height:60px!important;padding:16px!important;font-size:15px!important}body[data-season] #race .track{height:clamp(240px,35dvh,360px)!important;min-height:240px!important}#race .track .runner{width:clamp(70px,22vw,100px)!important;height:clamp(46px,7dvh,64px)!important}}
+
+body[data-season] #race .question-stage .answer-cloud{background:transparent url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22320%22%20height%3D%22110%22%20viewBox%3D%220%200%20320%20110%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M32%20100C-3%20100-4%2052%2025%2045C21%2016%2058%205%2080%2026C101%202%20141%207%20154%2028C178%207%20212%2014%20225%2036C254%2015%20291%2030%20289%2053C323%2058%20322%20100%20286%20100Z%22%20fill%3D%22%23d9efc9%22%20stroke%3D%22%2398bd80%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E") center/100% 100% no-repeat!important;border:0!important;border-radius:0!important;box-shadow:none!important;min-height:82px!important;padding:30px 22px 18px!important}
+body[data-season] #race .question-stage .answer-cloud:hover,body[data-season] #race .question-stage .answer-cloud:focus-visible{background-color:transparent!important;filter:brightness(.97);outline:2px solid #6b9e54!important;outline-offset:2px;border-radius:28px!important}
+.account-screen{max-width:440px;margin:20px auto;padding:12px}.account-screen .entry{gap:10px;background:#f5faef;border:1px solid #aacb95}.account-screen h2{margin:0;color:#254629}.account-screen p{margin:0 0 4px}.account-screen label{font-size:14px}.account-screen small{color:#586950;font-size:12px}.account-screen .show-password{display:flex;flex-direction:row;align-items:center;gap:8px}.account-screen .show-password input{width:18px;height:18px}.account-screen #accountError{color:#a12525;min-height:20px}.account-screen input{font-size:16px}
