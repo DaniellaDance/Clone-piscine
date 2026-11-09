@@ -808,3 +808,28 @@ body[data-screen="race"] #race #question[hidden]{display:none!important}
    background-color:#121e47!important;
  }
 }
+
+
+/* Mode selection is a compact overlay, not a full-height modal. */
+@media(max-width:700px) and (orientation:portrait){
+ #setup.horsecup-splash .splash-drawer:not([hidden]):has(.mode-picker:not([hidden])){
+   position:absolute!important;
+   inset:auto!important;
+   left:50%!important;
+   bottom:clamp(75px,12dvh,125px)!important;
+   top:auto!important;right:auto!important;
+   transform:translateX(-50%)!important;
+   width:min(94vw,530px)!important;
+   height:auto!important;
+   max-height:65dvh!important;
+   padding:12px!important;
+   border:1px solid #d9af65!important;
+   border-radius:22px!important;
+   overflow-y:auto!important;
+ }
+ #setup.horsecup-splash .splash-drawer .mode-picker:not([hidden]){
+   padding:clamp(12px,3vw,20px)!important;
+   height:auto!important;
+   min-height:0!important;
+ }
+}
