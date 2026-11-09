@@ -1063,6 +1063,13 @@ body.low-power-mode .runner{will-change:auto!important}
 #setup.horsecup-splash #modePicker .play-mode b{color:#ffdc8a!important;font-size:clamp(19px,4.4vw,25px)!important}
 @media(max-height:640px){#setup.horsecup-splash:has(#modePicker:not([hidden])) #splashDrawer #modePicker.mode-picker{min-height:0!important;gap:8px!important;padding:12px!important}#setup.horsecup-splash #modePicker #dailyJokePanel .daily-joke-circle{min-height:100px!important;padding:10px!important}#setup.horsecup-splash #modePicker .play-mode{min-height:44px!important}}
 
+/* Mode selection: remove blue backdrop while preserving the colorful circular joke. */
+#setup.horsecup-splash:has(#modePicker:not([hidden])) #splashDrawer.splash-drawer:not([hidden]){background:linear-gradient(160deg,#fffaf0,#f5e8c8 60%,#e9d7ad)!important}
+#setup.horsecup-splash:has(#modePicker:not([hidden])) #splashDrawer #modePicker.mode-picker{background:rgba(255,250,236,.94)!important;color:#493822!important;border-color:#d3a54f!important;box-shadow:0 12px 40px #664a2829!important}
+#setup.horsecup-splash #modePicker>h2{color:#5a3a19!important}
+#setup.horsecup-splash #modePicker .play-mode{background:linear-gradient(180deg,#fff4d7,#e8c77f)!important;color:#49331b!important;border-color:#b48a40!important}
+#setup.horsecup-splash #modePicker .play-mode b{color:#49331b!important}
+
 /* Mode buttons: compact, same width based on "Командная игра" */
 #setup.horsecup-splash #modePicker .play-mode{width:min(100%,355px)!important;align-self:center!important;min-height:56px!important;padding:11px 18px!important;text-align:center!important;display:flex!important;align-items:center!important;justify-content:center!important}
 #setup.horsecup-splash #modePicker .play-mode b{font-size:clamp(17px,4vw,23px)!important}
