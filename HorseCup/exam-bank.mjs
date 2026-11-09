@@ -1,4 +1,4 @@
-/* 100 concrete, unambiguous Exam questions with runnable Go examples. */
+/* 100 Exam tasks: precise output questions and inline code-completion exercises. */
 export const EXAM_BANK=[
   {
     "id": "exam-2-1",
@@ -39,17 +39,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 2,
     "stage": 3,
-    "kind": "choice",
-    "q": "Что выведет программа после прибавления 1 к 25?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 25\n x++\n fmt.Println(x)\n}",
-    "opts": [
-      "27",
-      "26",
-      "25"
-    ],
-    "a": 1,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: после прибавления 1 к 25. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 25\n x++\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 26.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "x"
   },
   {
     "id": "exam-2-4",
@@ -90,17 +85,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 2,
     "stage": 6,
-    "kind": "choice",
-    "q": "Сколько элементов в срезе выведет программа?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n nums := []int{28, 29, 30}\n fmt.Println(len(nums))\n}",
-    "opts": [
-      "4",
-      "3",
-      "2"
-    ],
-    "a": 1,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: количество элементов в срезе выведет программа. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n nums := []int{28, 29, 30}\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 3.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "len(nums)"
   },
   {
     "id": "exam-2-7",
@@ -141,17 +131,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 2,
     "stage": 9,
-    "kind": "choice",
-    "q": "Что выведет программа после вычитания 2 из 36?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 36\n x -= 2\n fmt.Println(x)\n}",
-    "opts": [
-      "33",
-      "34",
-      "36"
-    ],
-    "a": 1,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: после вычитания 2 из 36. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 36\n x -= 2\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 34.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "x"
   },
   {
     "id": "exam-2-10",
@@ -243,17 +228,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 3,
     "stage": 3,
-    "kind": "choice",
-    "q": "Какой остаток от деления 109 на 3 выведет программа?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(109 % 3)\n}",
-    "opts": [
-      "1",
-      "0",
-      "2"
-    ],
-    "a": 0,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: Какой остаток от деления 109 на 3 выведет программа. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 1.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "109 % 3"
   },
   {
     "id": "exam-3-4",
@@ -294,17 +274,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 3,
     "stage": 6,
-    "kind": "choice",
-    "q": "Какую сумму выведет программа?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n a := 39\n b := 41\n fmt.Println(a+b)\n}",
-    "opts": [
-      "80",
-      "78",
-      "81"
-    ],
-    "a": 0,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: Какую сумму выведет программа. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a := 39\n b := 41\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 80.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "a+b"
   },
   {
     "id": "exam-3-7",
@@ -345,17 +320,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 3,
     "stage": 9,
-    "kind": "choice",
-    "q": "Что выведет программа после увеличения числа 42 на 3?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 42\n n += 3\n fmt.Println(n)\n}",
-    "opts": [
-      "45",
-      "42",
-      "44"
-    ],
-    "a": 0,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: после увеличения числа 42 на 3. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 42\n n += 3\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 45.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "n"
   },
   {
     "id": "exam-3-10",
@@ -447,17 +417,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 4,
     "stage": 3,
-    "kind": "choice",
-    "q": "Что выведет программа при сравнении чисел 47 и 48?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(47 == 48)\n}",
-    "opts": [
-      "true",
-      "1",
-      "false"
-    ],
-    "a": 2,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: при сравнении чисел 47 и 48. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(???)\n}",
     "explanation": "Программа выводит false.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "47 == 48"
   },
   {
     "id": "exam-4-4",
@@ -498,17 +463,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 4,
     "stage": 6,
-    "kind": "choice",
-    "q": "Какое значение вернёт функция double(50)?",
-    "code": "package main\nimport \"fmt\"\nfunc double(x int) int { return x*2 }\nfunc main() { fmt.Println(double(50)) }",
-    "opts": [
-      "50",
-      "52",
-      "100"
-    ],
-    "a": 2,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: значение вернёт функция double(50). Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc double(x int) int { return x*2 }\nfunc main() { fmt.Println(???) }",
     "explanation": "Программа выводит 100.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "double(50)"
   },
   {
     "id": "exam-4-7",
@@ -549,17 +509,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 4,
     "stage": 9,
-    "kind": "choice",
-    "q": "Что выведет программа при проверке, является ли число 106 чётным?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 106\n fmt.Println(n%2 == 0)\n}",
-    "opts": [
-      "false",
-      "0",
-      "true"
-    ],
-    "a": 2,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: при проверке, является ли число 106 чётным. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 106\n fmt.Println(???)\n}",
     "explanation": "Программа выводит true.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "n%2 == 0"
   },
   {
     "id": "exam-4-10",
@@ -651,17 +606,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 5,
     "stage": 3,
-    "kind": "choice",
-    "q": "Сколько элементов в срезе выведет программа?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n nums := []int{58, 59, 60}\n fmt.Println(len(nums))\n}",
-    "opts": [
-      "4",
-      "3",
-      "2"
-    ],
-    "a": 1,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: количество элементов в срезе выведет программа. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n nums := []int{58, 59, 60}\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 3.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "len(nums)"
   },
   {
     "id": "exam-5-4",
@@ -702,17 +652,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 5,
     "stage": 6,
-    "kind": "choice",
-    "q": "Что выведет программа после вычитания 2 из 66?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 66\n x -= 2\n fmt.Println(x)\n}",
-    "opts": [
-      "63",
-      "64",
-      "66"
-    ],
-    "a": 1,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: после вычитания 2 из 66. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 66\n x -= 2\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 64.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "x"
   },
   {
     "id": "exam-5-7",
@@ -753,17 +698,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 5,
     "stage": 9,
-    "kind": "choice",
-    "q": "Какое число выведет цикл, который выполняется 6 раз?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n count := 0\n for i := 0; i < 6; i++ { count++ }\n fmt.Println(count)\n}",
-    "opts": [
-      "7",
-      "6",
-      "5"
-    ],
-    "a": 1,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: Какое число выведет цикл, который выполняется 6 раз. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n count := 0\n for i := 0; i < 6; i++ { count++ }\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 6.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "count"
   },
   {
     "id": "exam-5-10",
@@ -855,17 +795,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 6,
     "stage": 3,
-    "kind": "choice",
-    "q": "Какую сумму выведет программа?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n a := 69\n b := 71\n fmt.Println(a+b)\n}",
-    "opts": [
-      "140",
-      "138",
-      "141"
-    ],
-    "a": 0,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: Какую сумму выведет программа. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a := 69\n b := 71\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 140.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "a+b"
   },
   {
     "id": "exam-6-4",
@@ -906,17 +841,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 6,
     "stage": 6,
-    "kind": "choice",
-    "q": "Что выведет программа после увеличения числа 72 на 3?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 72\n n += 3\n fmt.Println(n)\n}",
-    "opts": [
-      "75",
-      "72",
-      "74"
-    ],
-    "a": 0,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: после увеличения числа 72 на 3. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 72\n n += 3\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 75.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "n"
   },
   {
     "id": "exam-6-7",
@@ -957,17 +887,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 6,
     "stage": 9,
-    "kind": "choice",
-    "q": "Что выведет программа, если 75 меньше 79?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n a, b := 75, 79\n if a < b { fmt.Println(\"меньше\") } else { fmt.Println(\"больше\") }\n}",
-    "opts": [
-      "меньше",
-      "больше",
-      "ничего"
-    ],
-    "a": 0,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: Что выведет программа, если 75 меньше 79. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a, b := 75, 79\n if a < b { fmt.Println(???) }\n}",
     "explanation": "Программа выводит меньше.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "\"меньше\") } else { fmt.Println(\"больше\""
   },
   {
     "id": "exam-6-10",
@@ -1059,17 +984,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 7,
     "stage": 3,
-    "kind": "choice",
-    "q": "Какое значение вернёт функция double(80)?",
-    "code": "package main\nimport \"fmt\"\nfunc double(x int) int { return x*2 }\nfunc main() { fmt.Println(double(80)) }",
-    "opts": [
-      "80",
-      "82",
-      "160"
-    ],
-    "a": 2,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: значение вернёт функция double(80). Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc double(x int) int { return x*2 }\nfunc main() { fmt.Println(???) }",
     "explanation": "Программа выводит 160.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "double(80)"
   },
   {
     "id": "exam-7-4",
@@ -1110,17 +1030,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 7,
     "stage": 6,
-    "kind": "choice",
-    "q": "Что выведет программа при проверке, является ли число 166 чётным?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 166\n fmt.Println(n%2 == 0)\n}",
-    "opts": [
-      "false",
-      "0",
-      "true"
-    ],
-    "a": 2,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: при проверке, является ли число 166 чётным. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 166\n fmt.Println(???)\n}",
     "explanation": "Программа выводит true.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "n%2 == 0"
   },
   {
     "id": "exam-7-7",
@@ -1161,17 +1076,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 7,
     "stage": 9,
-    "kind": "choice",
-    "q": "Какое значение выведет программа после умножения 86 на 2?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 86\n x *= 2\n fmt.Println(x)\n}",
-    "opts": [
-      "88",
-      "86",
-      "172"
-    ],
-    "a": 2,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: значение выведет программа после умножения 86 на 2. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 86\n x *= 2\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 172.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "x"
   },
   {
     "id": "exam-7-10",
@@ -1263,17 +1173,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 8,
     "stage": 3,
-    "kind": "choice",
-    "q": "Что выведет программа после вычитания 2 из 96?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 96\n x -= 2\n fmt.Println(x)\n}",
-    "opts": [
-      "93",
-      "94",
-      "96"
-    ],
-    "a": 1,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: после вычитания 2 из 96. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 96\n x -= 2\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 94.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "x"
   },
   {
     "id": "exam-8-4",
@@ -1314,17 +1219,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 8,
     "stage": 6,
-    "kind": "choice",
-    "q": "Какое число выведет цикл, который выполняется 6 раз?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n count := 0\n for i := 0; i < 6; i++ { count++ }\n fmt.Println(count)\n}",
-    "opts": [
-      "7",
-      "6",
-      "5"
-    ],
-    "a": 1,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: Какое число выведет цикл, который выполняется 6 раз. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n count := 0\n for i := 0; i < 6; i++ { count++ }\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 6.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "count"
   },
   {
     "id": "exam-8-7",
@@ -1365,17 +1265,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 8,
     "stage": 9,
-    "kind": "choice",
-    "q": "Что выведет программа после прибавления 1 к 97?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 97\n x++\n fmt.Println(x)\n}",
-    "opts": [
-      "99",
-      "98",
-      "97"
-    ],
-    "a": 1,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: после прибавления 1 к 97. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n x := 97\n x++\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 98.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "x"
   },
   {
     "id": "exam-8-10",
@@ -1467,17 +1362,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 9,
     "stage": 3,
-    "kind": "choice",
-    "q": "Что выведет программа после увеличения числа 102 на 3?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 102\n n += 3\n fmt.Println(n)\n}",
-    "opts": [
-      "105",
-      "102",
-      "104"
-    ],
-    "a": 0,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: после увеличения числа 102 на 3. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n n := 102\n n += 3\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 105.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "n"
   },
   {
     "id": "exam-9-4",
@@ -1518,17 +1408,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 9,
     "stage": 6,
-    "kind": "choice",
-    "q": "Что выведет программа, если 105 меньше 109?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n a, b := 105, 109\n if a < b { fmt.Println(\"меньше\") } else { fmt.Println(\"больше\") }\n}",
-    "opts": [
-      "меньше",
-      "больше",
-      "ничего"
-    ],
-    "a": 0,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: Что выведет программа, если 105 меньше 109. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n a, b := 105, 109\n if a < b { fmt.Println(???) }\n}",
     "explanation": "Программа выводит меньше.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "\"меньше\") } else { fmt.Println(\"больше\""
   },
   {
     "id": "exam-9-7",
@@ -1569,17 +1454,12 @@ export const EXAM_BANK=[
     "lvl": "exam",
     "quest": 9,
     "stage": 9,
-    "kind": "choice",
-    "q": "Какой остаток от деления 325 на 3 выведет программа?",
-    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(325 % 3)\n}",
-    "opts": [
-      "1",
-      "0",
-      "2"
-    ],
-    "a": 0,
+    "kind": "fill",
+    "q": "Допишите выражение прямо в строке fmt.Println, чтобы программа выполнила действие: Какой остаток от деления 325 на 3 выведет программа. Используйте переменные и операции из кода.",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n fmt.Println(???)\n}",
     "explanation": "Программа выводит 1.",
-    "term": "Go"
+    "term": "Go",
+    "expected": "325 % 3"
   },
   {
     "id": "exam-9-10",
