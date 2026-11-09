@@ -1,4 +1,4 @@
-/* Original exam-style practice; 10 tasks for each Quest 2–9. */
+/* Original coding questions and bilingual terminology practice based on the Tomorrow School English textbook. */
 export const EXAM_BANK=[
   {
     "id": "exam-2-1",
@@ -815,5 +815,277 @@ export const EXAM_BANK=[
     "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\nfunc main() {\n    compare := func(a, b string) bool { return a == b }\n    // Допишите 3 строки кода здесь\n}",
     "expected": "result := compare(\"a\", \"b\")\nfmt.Println(result)\nfmt.Println(\"Готово\")",
     "stage": 10
+  },
+  {
+    "id": "exam-english-1",
+    "lvl": "exam",
+    "quest": 2,
+    "stage": 4.5,
+    "kind": "choice",
+    "q": "Переведите на русский: «return».",
+    "opts": [
+      "сохранить файл",
+      "вернуть значение",
+      "запустить программу"
+    ],
+    "a": 1,
+    "explanation": "Ключевое слово Go для возврата результата из функции.",
+    "term": "return",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-2",
+    "lvl": "exam",
+    "quest": 2,
+    "stage": 7.5,
+    "kind": "choice",
+    "q": "Переведите на английский: «цикл».",
+    "opts": [
+      "loop",
+      "directory",
+      "pointer"
+    ],
+    "a": 0,
+    "explanation": "Повторение действий по условию или диапазону; в Go используется for.",
+    "term": "loop",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-3",
+    "lvl": "exam",
+    "quest": 3,
+    "stage": 4.5,
+    "kind": "choice",
+    "q": "Переведите на русский: «function».",
+    "opts": [
+      "папка",
+      "функция",
+      "консоль"
+    ],
+    "a": 1,
+    "explanation": "Именованный блок инструкций с параметрами и возможным результатом.",
+    "term": "function",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-4",
+    "lvl": "exam",
+    "quest": 3,
+    "stage": 7.5,
+    "kind": "choice",
+    "q": "Переведите на английский: «срез».",
+    "opts": [
+      "slice",
+      "variable",
+      "loop"
+    ],
+    "a": 0,
+    "explanation": "Динамическое представление последовательности элементов Go с длиной и ёмкостью.",
+    "term": "slice",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-5",
+    "lvl": "exam",
+    "quest": 4,
+    "stage": 4.5,
+    "kind": "choice",
+    "q": "Переведите на русский: «pointer».",
+    "opts": [
+      "сравнение",
+      "указатель",
+      "пакет"
+    ],
+    "a": 1,
+    "explanation": "Значение, содержащее адрес другой переменной в памяти.",
+    "term": "pointer",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-6",
+    "lvl": "exam",
+    "quest": 4,
+    "stage": 7.5,
+    "kind": "choice",
+    "q": "Переведите на английский: «строка».",
+    "opts": [
+      "string",
+      "directory",
+      "pointer"
+    ],
+    "a": 0,
+    "explanation": "Тип данных Go для последовательности байтов, обычно содержащей UTF-8.",
+    "term": "string",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-7",
+    "lvl": "exam",
+    "quest": 5,
+    "stage": 4.5,
+    "kind": "choice",
+    "q": "Переведите на русский: «error».",
+    "opts": [
+      "результат",
+      "ошибка",
+      "условие"
+    ],
+    "a": 1,
+    "explanation": "Ошибка означает проблему выполнения или обработки; в Go часто возвращается значение типа error.",
+    "term": "error",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-8",
+    "lvl": "exam",
+    "quest": 5,
+    "stage": 7.5,
+    "kind": "choice",
+    "q": "Переведите на английский: «вывести».",
+    "opts": [
+      "print",
+      "directory",
+      "pointer"
+    ],
+    "a": 0,
+    "explanation": "Вывод результата на экран или стандартный поток вывода.",
+    "term": "print",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-9",
+    "lvl": "exam",
+    "quest": 6,
+    "stage": 4.5,
+    "kind": "choice",
+    "q": "Переведите на русский: «array».",
+    "opts": [
+      "срез",
+      "массив",
+      "карта"
+    ],
+    "a": 1,
+    "explanation": "Последовательность фиксированной длины из элементов одного типа.",
+    "term": "array",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-10",
+    "lvl": "exam",
+    "quest": 6,
+    "stage": 7.5,
+    "kind": "choice",
+    "q": "Переведите на английский: «параметр».",
+    "opts": [
+      "parameter",
+      "variable",
+      "loop"
+    ],
+    "a": 0,
+    "explanation": "Имя входного значения, объявленное в определении функции.",
+    "term": "parameter",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-11",
+    "lvl": "exam",
+    "quest": 7,
+    "stage": 4.5,
+    "kind": "choice",
+    "q": "Переведите на русский: «index».",
+    "opts": [
+      "команда",
+      "индекс",
+      "оператор"
+    ],
+    "a": 1,
+    "explanation": "Позиция элемента в последовательности, обычно начиная с нуля.",
+    "term": "index",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-12",
+    "lvl": "exam",
+    "quest": 7,
+    "stage": 7.5,
+    "kind": "choice",
+    "q": "Переведите на английский: «длина».",
+    "opts": [
+      "length",
+      "directory",
+      "pointer"
+    ],
+    "a": 0,
+    "explanation": "Количество элементов или байтов, которое возвращает len в зависимости от типа.",
+    "term": "length",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-13",
+    "lvl": "exam",
+    "quest": 8,
+    "stage": 4.5,
+    "kind": "choice",
+    "q": "Переведите на русский: «range».",
+    "opts": [
+      "рекурсия",
+      "диапазон",
+      "компилятор"
+    ],
+    "a": 1,
+    "explanation": "Конструкция Go для перебора элементов массива, среза, строки или map.",
+    "term": "range",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-14",
+    "lvl": "exam",
+    "quest": 8,
+    "stage": 7.5,
+    "kind": "choice",
+    "q": "Переведите на английский: «условие».",
+    "opts": [
+      "condition",
+      "directory",
+      "pointer"
+    ],
+    "a": 0,
+    "explanation": "Логическое выражение, от которого зависит выполнение ветви кода.",
+    "term": "condition",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-15",
+    "lvl": "exam",
+    "quest": 9,
+    "stage": 4.5,
+    "kind": "choice",
+    "q": "Переведите на русский: «factorial».",
+    "opts": [
+      "остаток",
+      "факториал",
+      "индекс"
+    ],
+    "a": 1,
+    "explanation": "Произведение всех положительных целых чисел от 1 до n; 0! равен 1.",
+    "term": "factorial",
+    "kmPerCorrect": 100
+  },
+  {
+    "id": "exam-english-16",
+    "lvl": "exam",
+    "quest": 9,
+    "stage": 7.5,
+    "kind": "choice",
+    "q": "Переведите на английский: «рекурсия».",
+    "opts": [
+      "recursion",
+      "variable",
+      "loop"
+    ],
+    "a": 0,
+    "explanation": "Приём, при котором функция вызывает себя; требуется условие остановки.",
+    "term": "recursion",
+    "kmPerCorrect": 100
   }
 ];
