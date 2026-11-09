@@ -854,3 +854,20 @@ body:has(#setup:not([hidden]))>header,body:has(#setup:not([hidden]))>footer{disp
  #setup.horsecup-splash .splash-drawer .entry .tabs{background:transparent!important;box-shadow:none!important;border:0!important;padding:0!important;min-height:0!important}
  #setup.horsecup-splash .splash-drawer .entry .tabs #entryModeTitle{background:transparent!important;color:#fff2c9!important;padding:0!important;border:0!important}
 }
+
+
+/* Exam: ten visible mountain ledges, horse climbs one ledge for ten correct answers. */
+#track.exam-track{position:relative;overflow:hidden;min-height:clamp(280px,46dvh,520px);background:linear-gradient(180deg,#8dd1ec 0%,#b7ddec 40%,#7a9c88 100%)!important;border-radius:22px}
+#track.exam-track .track-head,#track.exam-track #lanes{display:none!important}
+#examMountain[hidden]{display:none!important}
+#examMountain{position:relative;height:clamp(280px,46dvh,520px);width:100%;overflow:hidden;background:linear-gradient(155deg,transparent 33%,#77937f 33.3%,#445f58 88%);isolation:isolate}
+#examMountain:before{content:"";position:absolute;inset:9% 4% 0;background:linear-gradient(140deg,#e8edf0 0 17%,#a5b3ad 18% 29%,#546e64 60%,#2f4b47 100%);clip-path:polygon(50% 0,100% 100%,0 100%);z-index:-1}
+.exam-peak{position:absolute;top:2%;left:50%;transform:translateX(-50%);font-weight:900;color:#183c44;text-shadow:0 1px 2px #fff;white-space:nowrap}
+.exam-steps{position:absolute;inset:0}
+.exam-step{position:absolute;left:calc(7% + var(--step)*5.4%);bottom:calc(10% + var(--step)*7.4%);width:35%;height:14px;border-radius:9px;background:#c5c8a6;border-bottom:5px solid #627a5b;box-shadow:0 5px 7px #253b4260}
+.exam-step.passed{background:#f6d46e;border-bottom-color:#b17b30}
+.exam-step span{position:absolute;right:7px;bottom:12px;font-size:11px;font-weight:900;color:#fff;text-shadow:0 1px 4px #173b3c}
+.exam-horse{position:absolute;left:calc(8% + var(--climb)*5.4%);bottom:calc(11% + var(--climb)*7.4%);width:clamp(60px,17%,135px);height:90px;transition:left .75s ease,bottom .75s ease;z-index:2;display:flex;align-items:flex-end}
+.exam-horse img{width:100%;height:100%;object-fit:contain}
+.exam-step-caption{position:absolute;bottom:2%;left:50%;transform:translateX(-50%);background:#123b4bc9;border-radius:20px;color:white;font-weight:800;padding:5px 12px;white-space:nowrap;font-size:clamp(11px,2.7vw,15px)}
+@media(max-width:700px){#track.exam-track,#examMountain{min-height:290px;height:36dvh;max-height:420px}.exam-horse{height:75px}}
