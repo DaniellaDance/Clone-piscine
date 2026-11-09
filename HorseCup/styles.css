@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 :root{--green:#146447;--deep:#123a2c;--cream:#f7f4e9;--gold:#e8b651;--ink:#233d31}*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--cream);color:var(--ink);font:14px Manrope,Arial,sans-serif}button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:11px 15px;background:#e8eee4;color:var(--deep);font-weight:700}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e8b651;outline-offset:3px}header{height:78px;display:flex;justify-content:space-between;align-items:center;padding:0 4vw;border-bottom:1px solid #dce2d6;background:#fbfaf5}.logo{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--green);font-size:38px}.logo>span{font-size:22px;font-weight:800;letter-spacing:1px}.logo>span>span{color:#a46d24}.logo small{display:block;font-size:9px;letter-spacing:1.4px;font-weight:600}.head-right{display:flex;align-items:center;gap:18px;font-size:12px}main{max-width:1440px;margin:auto;padding:26px 4vw 16px}.screen{min-width:0}.setup,.lobby{display:grid;grid-template-columns:1fr 1fr;gap:5vw;align-items:center;min-height:calc(100dvh - 170px)}.intro h1{font-size:clamp(32px,4.3vw,61px);line-height:1.12;letter-spacing:-2px;margin:20px 0}.intro h1 em{font-style:normal;color:#9c6a24}.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:9px;font-weight:800;color:#718775}p{line-height:1.6}.intro>p{font-size:16px;max-width:440px;color:#69796a}.rules{display:flex;flex-direction:column;gap:14px;font-size:13px;margin-top:30px}.entry,.lobby-card{background:white;border:1px solid #dde3d7;border-radius:20px;padding:22px;box-shadow:0 14px 40px #3f5b2a08}.entry{display:flex;flex-direction:column;gap:14px}.tabs{display:flex;gap:5px;padding:4px;background:#f0f3eb;border-radius:11px}.tabs button{flex:1;font-size:12px;background:transparent}.tabs button.active{background:var(--green);color:white}.entry label{display:flex;flex-direction:column;gap:6px;font-size:11px;font-weight:700}.entry input,.entry select{width:100%;padding:11px;background:#fafbf7;border:1px solid #dce3d4;border-radius:8px;color:var(--ink);min-width:0}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}fieldset{border:0;margin:0;padding:0;min-width:0}legend{font-size:11px;font-weight:700;padding:0;margin-bottom:8px}.horses{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.horse-choice{padding:2px 5px;background:#f8f8f1;border:2px solid transparent;border-radius:10px;min-width:0}.horse-choice svg{display:block;width:100%;height:70px;object-fit:contain}.horse-choice.selected{border-color:var(--green);background:#e9f1e5}.horse-choice span{font-size:9px;font-weight:600}.primary{background:var(--green);color:white;padding:14px 20px}.secondary{background:#eee9d7;color:#66552e}.hint{font-size:10px;color:#75806f;margin:0}.section-head{display:flex;align-items:center;justify-content:space-between}.section-head h2{font-size:19px}.lobby-intro h1{font-size:34px;letter-spacing:-1px}.lobby-intro h1 span{display:block;letter-spacing:7px;font-size:48px;color:var(--green)}.participant{display:flex;gap:14px;align-items:center;border-bottom:1px solid #edf0e7;padding:8px 0}.participant svg{width:90px;height:60px}.participant b{display:block}.participant small{color:#748270;font-size:10px}.lobby-card>.primary,.lobby-card>.secondary{width:100%;margin-top:10px}.race{height:calc(100dvh - 150px);display:flex;flex-direction:column;gap:14px}.race-toolbar{display:flex;justify-content:space-between;align-items:center;flex-shrink:0;height:62px}.race-toolbar h1{font-size:23px;margin:5px 0}.score{display:flex;gap:20px;text-align:right}.score span{font-size:10px;color:#71816c}.score b{display:block;font-size:26px;font-variant-numeric:tabular-nums;color:var(--green)}.track{width:100%;height:236px;flex-shrink:0;overflow:hidden;border:1px solid #c6d3a9;border-radius:14px;background:linear-gradient(#dbe8b7,#d2dfaa);padding:10px 14px;box-shadow:inset 0 0 0 5px #f0f1d7}.track-head{display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:1px;height:22px}.track-head>span:nth-child(2){letter-spacing:0;font-size:9px;color:#647846}.lanes{display:grid;grid-template-rows:repeat(4,1fr);height:188px;gap:4px}.lane{display:grid;grid-template-columns:112px minmax(0,1fr) 65px;align-items:center;gap:10px;min-height:0}.lane-name{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lane-name small{font-size:8px;display:block;color:#6c7956}.lane.me .lane-name{font-weight:800;color:#8f5018}.lane-road{height:100%;position:relative;background:#d9c6a2;border-top:1px solid #ac986b;border-bottom:1px solid #ac986b;border-radius:6px}.lane-road::after{content:'';position:absolute;right:3px;top:0;bottom:0;width:5px;background:#f8f5e7}.runner{position:absolute;left:0;bottom:-3px;width:65px;height:48px;transition:left .65s ease;z-index:2}.runner svg{width:100%;height:100%;overflow:visible}.lane-score{text-align:right;font-size:13px;font-weight:800}.lane.empty{opacity:.25}.question-stage{background:#d8eaf0;border:1px solid #c2d9e1;border-radius:15px;flex:1;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;padding:14px 20px;overflow:hidden}.question{width:100%;height:100%;display:flex;flex-direction:column;min-height:0}.question-meta{display:flex;justify-content:space-between;font-size:9px;color:#527381;font-weight:800}.question h2{text-align:center;font-size:clamp(15px,1.5vw,22px);line-height:1.35;margin:9px 0;flex-shrink:0}.question pre{background:#f7fcfd;border:1px solid #bbd3dd;border-radius:8px;padding:9px 15px;margin:0 auto;font-size:11px;max-width:100%;max-height:115px;overflow:auto;flex-shrink:1}.options{display:flex;align-items:center;justify-content:space-around;gap:16px;flex:1;min-height:90px;padding:10px 7px}.answer-cloud{position:relative;background:#fff;border-radius:48% 42% 43% 46%;padding:18px 20px;min-height:65px;max-width:31%;flex:1;box-shadow:0 6px 0 #a3c5d54a;font-size:12px;line-height:1.5;color:#244b5e;border:2px solid transparent;isolation:isolate}.answer-cloud::before,.answer-cloud::after{content:'';position:absolute;z-index:-1;background:inherit;border-radius:50%;width:35%;height:55%;top:-12%;left:15%}.answer-cloud::after{left:auto;right:12%;top:-9%;width:38%;height:65%}.answer-cloud:nth-child(2){transform:translateY(9px) rotate(2deg)}.answer-cloud:first-child{transform:translateY(-5px) rotate(-2deg)}.answer-cloud:nth-child(3){transform:translateY(-8px) rotate(-1deg)}.answer-cloud:hover{border-color:#6b9d8a}.answer-cloud code{white-space:normal;overflow-wrap:anywhere}#feedback{font-size:11px;margin:0;min-height:18px;text-align:center;color:#315c4a}.countdown{text-align:center}.countdown>span{display:block;font-size:13px;color:#56717b}.countdown strong{display:block;font-size:82px;line-height:1.3;color:var(--green)}#exhausted{max-width:470px;text-align:center}.result{max-width:700px;margin:15px auto;text-align:center}.trophy{font-size:70px;margin:14px}.result h1{font-size:32px}.result>p{color:#77816f}.standings{background:white;border:1px solid #dde3d7;border-radius:14px;padding:12px;margin:20px 0}.place{display:flex;align-items:center;gap:10px;padding:9px;text-align:left;border-bottom:1px solid #eee}.place svg{width:75px;height:45px}.place>b:last-child{margin-left:auto}.result>.primary,.result>.secondary{margin:6px}.error{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);background:#fff1ee;border:1px solid #d99a8f;padding:12px 20px;border-radius:10px;z-index:20;max-width:calc(100% - 30px);color:#9d3d2f;font-size:12px}footer{display:flex;justify-content:space-between;font-size:9px;color:#89957c;padding:10px 4vw;height:30px;gap:10px}body:has(.race:not([hidden])){overflow:hidden}
 @media(max-width:700px){header{height:60px;padding:0 12px}.logo{font-size:30px;gap:5px}.logo>span{font-size:16px}.logo small{font-size:7px}.head-right{gap:7px;font-size:9px}header button{font-size:9px;padding:8px}main{padding:12px}.setup,.lobby{grid-template-columns:1fr;gap:16px;min-height:0}.intro h1{font-size:29px;letter-spacing:-1px;margin:9px 0}.intro h1 br{display:none}.intro>p{font-size:12px;margin:8px 0}.eyebrow{font-size:8px;letter-spacing:1px}.rules{flex-direction:row;flex-wrap:wrap;gap:8px;font-size:9px;margin:10px 0}.entry,.lobby-card{padding:15px;border-radius:14px;gap:12px}.horse-choice svg{height:58px}.lobby-intro h1{font-size:25px;margin:10px 0}.lobby-intro h1 span{display:inline;font-size:30px;letter-spacing:3px}.race{height:calc(100dvh - 113px);gap:10px}.race-toolbar{height:46px}.race-toolbar h1{font-size:18px}.score{gap:13px}.score b{font-size:23px}.track{height:205px;padding:8px}.track-head{font-size:8px;height:21px}.track-head>span:nth-child(2){display:none}.lanes{height:165px;gap:4px}.lane{grid-template-columns:67px minmax(0,1fr) 46px;gap:5px}.lane-name{font-size:9px}.lane-name small{font-size:7px}.runner{width:49px;height:38px;bottom:-2px}.lane-score{font-size:11px}.question-stage{padding:10px 9px}.question h2{font-size:13px;margin:8px 0}.question pre{font-size:9px;max-height:100px;padding:8px;line-height:1.4}.options{gap:8px;min-height:80px;padding:8px 2px}.answer-cloud{font-size:10px;max-width:32%;padding:13px 7px;min-height:55px;overflow-wrap:anywhere}#feedback{font-size:9px;min-height:15px}footer{padding:6px 12px;font-size:7px;height:25px}footer>span{display:none}.result{margin:12px auto}.result h1{font-size:26px}.result .trophy{font-size:52px}.result .place svg{width:60px}.question-meta{font-size:8px}}
 @media(max-height:650px){.race{gap:7px}.track{height:174px}.lanes{height:132px}.runner{height:34px;width:49px}.race-toolbar{height:38px}.question h2{margin:5px 0;font-size:12px}.question pre{max-height:70px;font-size:9px}.options{min-height:65px;padding-top:5px;padding-bottom:4px}.answer-cloud{padding:10px 7px;min-height:45px}.question-stage{padding:8px}.question-meta{font-size:8px}}
@@ -41,7 +40,7 @@ dialog{border:1px solid #d3ddc6;border-radius:18px;max-width:min(440px,calc(100v
 .result.awaiting-ceremony>*{visibility:hidden}.result.awaiting-ceremony{min-height:65vh}.reward-cinema .reward-sky:before{content:'♞  HORSECUP  ♞';display:block;color:#ffe3a0;font-family:Georgia,serif;font-size:clamp(15px,3vw,26px);letter-spacing:.14em;text-shadow:0 2px 12px #000;z-index:2}.reward-sky{background:radial-gradient(ellipse at 50% 95%,#c98d3b55,transparent 62%);border-radius:30px}.reward-cinema-count,.reward-cinema-shoe strong{filter:drop-shadow(0 0 9px #dba22b)}
 
 /* Approved uploaded artwork: the counters are live text, not part of the image. */
-.reward-cinema{background:linear-gradient(180deg,#100a09a8,#140b06aa),url('images/%D0%9F%D1%80%D0%B0%D0%B7%D0%B4%D0%BD%D0%B8%D1%87%D0%BD%D0%B0%D1%8F%20%D0%BD%D0%B0%D0%B3%D1%80%D0%B0%D0%B4%D0%B0%20HorseCup%20%D0%BD%D0%B0%20%D0%B7%D0%B0%D0%BA%D0%B0%D1%82%D0%B5%20(1).png') center center/cover no-repeat;background-color:#382010}
+.reward-cinema{background:linear-gradient(180deg,#100a09a8,#140b06aa),url('images/%D0%9F%D1%80%D0%B0%D0%B7%D0%B4%D0%BD%D0%B8%D1%87%D0%BD%D0%B0%D1%8F%20%D0%BD%D0%B0%D0%B3%D1%80%D0%B0%D0%B4%D0%B0%20HorseCup%20%D0%BD%D0%B0%20%D0%B7%D0%B0%D0%BA%D0%B0%D1%82%D0%B5%20(1).webp') center center/cover no-repeat;background-color:#382010}
 .reward-sky{background:linear-gradient(180deg,#170e0d99,#170e0d40 38%,#160d0bba);border:2px solid #f4c76e80;box-shadow:0 0 40px #0008;border-radius:28px;padding:24px}
 .reward-sky:before{content:none!important}
 .reward-cinema-count,.reward-cinema-shoe strong{background:#231209c9;border:1px solid #f8d477;border-radius:18px;padding:10px 22px;box-shadow:0 5px 22px #0009;text-shadow:0 2px 5px #000}
@@ -148,7 +147,7 @@ body:has(#setup:not([hidden])) main{padding-top:8px;padding-bottom:6px}
 }
 
 /* Approved four-horse autumn panorama with clickable choice over each horse. */
-#setup #horses.horses{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:1fr;gap:0;width:100%;aspect-ratio:1648/928;min-height:0;flex:0 0 auto;background:url("images/%D0%92%D1%8B%D0%B1%D0%B5%D1%80%D0%B8%20%D0%BC%D0%B0%D1%81%D1%82%D1%8C_%20%D0%BE%D1%81%D0%B5%D0%BD%D0%BD%D0%B8%D0%B9%20%D0%B7%D0%B0%D0%B1%D0%B5%D0%B3.png") center/100% 100% no-repeat;border-radius:12px;overflow:hidden}
+#setup #horses.horses{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:1fr;gap:0;width:100%;aspect-ratio:1648/928;min-height:0;flex:0 0 auto;background:url("images/%D0%92%D1%8B%D0%B1%D0%B5%D1%80%D0%B8%20%D0%BC%D0%B0%D1%81%D1%82%D1%8C_%20%D0%BE%D1%81%D0%B5%D0%BD%D0%BD%D0%B8%D0%B9%20%D0%B7%D0%B0%D0%B1%D0%B5%D0%B3.webp") center/100% 100% no-repeat;border-radius:12px;overflow:hidden}
 #setup #horses .horse-choice{display:flex;align-items:flex-end;justify-content:center;position:relative;min-height:0;aspect-ratio:auto;border:0;background:transparent;padding:0 1px 5%;border-radius:0;box-shadow:none}
 #setup #horses .horse-choice span{display:block;background:#166347;color:#fff;font-size:clamp(8px,1.1vw,15px);line-height:1.2;padding:7px 4px;border:2px solid #f4c550;border-radius:24px;white-space:nowrap;box-shadow:0 2px 9px #13251a99}
 #setup #horses .horse-choice.selected,#setup #horses .horse-choice:focus-visible{border:0;background:#f6ca3033;box-shadow:inset 0 0 0 3px #ffd84a}
@@ -240,11 +239,11 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 
 /* Seasonal hippodrome: select by the player's local calendar month. Background assets
    are loaded from HorseCup/images/seasons/ when published. */
-.track{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%9E%D1%81%D0%B5%D0%BD%D0%BD%D0%B8%D0%B9%20%D0%B8%D0%BF%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%BC%20%D1%81%20%D0%B7%D0%BE%D0%BB%D0%BE%D1%82%D1%8B%D0%BC%20%D0%BA%D0%BE%D0%BD%D1%91%D0%BC-3.png");background-position:center;background-size:cover;background-repeat:no-repeat;box-shadow:inset 0 0 0 2px #ffffff88}
-.track[data-season="spring"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%92%D0%B5%D1%81%D0%B5%D0%BD%D0%BD%D0%B5%D0%B5%20%D1%81%D0%BF%D0%BE%D1%80%D1%82%D0%B8%D0%B2%D0%BD%D0%BE%D0%B5%20%D0%BF%D0%BE%D0%BB%D0%B5%20%D1%83%20%D0%B3%D0%BE%D1%80%D0%BD%D1%8B%D1%85%20%D0%B2%D0%B5%D1%80%D1%88%D0%B8%D0%BD-1.png")}
-.track[data-season="summer"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%A1%D0%BE%D0%BB%D0%BD%D0%B5%D1%87%D0%BD%D1%8B%D0%B9%20%D0%B8%D0%BF%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%BC%20%D1%81%20%D0%B7%D0%BE%D0%BB%D0%BE%D1%82%D1%8B%D0%BC%20%D0%BA%D0%BE%D0%BD%D1%91%D0%BC-2.png")}
-.track[data-season="autumn"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%9E%D1%81%D0%B5%D0%BD%D0%BD%D0%B8%D0%B9%20%D0%B8%D0%BF%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%BC%20%D1%81%20%D0%B7%D0%BE%D0%BB%D0%BE%D1%82%D1%8B%D0%BC%20%D0%BA%D0%BE%D0%BD%D1%91%D0%BC-3.png")}
-.track[data-season="winter"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%97%D0%B8%D0%BC%D0%BD%D0%B8%D0%B9%20%D0%B8%D0%BF%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%BC%20%D0%B2%20%D1%81%D0%BD%D0%B5%D0%B3%D1%83-4.png")}
+.track{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%9E%D1%81%D0%B5%D0%BD%D0%BD%D0%B8%D0%B9%20%D0%B8%D0%BF%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%BC%20%D1%81%20%D0%B7%D0%BE%D0%BB%D0%BE%D1%82%D1%8B%D0%BC%20%D0%BA%D0%BE%D0%BD%D1%91%D0%BC-3.webp");background-position:center;background-size:cover;background-repeat:no-repeat;box-shadow:inset 0 0 0 2px #ffffff88}
+.track[data-season="spring"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%92%D0%B5%D1%81%D0%B5%D0%BD%D0%BD%D0%B5%D0%B5%20%D1%81%D0%BF%D0%BE%D1%80%D1%82%D0%B8%D0%B2%D0%BD%D0%BE%D0%B5%20%D0%BF%D0%BE%D0%BB%D0%B5%20%D1%83%20%D0%B3%D0%BE%D1%80%D0%BD%D1%8B%D1%85%20%D0%B2%D0%B5%D1%80%D1%88%D0%B8%D0%BD-1.webp")}
+.track[data-season="summer"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%A1%D0%BE%D0%BB%D0%BD%D0%B5%D1%87%D0%BD%D1%8B%D0%B9%20%D0%B8%D0%BF%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%BC%20%D1%81%20%D0%B7%D0%BE%D0%BB%D0%BE%D1%82%D1%8B%D0%BC%20%D0%BA%D0%BE%D0%BD%D1%91%D0%BC-2.webp")}
+.track[data-season="autumn"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%9E%D1%81%D0%B5%D0%BD%D0%BD%D0%B8%D0%B9%20%D0%B8%D0%BF%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%BC%20%D1%81%20%D0%B7%D0%BE%D0%BB%D0%BE%D1%82%D1%8B%D0%BC%20%D0%BA%D0%BE%D0%BD%D1%91%D0%BC-3.webp")}
+.track[data-season="winter"]{background-image:linear-gradient(180deg,rgba(6,28,27,.04),rgba(10,34,20,.08)),url("images/%D0%97%D0%B8%D0%BC%D0%BD%D0%B8%D0%B9%20%D0%B8%D0%BF%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%BC%20%D0%B2%20%D1%81%D0%BD%D0%B5%D0%B3%D1%83-4.webp")}
 .track .lane-road{background:transparent;border:0;border-radius:0;border-bottom:1px dashed #ffffffa8}
 .track .lane-road::after{background:#fff9;border-radius:2px}
 .track .lane-name,.track .lane-score,.track .track-head{color:#fff;text-shadow:0 1px 3px #17271b,0 0 5px #17271b}
@@ -308,7 +307,7 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 
 
 /* HorseCup approved expandable main menu */
-#setup.horsecup-splash{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:18px;min-height:calc(100dvh - 170px);padding:28px 16px;border-radius:22px;overflow:visible;background:linear-gradient(180deg,rgba(15,27,65,.28),rgba(15,24,50,.82)),url("images/Осенний ипподром с золотым конём-3.png") center/cover no-repeat;color:#fff;text-align:center}
+#setup.horsecup-splash{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:18px;min-height:calc(100dvh - 170px);padding:28px 16px;border-radius:22px;overflow:visible;background:linear-gradient(180deg,rgba(15,27,65,.28),rgba(15,24,50,.82)),url("images/Осенний ипподром с золотым конём-3.webp") center/cover no-repeat;color:#fff;text-align:center}
 #setup.horsecup-splash .intro h1{font-family:Georgia,serif;font-size:clamp(55px,9vw,110px);color:#ffd36e;text-shadow:0 3px 2px #64320e,0 10px 24px #120d2e;margin:4px}
 #setup.horsecup-splash .intro p{color:#fff4d4;max-width:580px;margin:12px auto}
 #setup.horsecup-splash .intro .eyebrow{color:#ffe0a0}
@@ -328,7 +327,7 @@ main,.race,.race-toolbar,.race-actions,.track,.question-stage,.question,.options
 
 
 /* Approved uploaded HorseCup splash asset */
-#setup.horsecup-splash{background-image:linear-gradient(180deg,rgba(12,19,48,.04) 0%,rgba(12,19,48,.10) 48%,rgba(12,19,48,.75) 100%),url("images/Галоп к Кубку HorseCup.png");background-position:center;background-size:cover}
+#setup.horsecup-splash{background-image:linear-gradient(180deg,rgba(12,19,48,.04) 0%,rgba(12,19,48,.10) 48%,rgba(12,19,48,.75) 100%),url("images/Галоп к Кубку HorseCup.webp");background-position:center;background-size:cover}
 #setup.horsecup-splash .intro{background:rgba(12,19,48,.58);border:1px solid #e5ba69;border-radius:20px;padding:10px 22px;backdrop-filter:blur(5px)}
 #setup.horsecup-splash .intro h1{display:none}
 #setup.horsecup-splash .intro .eyebrow{font-size:12px}
@@ -366,7 +365,7 @@ body:has(#setup.horsecup-splash:not([hidden])) main{max-width:none;width:100%;he
   margin:0!important;padding:clamp(8px,2vmin,24px)!important;border:0!important;border-radius:0!important;
   display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-end!important;
   background-color:#171727!important;
-  background-image:url("images/Галоп к Кубку HorseCup.png")!important;
+  background-image:url("images/Галоп к Кубку HorseCup.webp")!important;
   background-size:contain!important;background-repeat:no-repeat!important;background-position:center center!important;
   overflow:hidden!important;gap:6px!important
 }
@@ -410,7 +409,7 @@ body:has(#setup.horsecup-splash:not([hidden])) main{max-width:none;width:100%;he
 /* Approved portrait-specific artwork; preserve the original landscape artwork. */
 @media (orientation:portrait){
  #setup.horsecup-splash:not([hidden]){
-   background-image:url("images/Скачки HorseCup на фоне гор.png")!important;
+   background-image:url("images/Скачки HorseCup на фоне гор.webp")!important;
    background-size:cover!important;
    background-position:center center!important;
  }
@@ -427,7 +426,7 @@ body:has(#setup.horsecup-splash:not([hidden])) main{max-width:none;width:100%;he
 }
 @media (orientation:landscape){
  #setup.horsecup-splash:not([hidden]){
-   background-image:url("images/Галоп к Кубку HorseCup.png")!important;
+   background-image:url("images/Галоп к Кубку HorseCup.webp")!important;
    background-size:cover!important;
    background-position:center center!important;
  }
@@ -580,12 +579,12 @@ body:has(#setup.horsecup-splash:not([hidden])) main{max-width:none;width:100%;he
 /* Final approved splash art: no premature "Играть" printed on either image. */
 @media (orientation:portrait){
  #setup.horsecup-splash:not([hidden]){
-  background-image:url("images/a_vibrant_high_detail_game_splash_screen_menu_f.png")!important;
+  background-image:url("images/a_vibrant_high_detail_game_splash_screen_menu_f.webp")!important;
  }
 }
 @media (orientation:landscape){
  #setup.horsecup-splash:not([hidden]){
-  background-image:url("images/a_vibrant_detailed_widescreen_game_title_splash_f.png")!important;
+  background-image:url("images/a_vibrant_detailed_widescreen_game_title_splash_f.webp")!important;
  }
 }
 
@@ -671,24 +670,6 @@ body:has(#setup.horsecup-splash:not([hidden])) main{max-width:none;width:100%;he
 }
 
 
-/* Seasonal hippodrome environment across the ENTIRE race screen. */
-body:has(#race:not([hidden])){
- background-color:#172747!important;
- background-image:linear-gradient(180deg,rgba(8,22,49,.72),rgba(15,30,53,.30) 40%,rgba(9,20,37,.76)),url("images/Осенний ипподром с золотым конём-3.png")!important;
- background-position:center center!important;
- background-size:cover!important;
- background-attachment:fixed!important;
- color:#fff4df!important;
-}
-body:has(#race:not([hidden]) .track[data-season="spring"]){
- background-image:linear-gradient(180deg,rgba(8,22,49,.72),rgba(15,30,53,.30) 40%,rgba(9,20,37,.76)),url("images/Весеннее спортивное поле у горных вершин-1.png")!important;
-}
-body:has(#race:not([hidden]) .track[data-season="summer"]){
- background-image:linear-gradient(180deg,rgba(8,22,49,.72),rgba(15,30,53,.30) 40%,rgba(9,20,37,.76)),url("images/Солнечный ипподром с золотым конём-2.png")!important;
-}
-body:has(#race:not([hidden]) .track[data-season="winter"]){
- background-image:linear-gradient(180deg,rgba(8,22,49,.72),rgba(15,30,53,.30) 40%,rgba(9,20,37,.76)),url("images/Зимний ипподром с золотым конём-4.png")!important;
-}
 body:has(#race:not([hidden])) main{background:transparent!important}
 #race .race-toolbar{
  background:linear-gradient(110deg,rgba(13,27,61,.88),rgba(39,39,80,.78))!important;
@@ -709,3 +690,23 @@ body:has(#race:not([hidden])) main{background:transparent!important}
  body:has(#race:not([hidden])){background-attachment:scroll!important}
  #race .race-toolbar{padding:8px!important}
 }
+
+
+/* One lightweight seasonal palette for the environment and all question cards. */
+body[data-season="autumn"]{--season-photo:url("images/Осенний ипподром с золотым конём-3.webp");--season-ground:#f1dfbd;--season-paper:#fff7e6;--season-soft:#f5d9a2;--season-ink:#482d19;--season-accent:#a65c20;--season-line:#cc963e}
+body[data-season="winter"]{--season-photo:url("images/Зимний ипподром в снегу-4.webp");--season-ground:#e5f0f5;--season-paper:#f6fcff;--season-soft:#d3e9f2;--season-ink:#203e50;--season-accent:#337590;--season-line:#86b2c5}
+body[data-season="spring"]{--season-photo:url("images/Весеннее спортивное поле у горных вершин-1.webp");--season-ground:#e8f0d9;--season-paper:#f7fbe9;--season-soft:#d8edb9;--season-ink:#29462a;--season-accent:#528537;--season-line:#96b66b}
+body[data-season="summer"]{--season-photo:url("images/Солнечный ипподром с золотым конём-2.webp");--season-ground:#f3ebca;--season-paper:#fffce9;--season-soft:#e7edb3;--season-ink:#354621;--season-accent:#6c852b;--season-line:#b8b664}
+body[data-screen="race"]{background-color:var(--season-ground)!important;background-image:linear-gradient(#fff9,#fff5),var(--season-photo)!important;background-attachment:scroll!important;color:var(--season-ink)!important}
+body[data-screen="race"] #race .track{background-image:var(--season-photo)!important;border-color:var(--season-line)!important}
+body[data-season] #race .race-toolbar,body[data-season] #race .question-stage{background:var(--season-paper)!important;color:var(--season-ink)!important;border:2px solid var(--season-line)!important;backdrop-filter:none!important;box-shadow:0 3px 12px #51351418!important}
+body[data-season] #race .question-stage .question h2,body[data-season] #race .race-toolbar h1,body[data-season] #race .race-toolbar .score b{color:var(--season-ink)!important;text-shadow:none!important}
+body[data-season] #race .question-meta,body[data-season] #race .race-toolbar .score span,body[data-season] #race .race-toolbar .eyebrow{color:var(--season-accent)!important}
+body[data-season] #race .question-stage pre{background:var(--season-ground)!important;color:var(--season-ink)!important;border-color:var(--season-line)!important;white-space:pre-wrap;overflow-wrap:anywhere}
+body[data-season] #race .question-stage .answer-cloud{background:linear-gradient(145deg,var(--season-paper),var(--season-soft))!important;color:var(--season-ink)!important;border-color:var(--season-line)!important;box-shadow:0 3px 0 #51351425!important}
+body[data-season] #race .question-stage .answer-cloud::before,body[data-season] #race .question-stage .answer-cloud::after{background:var(--season-paper)!important}
+body[data-season] #race .question-stage .answer-cloud:hover,body[data-season] #race .question-stage .answer-cloud:focus-visible{background:var(--season-soft)!important;outline:2px solid var(--season-accent);outline-offset:2px}
+/* Keep the blue AI appearance without animating expensive filters every frame. */
+.runner img.ai-blue-horse,.participant img.ai-blue-horse{animation:none!important;filter:grayscale(1) sepia(1) saturate(5) hue-rotate(165deg) brightness(1.3) drop-shadow(0 0 5px #1aaeff)!important}
+.track .runner.galloping .race-horse-photo{animation:none!important}
+@media(max-width:700px){body[data-season] #race .question-stage .options{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))!important;gap:12px!important}body[data-season] #race .question-stage .answer-cloud{width:100%!important;max-width:100%!important;min-width:0!important;font-size:14px!important;padding:15px 12px!important}}

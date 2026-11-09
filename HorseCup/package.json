@@ -3,14 +3,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "npm install --omit=dev --no-audit --no-fund && node server.mjs",
+    "start": "npm install --omit=dev --no-audit --no-fund && npm run assets && node server.mjs",
     "test": "node --test race-engine.test.mjs question-bank.test.mjs",
-    "dev": "node server.mjs"
+    "dev": "node server.mjs",
+    "assets": "node optimize-images.mjs"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
-    "pg": "^8.13.3"
+    "pg": "^8.13.3",
+    "sharp": "0.34.5"
   }
 }
