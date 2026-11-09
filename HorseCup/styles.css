@@ -842,3 +842,45 @@ body[data-screen="race"] #race #question[hidden]{display:none!important}
  background-position:center center!important;
  background-repeat:no-repeat!important;
 }
+
+
+/* Responsive approved splash: PC, phone portrait, phone landscape.
+   Artwork always retains its intrinsic aspect ratio. */
+@media (max-width: 767px) and (orientation: portrait) {
+ body:has(#setup.horsecup-splash:not([hidden])) main{height:100dvh!important;min-height:0!important;overflow:hidden!important}
+ #setup.horsecup-splash:not([hidden]){
+  width:100%!important;height:100dvh!important;min-height:0!important;
+  padding:0 10px max(10px,env(safe-area-inset-bottom,0px))!important;
+  background-size:calc(100% - 12px) auto!important;
+  background-position:center 8%!important;
+  background-color:#101d3c!important;
+  justify-content:flex-end!important;
+ }
+ #setup.horsecup-splash .splash-toggle{position:relative!important;z-index:5!important;margin:0 auto 8px!important;font-size:14px!important;padding:8px 18px!important;max-width:92vw!important}
+ #setup.horsecup-splash .splash-drawer:not([hidden]){
+  position:relative!important;inset:auto!important;left:auto!important;bottom:auto!important;
+  transform:none!important;width:100%!important;max-height:30dvh!important;
+  overflow-y:auto!important;padding:8px!important;margin:0 0 6px!important;
+  border-radius:14px!important;z-index:4!important;
+ }
+ #setup.horsecup-splash .splash-drawer:not([hidden]):has(.mode-picker:not([hidden])){
+  position:relative!important;inset:auto!important;left:auto!important;bottom:auto!important;
+  transform:none!important;width:100%!important;max-height:30dvh!important;padding:8px!important;
+ }
+ #setup.horsecup-splash .splash-drawer .mode-picker:not([hidden]){padding:8px!important}
+}
+@media (max-height: 550px) and (orientation: landscape){
+ #setup.horsecup-splash:not([hidden]){
+  padding:4px 10px!important;background-size:auto calc(100dvh - 8px)!important;
+  background-position:center center!important;justify-content:flex-end!important;
+ }
+ #setup.horsecup-splash .splash-toggle{position:relative!important;z-index:5!important;padding:5px 12px!important;font-size:12px!important;margin:0 auto 3px!important}
+ #setup.horsecup-splash .splash-drawer:not([hidden]){
+  position:absolute!important;inset:auto 8px 38px auto!important;transform:none!important;
+  width:min(46vw,500px)!important;max-height:calc(100dvh - 45px)!important;
+  overflow-y:auto!important;padding:8px!important;z-index:6!important;
+ }
+}
+@media (min-width: 768px) and (min-height: 551px){
+ #setup.horsecup-splash:not([hidden]){background-size:contain!important;background-position:center center!important}
+}
