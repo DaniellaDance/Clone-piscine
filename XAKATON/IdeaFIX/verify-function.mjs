@@ -23,6 +23,8 @@ const anon=await call('/tickets',{body:'Анонимное сообщение д
 assert.equal((await call('/tickets/'+anon.data.id,null,a.cookie)).status,403);
 assert.equal((await call('/track',{id:anon.data.id,code:'wrong'})).status,403);
 assert.equal((await call('/track',{id:anon.data.id,code:anon.data.code})).status,200);
+assert.equal((await call('/tickets/'+t.data.id+'/bitrix',{},b.cookie)).status,409);
+assert.equal((await call('/tickets/'+t.data.id+'/bitrix',{},a.cookie)).status,403);
 const w={insight:'Не хватает полей в заявке',proposal:'Добавить поля в шаблон',benefit:'Меньше ошибок',discussion:'Коллеги согласовали изменение',cost:'2 часа',effect:'Меньше возвратов',feasibility:'Можно выполнить силами ИТ',decision:'approved',reason:'Согласовано руководителем',pilot:'Один отдел на неделю',pilotResult:'Тест успешно завершён',owner:'Руководитель ИТ',deadline:'2026-12-01',implementation:'Шаблон обновлён',before:'10 возвратов',after:'2 возврата',result:'Добавлены обязательные поля в шаблон'};
 assert.equal((await call('/tickets/'+t.data.id+'/workflow',{...w,stage:'result'},a.cookie,'PUT')).status,403);
 assert.equal((await call('/tickets/'+t.data.id+'/workflow',{...w,stage:'result'},b.cookie,'PUT')).status,400);

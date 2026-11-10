@@ -1,4 +1,4 @@
-const CACHE='ideafix-shell-v6';
+const CACHE='ideafix-shell-v7';
 const files=['./index.html','./mobile.html','./desktop.html','./install.html','./assets/app.js','./assets/styles.css','./assets/icon.svg','./assets/icon-192.png','./assets/icon-512.png','./manifest.webmanifest'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(files)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('ideafix-shell-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
