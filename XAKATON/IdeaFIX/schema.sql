@@ -1,0 +1,8 @@
+CREATE SCHEMA IF NOT EXISTS ideafix;
+CREATE TABLE IF NOT EXISTS ideafix.users(id text PRIMARY KEY, login text UNIQUE NOT NULL, name text NOT NULL, password text NOT NULL, role text NOT NULL DEFAULT 'employee', department text NOT NULL);
+CREATE TABLE IF NOT EXISTS ideafix.sessions(token text PRIMARY KEY, user_id text REFERENCES ideafix.users(id), expires timestamptz NOT NULL);
+CREATE TABLE IF NOT EXISTS ideafix.tickets(id serial PRIMARY KEY, author text REFERENCES ideafix.users(id), anonymous boolean NOT NULL DEFAULT false, access_hash text, title text NOT NULL, body text NOT NULL, kind text NOT NULL, department text NOT NULL, priority text NOT NULL, status text NOT NULL DEFAULT 'new', created timestamptz NOT NULL DEFAULT now(), due timestamptz NOT NULL, first_response timestamptz, result text NOT NULL DEFAULT '', controlled boolean NOT NULL DEFAULT false, published boolean NOT NULL DEFAULT false);
+CREATE TABLE IF NOT EXISTS ideafix.events(id serial PRIMARY KEY, ticket integer REFERENCES ideafix.tickets(id), actor text NOT NULL, text text NOT NULL, internal boolean NOT NULL DEFAULT false, created timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS ideafix.votes(ticket integer REFERENCES ideafix.tickets(id), voter text REFERENCES ideafix.users(id), PRIMARY KEY(ticket,voter));
+CREATE TABLE IF NOT EXISTS ideafix.settings(id integer PRIMARY KEY DEFAULT 1, data jsonb NOT NULL);
+INSERT INTO ideafix.settings(id,data) VALUES(1,'{"high":24,"medium":72,"low":168}') ON CONFLICT DO NOTHING;
