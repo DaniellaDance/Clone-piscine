@@ -8,3 +8,7 @@ CREATE TABLE IF NOT EXISTS ideafix.settings(id integer PRIMARY KEY DEFAULT 1, da
 INSERT INTO ideafix.settings(id,data) VALUES(1,'{"high":24,"medium":72,"low":168}') ON CONFLICT DO NOTHING;
 ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS stage text NOT NULL DEFAULT 'registration';
 ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS workflow jsonb NOT NULL DEFAULT '{}';
+ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS entry_type text NOT NULL DEFAULT 'insight';
+ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS vendor_id text NOT NULL DEFAULT '';
+ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS industry_id text NOT NULL DEFAULT '';
+ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS technical_id text NOT NULL DEFAULT '';

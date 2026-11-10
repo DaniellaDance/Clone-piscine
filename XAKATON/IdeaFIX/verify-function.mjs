@@ -8,7 +8,8 @@ assert.equal((await call('/health')).status,200);
 assert.equal((await call('/tickets')).status,401);
 const a=await call('/register',{login:prefix+'a',password:'test-pass-123',name:'Тест A',department:'ИТ'}),b=await call('/register',{login:prefix+'b',password:'test-pass-123',name:'Тест B',department:'Продажи'});assert.equal(a.status,200);assert.equal(b.status,200);uid=[a.data.id,b.data.id];
 assert.equal((await call('/me',null,a.cookie)).data.role,'employee');
-const t=await call('/tickets',{body:'Тестовая идея по улучшению формы заявки',kind:'idea'},a.cookie);assert.equal(t.status,201);
+assert.equal((await call('/tickets',{body:'Некорректная область для проверки',vendor_id:'unknown'},a.cookie)).status,400);
+const t=await call('/tickets',{body:'Тестовая идея по улучшению формы заявки',kind:'idea',entry_type:'proposal',vendor_id:'v1',industry_id:'meditsina',technical_id:'fire'},a.cookie);assert.equal(t.status,201);
 assert.equal((await call('/tickets/'+t.data.id,null,b.cookie)).status,403);
 assert.equal((await call('/tickets/'+t.data.id,{status:'done',result:'Попытка обхода'},a.cookie,'PATCH')).status,403);
 assert.equal((await call('/users',null,a.cookie)).status,403);
@@ -31,7 +32,7 @@ assert.equal((await call('/tickets/'+t.data.id+'/workflow',{...w,stage:'result'}
 for(const stage of ['discussion','evaluation','decision','pilot','implementation','result'])assert.equal((await call('/tickets/'+t.data.id+'/workflow',{...w,stage},b.cookie,'PUT')).status,200,stage);
 assert.equal((await call('/tickets/'+t.data.id,null,a.cookie)).data.workflow.after,'2 возврата');
 assert.equal((await call('/login',{login:prefix+'a',password:'wrong'})).status,401);
-const fresh=await call('/login',{login:prefix+'a',password:'test-pass-123'});assert.equal((await call('/tickets/'+t.data.id,null,fresh.cookie)).data.status,'done');
+const fresh=await call('/login',{login:prefix+'a',password:'test-pass-123'});assert.equal((await call('/tickets/'+t.data.id,null,fresh.cookie)).data.status,'done');const saved=(await call('/tickets/'+t.data.id,null,fresh.cookie)).data;assert.equal(saved.vendor_id,'v1');assert.equal(saved.industry_id,'meditsina');assert.equal(saved.technical_id,'fire');assert.equal(saved.entry_type,'proposal');
 await call('/logout',{},fresh.cookie);assert.equal((await call('/me',null,fresh.cookie)).status,401);
 // Remove only fixtures created by this test, including the anonymous fixture.
 await db.query('DELETE FROM ideafix.events WHERE ticket=$1',[anon.data.id]);await db.query('DELETE FROM ideafix.tickets WHERE id=$1',[anon.data.id]);
