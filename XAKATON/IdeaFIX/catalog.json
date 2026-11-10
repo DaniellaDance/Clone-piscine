@@ -558,10 +558,11 @@
       "email": "",
       "phone": "",
       "parent": "",
-      "note": "Обозначение ATS относится к линейке Advisor/Aritech. Исторический поставщик — UTC Fire & Security B.V., Нидерланды; актуальная страна правообладателя и точная линейка на странице Modus не указаны.",
+      "note": "ATS — линейка Advisor/Aritech. Официальная политика приложения Advisor Advanced Pro указывает оператора Carrier Fire & Security B.V. в Нидерландах. Адрес оператора не подтверждает страну изготовления устройств или текущего владельца всей марки.",
       "checked": "2026-11-11",
       "sources": [
-        "https://www.firesecurityproducts.com/"
+        "https://www.firesecurityproducts.com/",
+        "https://marketing.firesecurityproducts.com/ADVISOR-ADVANCED-APP/privacy-en.htm"
       ]
     },
     {
@@ -660,7 +661,7 @@
     {
       "id": "v36",
       "name": "Smartec",
-      "country": "UNCONFIRMED",
+      "country": "RU",
       "special": "Видео, СКУД, охранная и пожарная сигнализация",
       "tech": [
         "video",
@@ -672,11 +673,12 @@
       "email": "cctv@smartec-s.com",
       "phone": "+7 495 787 33 42",
       "parent": "",
-      "note": "Официальный контакт — АРМО-Системы, Россия. Vesta и Vita производятся в России; единую страну марки и всех моделей официальный сайт не подтверждает.",
+      "note": "Россия — страна марки по самоописанию на официальном сайте Smartec. Это не подтверждение юридической страны владельца марки или места изготовления всех моделей. Системы Vesta и Vita производятся в России; остальные изделия проверяются отдельно.",
       "checked": "2026-11-11",
       "sources": [
         "https://smartec-security.com/contacts_page/",
-        "https://smartec-security.com/company/"
+        "https://smartec-security.com/company/",
+        "https://smartec-security.com/products/Videoregistratory_setevye_NVR/STNR_6462/"
       ]
     },
     {
