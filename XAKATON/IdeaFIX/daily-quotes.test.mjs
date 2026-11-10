@@ -1,0 +1,8 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {readFileSync} from 'node:fs';
+function load(){const events={},document={getElementById:()=>null,addEventListener:(k,v)=>events[k]=v},window={IFI18n:{lang:'ru'},addEventListener:(k,v)=>events[k]=v};vm.runInNewContext(readFileSync(new URL('./public/assets/daily-quotes.js',import.meta.url),'utf8'),{window,document,Intl,Date,setInterval:()=>{},console});return{window,events}}
+test('quote remains stable within Kazakhstan day and changes at midnight',()=>{const {window:w}=load();const a=w.IFQuotes.forDate(new Date('2026-11-10T18:59:59Z')),b=w.IFQuotes.forDate(new Date('2026-11-10T19:00:00Z'));assert.equal(a.key,'2026-11-10');assert.equal(b.key,'2026-11-11');assert.notEqual(a.quote.id,b.quote.id);assert.equal(w.IFQuotes.forDate(new Date('2026-11-10T00:00:00Z')).quote.id,a.quote.id)});
+test('each day of the seven-day cycle has a distinct source-checked quote',()=>{const {window:w}=load(),ids=new Set();for(let i=0;i<w.IFQuotes.count;i++){const {quote:q}=w.IFQuotes.forDate(new Date(Date.UTC(2026,10,10+i)));ids.add(q.id);assert.match(q.source,/^https:\/\//);for(const lang of ['ru','en','kk'])assert.ok(q.text[lang])}assert.equal(ids.size,w.IFQuotes.count)});
+test('quote and source render in all three interface languages',()=>{const {window:w}=load();for(const [lang,label]of [['ru','Цитата дня'],['en','Quote of the day'],['kk','Күн дәйексөзі']]){w.IFI18n.lang=lang;const html=w.IFQuotes.html(new Date('2026-11-10T12:00:00Z'));assert.ok(html.includes(label));assert.ok(html.includes(`2026-11-10:${lang}`));assert.ok(html.includes('rel="noopener noreferrer"'));assert.ok(html.includes('data-user-text'))}});
