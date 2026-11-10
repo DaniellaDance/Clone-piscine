@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaFix Desktop — ПК-приложение</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  html, body { height: 100%; margin: 0; background: #060d15; overflow: hidden; }
+  .desk { display: grid; grid-template-rows: 30px 1fr 24px; height: 100vh; background: #0a1420; }
+
+  .winbar {
+    display: flex; align-items: center; gap: 8px; padding: 0 10px;
+    background: linear-gradient(180deg, #16283b, #101d2b);
+    border-bottom: 1px solid var(--line);
+    font-size: 12px; color: var(--muted); user-select: none;
+  }
+  .lights { display: flex; gap: 6px; margin-right: 6px; }
+  .lights i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .lights i:nth-child(1) { background: #e4574c; }
+  .lights i:nth-child(2) { background: #f2a33a; }
+  .lights i:nth-child(3) { background: #35c28d; }
+  .winbar .title { color: #cfdcea; font-weight: 550; }
+  .winbar .right { margin-left: auto; display: flex; gap: 12px; align-items: center; color: var(--muted-2); }
+  .winbar .right span { cursor: default; }
+
+  .menu { display: flex; gap: 2px; margin-left: 12px; }
+  .menu button { padding: 3px 8px; background: none; border: 0; color: var(--muted); font-size: 12px; border-radius: 2px; cursor: default; }
+  .menu button:hover { background: rgba(255,255,255,.06); color: var(--text); }
+
+  iframe { width: 100%; height: 100%; border: 0; background: var(--bg); }
+
+  .statusbar {
+    display: flex; align-items: center; gap: 16px; padding: 0 12px;
+    background: #0f1e2c; border-top: 1px solid var(--line);
+    font-size: 11px; color: var(--muted-2); font-family: var(--mono);
+  }
+  .statusbar .ok { color: #8ae0bb; }
+  .statusbar .right { margin-left: auto; display: flex; gap: 16px; }
+</style>
+</head>
+<body>
+  <div class="desk">
+    <div class="winbar">
+      <div class="lights"><i></i><i></i><i></i></div>
+      <span class="title">IdeaFix Desktop · ГК «Модус Трейд»</span>
+      <div class="menu">
+        <button>Файл</button><button>Вид</button><button>Отчёты</button><button>Справка</button>
+      </div>
+      <div class="right">
+        <span>Обновлено только что</span>
+        <span>—</span><span>▢</span><span>✕</span>
+      </div>
+    </div>
+
+    <iframe src="index.html" title="IdeaFix — рабочая область"></iframe>
+
+    <div class="statusbar">
+      <span class="ok">● подключено</span>
+      <span>роль: директор</span>
+      <span>данные: локальная демо-база</span>
+      <div class="right">
+        <span>обращений: 20</span>
+        <span>IdeaFix 1.0 · Windows / macOS / Linux</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

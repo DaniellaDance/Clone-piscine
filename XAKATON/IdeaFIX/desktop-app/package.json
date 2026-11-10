@@ -1,0 +1,24 @@
+{
+  "name": "ideafix-desktop",
+  "version": "1.0.0",
+  "description": "IdeaFix Desktop — ПК-приложение системы обратной связи и предложений сотрудников (демо для хакатона ГК «Модус Трейд»)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.modustrade.ideafix",
+    "productName": "IdeaFix",
+    "files": ["main.js", "preload.js", "desktop.html", "index.html", "assets/**", "manifest.webmanifest"],
+    "win": { "target": "nsis" },
+    "mac": { "target": "dmg" },
+    "linux": { "target": "AppImage" }
+  }
+}

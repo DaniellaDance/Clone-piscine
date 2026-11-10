@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaFix — система обратной связи и предложений сотрудников | ГК «Модус Трейд»</title>
+<meta name="description" content="IdeaFix — единый канал для проблем и предложений сотрудников: быстрая подача, сроки и эскалация, витрина идей, голосование и сводка для директора.">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1622">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body data-role="director">
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">IF</span>
+    IdeaFix
+    <span class="brand-sub">Модус Трейд · внутренние предложения</span>
+  </div>
+
+  <div class="top-actions">
+    <div class="search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path></svg>
+      <input id="q" type="text" placeholder="Поиск: номенклатура, сроки, 1С…" autocomplete="off">
+    </div>
+
+    <select id="role" class="role" title="Демонстрация ролей">
+      <option value="employee">Роль: сотрудник</option>
+      <option value="lead">Роль: руководитель</option>
+      <option value="director" selected>Роль: директор</option>
+      <option value="admin">Роль: администратор</option>
+    </select>
+
+    <button class="btn btn-primary" id="btn-new">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+      Новое обращение
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="rail" id="nav"></nav>
+  <main id="view"></main>
+</div>
+
+<div class="modal-backdrop" id="modal"></div>
+<div class="toast" id="toast"></div>
+
+<script src="assets/seed.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
