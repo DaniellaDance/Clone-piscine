@@ -6,3 +6,5 @@ CREATE TABLE IF NOT EXISTS ideafix.events(id serial PRIMARY KEY, ticket integer 
 CREATE TABLE IF NOT EXISTS ideafix.votes(ticket integer REFERENCES ideafix.tickets(id), voter text REFERENCES ideafix.users(id), PRIMARY KEY(ticket,voter));
 CREATE TABLE IF NOT EXISTS ideafix.settings(id integer PRIMARY KEY DEFAULT 1, data jsonb NOT NULL);
 INSERT INTO ideafix.settings(id,data) VALUES(1,'{"high":24,"medium":72,"low":168}') ON CONFLICT DO NOTHING;
+ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS stage text NOT NULL DEFAULT 'registration';
+ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS workflow jsonb NOT NULL DEFAULT '{}';

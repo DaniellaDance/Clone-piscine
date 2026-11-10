@@ -27,7 +27,11 @@ const anon=await call('/tickets',{body:'Анонимное сообщение д
 assert.equal((await call('/tickets/'+anon.data.id,null,a.cookie)).status,403);
 assert.equal((await call('/track',{id:anon.data.id,code:'wrong'})).status,403);
 assert.equal((await call('/track',{id:anon.data.id,code:anon.data.code})).status,200);
-assert.equal((await call('/tickets/'+t.data.id,{status:'done',result:'Добавлены обязательные поля в шаблон',published:true},b.cookie,'PATCH')).status,200);
+const w={insight:'Не хватает полей в заявке',proposal:'Добавить поля в шаблон',benefit:'Меньше ошибок',discussion:'Коллеги согласовали изменение',cost:'2 часа',effect:'Меньше возвратов',feasibility:'Можно выполнить силами ИТ',decision:'approved',reason:'Согласовано руководителем',pilot:'Один отдел на неделю',pilotResult:'Тест успешно завершён',owner:'Руководитель ИТ',deadline:'2026-12-01',implementation:'Шаблон обновлён',before:'10 возвратов',after:'2 возврата',result:'Добавлены обязательные поля в шаблон'};
+assert.equal((await call('/tickets/'+t.data.id+'/workflow',{...w,stage:'result'},a.cookie,'PUT')).status,403);
+assert.equal((await call('/tickets/'+t.data.id+'/workflow',{...w,stage:'result'},b.cookie,'PUT')).status,400);
+for(const stage of ['discussion','evaluation','decision','pilot','implementation','result'])assert.equal((await call('/tickets/'+t.data.id+'/workflow',{...w,stage},b.cookie,'PUT')).status,200,stage);
+assert.equal((await call('/tickets/'+t.data.id,null,a.cookie)).data.workflow.after,'2 возврата');
 assert.equal((await call('/login',{login:prefix+'a',password:'wrong'})).status,401);
 const fresh=await call('/login',{login:prefix+'a',password:'test-pass-123'});assert.equal((await call('/tickets/'+t.data.id,null,fresh.cookie)).data.status,'done');
 await call('/logout',{},fresh.cookie);assert.equal((await call('/me',null,fresh.cookie)).status,401);
