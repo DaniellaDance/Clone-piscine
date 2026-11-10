@@ -12,3 +12,6 @@ ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS entry_type text NOT NULL DE
 ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS vendor_id text NOT NULL DEFAULT '';
 ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS industry_id text NOT NULL DEFAULT '';
 ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS technical_id text NOT NULL DEFAULT '';
+
+CREATE TABLE IF NOT EXISTS ideafix.bitrix_config(id integer PRIMARY KEY CHECK(id=1), webhook text NOT NULL);
+CREATE TABLE IF NOT EXISTS ideafix.bitrix_deliveries(ticket integer REFERENCES ideafix.tickets(id), recipient bigint NOT NULL, recipient_name text NOT NULL, status text NOT NULL, task_id bigint, created timestamptz NOT NULL DEFAULT now(), PRIMARY KEY(ticket,recipient));
