@@ -23,8 +23,12 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  // Кэшируем по одному файлу и не падаем, если какой-то адрес отдаёт редирект:
+  // приложение должно устанавливаться даже при частичном сбое прогрева кэша.
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE)
+      .then((cache) => Promise.allSettled(ASSETS.map((url) => cache.add(url))))
+      .then(() => self.skipWaiting())
   );
 });
 

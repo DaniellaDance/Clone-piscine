@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IdeaFix · мобильное приложение</title>
+<meta name="theme-color" content="#0b1622">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="IdeaFix">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/mobile.css">
+</head>
+<body class="mobile">
+
+<header class="m-top">
+  <div class="m-brand">
+    <span class="brand-mark">IF</span>
+    <div><b>IdeaFix</b><small>Модус Трейд</small></div>
+  </div>
+  <button class="m-chip" id="m-role">Сотрудник</button>
+</header>
+
+<main class="m-main" id="m-view"></main>
+
+<nav class="m-tabs" id="m-tabs"></nav>
+<div class="toast" id="toast"></div>
+
+<script src="assets/seed.js"></script>
+<script src="assets/mobile.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+</script>
+</body>
+</html>
