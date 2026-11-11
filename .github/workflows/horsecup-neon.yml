@@ -38,7 +38,7 @@ jobs:
       - name: Package HorseCup
         run: |
           npm prune --omit=dev
-          zip -q -r "$RUNNER_TEMP/horsecup-neon.zip" . -x '*.test.mjs' 'downloads/*' 'node_modules/.cache/*' 'README.md'
+          zip -q -r -9 "$RUNNER_TEMP/horsecup-neon.zip" . -x '*.test.mjs' 'downloads/*' 'images/*.png' 'node_modules/sharp/*' 'node_modules/@img/*' 'node_modules/.cache/*' 'README.md' 'scripts/*' 'optimize-images.mjs' 'package-lock.json'\n          ls -lh "$RUNNER_TEMP/horsecup-neon.zip"\n          test $(stat -c%s "$RUNNER_TEMP/horsecup-neon.zip") -lt 33554432 || { echo 'Neon ZIP exceeds 32 MiB'; exit 1; }
           unzip -t "$RUNNER_TEMP/horsecup-neon.zip" | tail -1
       - name: Save build
         uses: actions/upload-artifact@v4
