@@ -68,3 +68,6 @@ CREATE INDEX IF NOT EXISTS media_messages_recipient_created ON ideafix.media_mes
 
 CREATE TABLE IF NOT EXISTS ideafix.ticket_files (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, ticket integer NOT NULL REFERENCES ideafix.tickets(id) ON DELETE CASCADE, filename text NOT NULL, mime text NOT NULL, bytes bytea NOT NULL, summary text NOT NULL DEFAULT '', created_at timestamptz NOT NULL DEFAULT now());
 CREATE INDEX IF NOT EXISTS ticket_files_ticket ON ideafix.ticket_files(ticket);
+
+CREATE TABLE IF NOT EXISTS ideafix.partners (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, company text NOT NULL, contact_name text NOT NULL, contact_email text NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS ideafix.partner_outbox (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, ticket integer NOT NULL REFERENCES ideafix.tickets(id), partner bigint NOT NULL REFERENCES ideafix.partners(id), sender text NOT NULL REFERENCES ideafix.users(id), status text NOT NULL DEFAULT 'prepared', created_at timestamptz NOT NULL DEFAULT now());
