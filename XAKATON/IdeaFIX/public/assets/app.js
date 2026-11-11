@@ -193,7 +193,8 @@ async function install(){if(installPrompt){await installPrompt.prompt();installP
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e});
 window.addEventListener('online',()=>me&&refresh());
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
-(async()=>{try{me=await api('/me');await refresh(true);notificationRoute()}catch(e){login();if(e.status!==401)toast('Не удалось подключиться. Проверьте интернет и обновите страницу.')}})();
+login();
+(async()=>{try{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),8000);let response;try{response=await fetch('/api/me',{credentials:'same-origin',signal:controller.signal,cache:'no-store'})}finally{clearTimeout(timer)}if(!response.ok)return;const user=await response.json();if(!user?.id)return;me=user;await refresh(true);notificationRoute()}catch(e){if(!$('#auth')&&!me)login()}})();
 setInterval(()=>{if(me&&!document.hidden)refresh()},15000);
 
 function workflowView(t){
