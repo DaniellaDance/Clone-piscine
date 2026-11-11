@@ -4,8 +4,8 @@ export function actionPayload(action,t,person){const plain=s=>String(s||'').repl
 export async function handleBitrixActions({url,req,u,body,send,fail,query,manage},call=bitrixCall){const match=url.pathname.match(/^\/api\/tickets\/(\d+)\/bitrix-actions$/);if(!match)return false;
  const t=(await query('SELECT * FROM ideafix.tickets WHERE id=$1',[+match[1]])).rows[0];if(!t)fail(404,'Обращение не найдено');if(t.anonymous||!(manage(u,t)||t.author===u.id||t.recipient===u.id))fail(403,'Нет доступа к отправке');
  if(req.method!=='POST')fail(405,'Метод недоступен');const b=await body(req);if(!['task','discussion','project'].includes(b.action))fail(400,'Выберите действие');
- if(b.action==='task'){const r=await mirrorIdea({query,ticket:t,u,kind:'idea',call});send(r);return true}
  const account=(await query('SELECT a.webhook,l.bitrix_user FROM ideafix.bitrix_accounts a JOIN ideafix.planner_bitrix_links l ON l.app_user=a.app_user WHERE a.app_user=$1',[u.id])).rows[0];if(!account)fail(409,'Сначала подключите «Мой Битрикс» вверху кабинета');
+ if(b.action==='task'){const r=await mirrorIdea({query,ticket:t,u,kind:'idea',call,explicit:true});send(r);return true}
  const link=id=>b.action==='project'?`${BITRIX_PORTAL}/workgroups/group/${id}/`:`${BITRIX_PORTAL}/company/personal/user/${account.bitrix_user}/blog/${id}/`;
  const reserved=await query(`INSERT INTO ideafix.bitrix_actions(ticket,app_user,action,status) VALUES($1,$2,$3,'pending') ON CONFLICT(ticket,app_user,action) DO UPDATE SET status='pending' WHERE ideafix.bitrix_actions.status='failed' RETURNING ticket`,[t.id,u.id,b.action]);
  if(!reserved.rowCount){const r=(await query('SELECT status,remote_id FROM ideafix.bitrix_actions WHERE ticket=$1 AND app_user=$2 AND action=$3',[t.id,u.id,b.action])).rows[0];send({...r,url:r?.remote_id?link(r.remote_id):undefined,message:r?.status==='sent'?'Уже создано в Битрикс':'Передача не подтверждена. Проверьте Битрикс перед повтором.'});return true}
