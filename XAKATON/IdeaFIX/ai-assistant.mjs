@@ -24,6 +24,21 @@ export async function handleAI({url,req,u,body,query,send,fail}){
  if(!leader(u))fail(403,'ИИ-анализ доступен руководителям');
  if(req.method!=='POST')fail(405,'Метод недоступен');
  const input=await body(req),ticketId=id(input.ticket_id);
+ if(url.pathname==='/api/ai/news-brief'){
+  const kind=input.kind==='technologies'?'technologies':'vendors';
+  const catalog=await import('./catalog.json',{with:{type:'json'}}).then(m=>m.default);
+  const items=kind==='vendors'?catalog.vendors:catalog.technical;
+  const selected=items.find(x=>String(x.id)===String(input.topic_id));
+  if(!selected)fail(400,'Выберите вендора или технологию из каталога');
+  const name=String(selected.name||selected.label?.[0]||'').slice(0,100);
+  const source=String(input.source_text||'').trim().slice(0,14000);
+  if(source.length<80)fail(400,'Добавьте текст реальной новости (не менее 80 символов). ИИ не должен придумывать публикации.');
+  const sourceUrl=String(input.source_url||'').trim();
+  if(sourceUrl&&!/^https:\/\/[^\s]+$/i.test(sourceUrl))fail(400,'Ссылка должна начинаться с https://');
+  const pilots=(await query("SELECT id,title,department,stage FROM ideafix.tickets WHERE lower(stage) LIKE '%pilot%' OR lower(stage) LIKE '%пилот%' ORDER BY id DESC LIMIT 30")).rows;
+  const result=await generate('Ты аналитик по технологиям и корпоративным инновациям. Работай ТОЛЬКО с предоставленным текстом новости. Верни JSON: summary (строка, 2-4 предложения), relevance (строка), opportunities (массив строк), risks (массив строк), pilot_impacts (массив объектов {pilot_id,impact,action,confidence}), improvement_ideas (массив объектов {title,description,benefit,first_step}), verification_needed (массив строк). Сопоставляй пилоты только из списка; если связи нет, оставь pilot_impacts пустым. Не придумывай цифры, факты, ссылки и экономический эффект. Новые идеи только как черновики, без публикации и отправки в Bitrix24. Отмечай, что факты из источника не проверены.',{topic:name,kind,source_text:source,source_url:sourceUrl,pilots});
+  send({topic:name,source_url:sourceUrl,analysis:result,draft:true,ai_generated:true,requires_human_approval:true});return true;
+ }
  if(url.pathname==='/api/ai/idea-analysis'){
   if(!ticketId)fail(400,'Выберите идею');
   const t=(await query('SELECT id,title,body,department,stage,workflow,published FROM ideafix.tickets WHERE id=$1',[ticketId])).rows[0];
