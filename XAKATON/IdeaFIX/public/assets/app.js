@@ -111,7 +111,17 @@ async function recordIdeaVideo(){
   blob=null;chunks=[];speechFinal='';spokenParts.clear();transcript.value='';share.hidden=true;download.hidden=true;retake.hidden=true;stop.disabled=true;
   if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status.textContent='Запись видео не поддерживается этим браузером.';return}
   try{
-   stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
+   status.textContent='Запрашиваем разрешение на камеру и микрофон…';
+   let cameraTimedOut=false;
+   const cameraRequest=navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
+   cameraRequest.then(lateStream=>{if(cameraTimedOut||closed)lateStream.getTracks().forEach(t=>t.stop())}).catch(()=>{});
+   let cameraTimer;
+   try{
+    stream=await Promise.race([
+     cameraRequest,
+     new Promise((_,reject)=>{cameraTimer=setTimeout(()=>{cameraTimedOut=true;reject(new Error('CAMERA_TIMEOUT'))},12000)})
+    ]);
+   }finally{clearTimeout(cameraTimer)}
    if(closed){cleanup();return}
    video.srcObject=stream;video.muted=true;video.controls=false;
    const type=['video/webm;codecs=vp8,opus','video/webm','video/mp4'].find(t=>MediaRecorder.isTypeSupported(t));
@@ -127,7 +137,7 @@ async function recordIdeaVideo(){
     share.hidden=false;download.hidden=false;retake.hidden=false;stop.disabled=true;
    };
    recorder.start(1000);startSpeech();stop.disabled=false;status.textContent='Идёт запись видео и звука. Нажмите «Остановить запись», когда закончите.';
-  }catch(e){cleanup();status.textContent=e.name==='NotAllowedError'?'Разрешите доступ к камере и микрофону.':'Не удалось включить камеру: '+e.message}
+  }catch(e){cleanup();status.textContent=e.message==='CAMERA_TIMEOUT'?'Камера не ответила за 12 секунд. Проверьте разрешения камеры и микрофона в браузере и нажмите «Повторить».':e.name==='NotAllowedError'?'Доступ к камере или микрофону запрещён. Разрешите его в настройках браузера и нажмите «Повторить».':'Не удалось включить камеру: '+e.message;retake.textContent='Повторить';retake.hidden=false}
  };
  stop.onclick=()=>{if(recorder?.state==='recording'){stopSpeech();recorder.stop();stop.disabled=true;status.textContent='Подготовка видео…'}};
  const file=()=>new File([blob],blob.type.includes('mp4')?'ideafix-idea.mp4':'ideafix-idea.webm',{type:blob.type});
