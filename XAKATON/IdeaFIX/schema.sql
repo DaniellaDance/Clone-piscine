@@ -34,3 +34,5 @@ CREATE TABLE IF NOT EXISTS ideafix.chat_deliveries(message_id integer NOT NULL R
 CREATE TABLE IF NOT EXISTS ideafix.channel_tests(request_key text PRIMARY KEY,provider text NOT NULL,created timestamptz NOT NULL DEFAULT now());
 
 CREATE TABLE IF NOT EXISTS ideafix.vendor_scopes(vendor_id text PRIMARY KEY,industry_ids jsonb NOT NULL DEFAULT '[]',source text NOT NULL);
+
+CREATE TABLE IF NOT EXISTS ideafix.push_subscriptions(endpoint text PRIMARY KEY,user_id text NOT NULL REFERENCES ideafix.users(id) ON DELETE CASCADE,subscription jsonb NOT NULL,created timestamptz NOT NULL DEFAULT now());
