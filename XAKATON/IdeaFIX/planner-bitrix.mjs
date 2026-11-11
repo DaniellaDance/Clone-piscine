@@ -1,6 +1,7 @@
 import {bitrixCall,BITRIX_PORTAL} from './bitrix.mjs';
 export function workTaskFields(task,person){const plain=s=>String(s||'').replaceAll('[','(').replaceAll(']',')');const start=new Date(task.due_at),end=new Date(start.getTime()+(task.duration_minutes||30)*60000);return {TITLE:plain(task.title).slice(0,200),DESCRIPTION:plain(task.description)+'\n\nРабочая задача из личного «Плана дня» IdeaFix.',RESPONSIBLE_ID:Number(person),START_DATE_PLAN:start.toISOString(),END_DATE_PLAN:end.toISOString(),DEADLINE:end.toISOString()}}
-export async function syncDayTask(query,task,call=bitrixCall){
+export async function syncDayTask(query,task,call=bitrixCall,{explicitIdea=false}={}){
+ if(task.source==='idea-event'&&!explicitIdea)return {status:'manual_required',message:'Отправьте идею отдельной кнопкой в её карточке.'};
  if(!task.work_task)return {status:'personal'};
  const link=(await query('SELECT bitrix_user FROM ideafix.planner_bitrix_links WHERE app_user=$1',[task.owner])).rows[0],config=(await query('SELECT webhook,pilot_group FROM ideafix.bitrix_config WHERE id=1')).rows[0];const personal=(await query('SELECT webhook FROM ideafix.bitrix_accounts WHERE app_user=$1',[task.owner])).rows[0];const base=personal?.webhook||config?.webhook||process.env.BITRIX_WEBHOOK_URL;
  if(!base||!link)return {status:'queued',message:'Рабочая задача сохранена. Передача в Bitrix24 ожидает подключения личного аккаунта.'};
