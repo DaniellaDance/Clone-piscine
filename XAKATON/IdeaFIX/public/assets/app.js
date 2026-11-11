@@ -20,9 +20,63 @@ async function refresh(initial=false){try{const next=await api('/tickets');if(!i
 function sound(){try{const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);g.gain.value=.05;o.frequency.value=650;o.start();o.stop(a.currentTime+.12);o.onended=()=>a.close()}catch{}}
 function head(title,sub=''){return `<div class="page-head"><div><div class="eyebrow">Ваш голос имеет значение</div><h1>${title}</h1><p class="muted">${sub}</p></div><button id="new" class="primary">＋ Инсайт</button></div>`}
 function chooseIdeaMode(){
- modal('Записать идею',`<div class="voice-actions" style="display:grid;gap:12px;padding:12px 0"><button type="button" id="idea-by-voice" class="primary">🎙 Записать голосом</button><button type="button" id="idea-by-text">✍ Написать текстом</button></div>`);
+ modal('Записать идею',`<div class="voice-actions" style="display:grid;gap:12px;padding:12px 0"><button type="button" id="idea-by-voice" class="primary">🎙 Записать голосом</button><button type="button" id="idea-by-text">✍ Написать текстом</button><button type="button" id="idea-by-video">🎥 Записать видеообращение</button></div>`);
  $('#idea-by-voice').onclick=()=>{ $('#modal').close();newTicket();const button=$('#create [data-dictate]');if(button&&!button.disabled)button.click() };
  $('#idea-by-text').onclick=()=>{ $('#modal').close();newTicket();$('#create textarea[name=body]')?.focus() };
+ $('#idea-by-video').onclick=()=>{ $('#modal').close();recordIdeaVideo() };
+}
+async function recordIdeaVideo(){
+ modal('Видеообращение',`<div style="display:grid;gap:12px">
+  <p class="hint">Видео записывается только с вашего разрешения. Перед отправкой его можно просмотреть или удалить.</p>
+  <video id="idea-video-preview" autoplay muted playsinline style="width:100%;max-height:48vh;background:#14202a;border-radius:12px"></video>
+  <p id="idea-video-status" role="status">Подготовка камеры…</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px">
+   <button type="button" id="idea-video-stop" class="primary" disabled>Остановить запись</button>
+   <button type="button" id="idea-video-share" hidden>Поделиться видео</button>
+   <button type="button" id="idea-video-download" hidden>Сохранить видео</button>
+   <button type="button" id="idea-video-retake" hidden>Перезаписать</button>
+  </div></div>`);
+ const dialog=$('#modal'),video=$('#idea-video-preview'),status=$('#idea-video-status');
+ const stop=$('#idea-video-stop'),share=$('#idea-video-share'),download=$('#idea-video-download'),retake=$('#idea-video-retake');
+ let stream=null,recorder=null,chunks=[],blob=null,url=null,closed=false;
+ const cleanup=()=>{stream?.getTracks().forEach(t=>t.stop());stream=null};
+ const release=()=>{closed=true;cleanup();if(recorder?.state==='recording')recorder.stop();if(url)URL.revokeObjectURL(url)};
+ dialog.addEventListener('close',release,{once:true});
+ const begin=async()=>{
+  cleanup();if(url){URL.revokeObjectURL(url);url=null}
+  blob=null;chunks=[];share.hidden=true;download.hidden=true;retake.hidden=true;stop.disabled=true;
+  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status.textContent='Запись видео не поддерживается этим браузером.';return}
+  try{
+   stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
+   if(closed){cleanup();return}
+   video.srcObject=stream;video.muted=true;video.controls=false;
+   const type=['video/webm;codecs=vp8,opus','video/webm','video/mp4'].find(t=>MediaRecorder.isTypeSupported(t));
+   recorder=new MediaRecorder(stream,type?{mimeType:type}:undefined);
+   recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+   recorder.onstop=()=>{
+    cleanup();if(closed)return;
+    blob=new Blob(chunks,{type:recorder.mimeType||'video/webm'});
+    if(!blob.size){status.textContent='Видео не записалось. Попробуйте ещё раз.';retake.hidden=false;return}
+    url=URL.createObjectURL(blob);video.srcObject=null;video.src=url;video.muted=false;video.controls=true;video.play().catch(()=>{});
+    status.textContent='Видео готово. Выберите, кому отправить его через меню «Поделиться», либо сохраните файл.';
+    share.hidden=false;download.hidden=false;retake.hidden=false;stop.disabled=true;
+   };
+   recorder.start(1000);stop.disabled=false;status.textContent='Идёт запись видео и звука. Нажмите «Остановить запись», когда закончите.';
+  }catch(e){cleanup();status.textContent=e.name==='NotAllowedError'?'Разрешите доступ к камере и микрофону.':'Не удалось включить камеру: '+e.message}
+ };
+ stop.onclick=()=>{if(recorder?.state==='recording'){recorder.stop();stop.disabled=true;status.textContent='Подготовка видео…'}};
+ const file=()=>new File([blob],blob.type.includes('mp4')?'ideafix-idea.mp4':'ideafix-idea.webm',{type:blob.type});
+ share.onclick=async()=>{
+  if(!blob)return;
+  try{
+   const f=file();
+   if(!navigator.share||!navigator.canShare?.({files:[f]})){status.textContent='Ваш браузер не поддерживает отправку видео. Сохраните файл и прикрепите его в рабочем чате.';return}
+   await navigator.share({files:[f],title:'Видеообращение IdeaFIX',text:'Видеообращение'});
+  }catch(e){if(e.name!=='AbortError')status.textContent='Не удалось поделиться видео. Сохраните файл и отправьте вручную.'}
+ };
+ download.onclick=()=>{if(!blob)return;const a=document.createElement('a');a.href=url;a.download=file().name;a.click()};
+ retake.onclick=()=>{video.pause();begin()};
+ await begin();
 }
 function wireNew(){if($('#new'))$('#new').onclick=chooseIdeaMode;if($('#record-idea'))$('#record-idea').onclick=chooseIdeaMode}
 const late=t=>!t.first_response&&!['done','reject'].includes(t.status)&&new Date(t.due)<new Date();
