@@ -98,3 +98,5 @@ CREATE TABLE IF NOT EXISTS ideafix.discussion_exports (
   message_count integer NOT NULL,
   generated_at timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS ideafix.regular_clients (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, company text NOT NULL, contact_name text NOT NULL DEFAULT '', contact_email text NOT NULL DEFAULT '', notes text NOT NULL DEFAULT '', created_at timestamptz NOT NULL DEFAULT now());
