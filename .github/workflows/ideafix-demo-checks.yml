@@ -1,0 +1,39 @@
+name: IdeaFIX demo checks
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'XAKATON/IdeaFIX/**'
+      - '.github/workflows/ideafix-demo-checks.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ideafix-demo-checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: XAKATON/IdeaFIX
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: XAKATON/IdeaFIX/package-lock.json
+      - name: Install
+        run: npm ci --no-audit --no-fund
+      - name: Build
+        run: npm run build
+      - name: Unit tests (no production database)
+        run: npm run test:unit
+      - name: Check demo pages
+        run: |
+          test -s public/index.html
+          test -s public/mobile.html
+          test -s public/desktop.html
+          test -s public/install.html
