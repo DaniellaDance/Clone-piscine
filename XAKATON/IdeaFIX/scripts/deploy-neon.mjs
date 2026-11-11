@@ -34,15 +34,23 @@ while (Date.now() < deadline) {
 }
 if (!active) throw new Error('Timed out waiting for active Neon deployment');
 for (const route of ['/', '/mobile.html', '/desktop.html', '/assets/voice.js']) {
-  const response = await fetch(url + route + '?ci=' + encodeURIComponent(GITHUB_SHA || Date.now()), {
-    headers: { 'cache-control': 'no-cache' },
-    signal: AbortSignal.timeout(20000)
-  });
-  if (!response.ok) throw new Error('Smoke test failed: ' + route + ' HTTP ' + response.status);
-  if (route === '/assets/voice.js') {
-    const source = await response.text();
-    if (!source.includes('ideafix-commit:' + GITHUB_SHA)) throw new Error('Deployed commit mismatch in voice asset');
+  let verified = false;
+  for (let attempt = 1; attempt <= 12; attempt++) {
+    const response = await fetch(url + route + '?ci=' + encodeURIComponent(GITHUB_SHA || Date.now()) + '&attempt=' + attempt, {
+      headers: { 'cache-control': 'no-cache' },
+      signal: AbortSignal.timeout(20000)
+    });
+    if (response.ok) {
+      if (route !== '/assets/voice.js') verified = true;
+      else {
+        const source = await response.text();
+        verified = source.includes('ideafix-commit:' + GITHUB_SHA);
+      }
+    }
+    if (verified) { console.log('OK', route, response.status); break; }
+    console.log('Waiting for new revision on', route, 'attempt', attempt);
+    await new Promise(resolve => setTimeout(resolve, 3000));
   }
-  console.log('OK', route, response.status);
+  if (!verified) throw new Error('Smoke test failed or deployed commit mismatch: ' + route);
 }
 console.log('IdeaFIX Neon deployment verified:', url);
