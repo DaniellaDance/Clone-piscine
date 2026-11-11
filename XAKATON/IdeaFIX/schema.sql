@@ -56,3 +56,6 @@ ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS offering_id text NOT NULL D
 ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS offering_name text NOT NULL DEFAULT '';
 
 CREATE TABLE IF NOT EXISTS ideafix.bitrix_actions(ticket integer NOT NULL REFERENCES ideafix.tickets(id),app_user text NOT NULL REFERENCES ideafix.users(id),action text NOT NULL CHECK(action IN ('discussion','project')),status text NOT NULL,remote_id bigint,PRIMARY KEY(ticket,app_user,action));
+
+ALTER TABLE ideafix.meetings ADD COLUMN IF NOT EXISTS vendor_id text NOT NULL DEFAULT '';
+CREATE INDEX IF NOT EXISTS meetings_vendor_time ON ideafix.meetings(vendor_id,starts_at);

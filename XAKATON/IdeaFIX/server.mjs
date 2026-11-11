@@ -1,3 +1,4 @@
+import {handleVendorWorkspace} from './vendor-workspace.mjs';
 import {handleBitrixActions} from './bitrix-actions.mjs';
 import {mirrorIdea} from './bitrix-events.mjs';
 import {handleBitrixAccount} from './bitrix-account.mjs';
@@ -55,6 +56,7 @@ if(url.pathname==='/api/track'&&req.method==='POST'){const b=await body(req),t=a
 const u=await session(req);if(!u)fail(401,'Войдите в аккаунт');
 if(url.pathname==='/api/me')return send({...publicUser(u),departments});
 if(url.pathname==='/api/logout'){const tok=(req.headers.cookie||'').match(/if_session=([^;]+)/)?.[1];if(tok)await query('DELETE FROM ideafix.sessions WHERE token=$1',[hash(tok)]);res.setHeader('Set-Cookie','if_session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax');return send({ok:true})}
+if(await handleVendorWorkspace({url,req,u,query,send,fail,catalog}))return;
 if(await handleBitrixActions({url,req,u,body,send,fail,query,manage}))return;
 if(await handleBitrixAccount({url,req,u,body,send,fail,query}))return;
 if(await handlePlanner({url,req,u,body:r=>body(r,600000),send,fail,query,pool}))return;
@@ -67,7 +69,7 @@ if(url.pathname==='/api/text/prepare'){
  if(!admitted.rowCount){res.setHeader('Retry-After','60');fail(429,'Слишком много проверок. Повторите через минуту')}
  return send(await proofread(b.text,b.language||'ru'));
 }
-if(await handleMeetings({url,req,res,u,body,send,fail,query,manage,event}))return;
+if(await handleMeetings({url,req,res,u,body,send,fail,query,manage,event,catalog}))return;
 if(url.pathname==='/api/settings'){
 if(req.method==='PUT'){if(!staff(u))fail(403,'Нет доступа');const b=await body(req);for(const key of ['high','medium','low'])if(!Number.isInteger(b[key])||b[key]<1||b[key]>720)fail(400,'Срок: 1–720 часов');await query('UPDATE ideafix.settings SET data=$1 WHERE id=1',[JSON.stringify({high:b.high,medium:b.medium,low:b.low})])}return send((await query('SELECT data FROM ideafix.settings WHERE id=1')).rows[0].data)}
 if(await handlePush({url,req,u,body,send,fail,query}))return;

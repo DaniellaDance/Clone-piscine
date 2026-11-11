@@ -1,0 +1,9 @@
+import {BITRIX_PORTAL} from './bitrix.mjs';
+export async function handleVendorWorkspace({url,req,u,query,send,fail,catalog}){
+ const match=url.pathname.match(/^\/api\/vendors\/([^/]+)\/workspace$/);if(!match)return false;if(req.method!=='GET')fail(405,'Метод недоступен');const id=match[1];if(!catalog.vendors.some(v=>v.id===id))fail(404,'Вендор не найден');const top=['director','admin'].includes(u.role),lead=u.role==='lead';
+ const tickets=(await query(`SELECT id,title,stage,status,offering_name FROM ideafix.tickets WHERE vendor_id=$1 AND ($2 OR recipient=$3 OR (NOT anonymous AND author=$3) OR published OR ($4 AND department=$5)) ORDER BY created DESC,id DESC`,[id,top,u.id,lead,u.department])).rows;
+ const remote=(await query("SELECT ticket,remote_id FROM ideafix.bitrix_actions WHERE app_user=$1 AND action='project' AND status='sent' AND ticket=ANY($2::int[])",[u.id,tickets.map(t=>t.id)])).rows;
+ const byTicket=new Map(remote.map(r=>[r.ticket,r.remote_id]));const projects=tickets.filter(t=>['pilot','implementation','result'].includes(t.stage)||byTicket.has(t.id)).map(t=>({...t,bitrix_url:byTicket.has(t.id)?`${BITRIX_PORTAL}/workgroups/group/${byTicket.get(t.id)}/`:null}));
+ const events=(await query(`SELECT m.id,m.title,m.kind,m.starts_at,m.location,m.department FROM ideafix.meetings m WHERE m.starts_at>=now() AND ($2 OR m.department='' OR m.department=$3) AND (m.vendor_id=$1 OR EXISTS(SELECT 1 FROM ideafix.meeting_agenda a JOIN ideafix.tickets t ON t.id=a.ticket_id WHERE a.meeting_id=m.id AND t.vendor_id=$1 AND ($2 OR t.recipient=$4 OR (NOT t.anonymous AND t.author=$4) OR t.published OR ($5 AND t.department=$3)))) ORDER BY m.starts_at,m.id LIMIT 100`,[id,top,u.department,u.id,lead])).rows;
+ send({projects,ideas:tickets.filter(t=>!projects.some(p=>p.id===t.id)),events,canSchedule:top||lead});return true;
+}
