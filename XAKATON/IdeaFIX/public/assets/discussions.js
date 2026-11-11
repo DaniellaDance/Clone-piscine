@@ -30,14 +30,24 @@ async function show(id){
   const [details,rows]=await Promise.all([api(base(id)),api(base(id)+'/messages')]);
   if(page!=='discussions')return;
   topic=details;const v=$('#view');v.classList.remove('list-screen');v.classList.add('discussion-screen');
-  v.innerHTML=heading+'<div class="discussion-subject"><b>'+title(details)+'</b><span>'+(details.closed_at?'Завершено':'В процессе')+'</span></div><div id="disc-messages" role="log" aria-label="Сообщения обсуждения"></div>'+(details.closed_at?'<div class="discussion-actions"><button id="disc-download" class="primary">Скачать протокол (.txt)</button></div>':'<form id="disc-send"><label>Сообщение<textarea name="text" id="disc-text" rows="2" maxlength="3000" required placeholder="Обсудите идею или проблему…"></textarea></label><div class="discussion-actions"><button type="button" id="disc-voice">🎙 Надиктовать</button><button type="submit" class="primary">Отправить</button><button type="button" id="disc-close">Завершить и сохранить файл</button></div><p class="hint">Протокол включает все отправленные сообщения, в том числе отправленную диктовку.</p><p class="error" role="alert"></p></form>');
+  v.innerHTML=heading+'<div class="discussion-subject"><b>'+title(details)+'</b><span>'+(details.closed_at?'Завершено':'В процессе')+'</span></div><div id="disc-messages" role="log" aria-label="Сообщения обсуждения"></div>'+(details.closed_at?'<div class="discussion-actions"><button id="disc-download" class="primary">Скачать протокол (.txt)</button><button type="button" id="disc-ai-protocol">✦ ИИ-протокол и поручения</button></div><div id="disc-ai-output"></div>':'<form id="disc-send"><label>Сообщение<textarea name="text" id="disc-text" rows="2" maxlength="3000" required placeholder="Обсудите идею или проблему…"></textarea></label><div class="discussion-actions"><button type="button" id="disc-voice">🎙 Надиктовать</button><button type="submit" class="primary">Отправить</button><button type="button" id="disc-close">Завершить и сохранить файл</button><button type="button" id="disc-ai-protocol">✦ ИИ-протокол и поручения</button></div><p class="hint">Протокол включает все отправленные сообщения, в том числе отправленную диктовку.</p><p class="error" role="alert"></p></form><div id="disc-ai-output"></div>');
   $('#disc-back').onclick=()=>{active=null;topic=null;stopVoice();render()};
   paint(rows);
+  $('#disc-ai-protocol').onclick=()=>aiProtocol(id);
   if(details.closed_at){$('#disc-download').onclick=()=>download(id);return}
   bindForm('#disc-send',async form=>{stopVoice();await api(base(id)+'/messages',{text:form.text});const area=$('#disc-text');if(area)area.value='';await refresh()});
   $('#disc-close').onclick=async()=>{if(!confirm('Завершить обсуждение? Будет сохранён полный протокол всех сообщений.'))return;const b=$('#disc-close');b.disabled=true;try{stopVoice();await api(base(id)+'/close',{});await show(id);download(id);toast('Протокол сохранён и готов к скачиванию')}catch(e){toast(e.message);b.disabled=false}};
   $('#disc-voice').onclick=dictate;
  }catch(e){toast(e.message);active=null;await render()}
+}
+async function aiProtocol(id){
+ const btn=$('#disc-ai-protocol'),out=$('#disc-ai-output');if(!btn||!out)return;btn.disabled=true;out.textContent='ИИ готовит проект протокола…';
+ try{const data=await api('/ai/discussion-protocol',{topic_id:Number(id)}),p=data.protocol||{};
+ const list=(name,rows)=>'<h3>'+name+'</h3><ul>'+((Array.isArray(rows)?rows:[]).map(x=>'<li>'+esc(typeof x==='string'?x:(x.task||'Поручение')+' — '+(x.owner||'Не назначен')+'; срок: '+(x.deadline||'Не указан'))+'</li>').join('')||'<li>Не указано</li>')+'</ul>';
+ const text=['ПРОЕКТ ПРОТОКОЛА',p.summary||'',...(p.decisions||[]).map(x=>'Решение: '+x),...(p.assignments||[]).map(x=>'Поручение: '+x.task+'; ответственный: '+x.owner+'; срок: '+x.deadline),...(p.unresolved||[]).map(x=>'Открытый вопрос: '+x),'Рекомендация: '+(p.recommended_action||'')].join('\n');
+ out.innerHTML='<section class="panel" style="background:#edf5ff;color:#193354"><h2>Проект протокола ИИ</h2><p>'+esc(p.summary||'—')+'</p>'+list('Решения',p.decisions)+list('Поручения',p.assignments)+list('Открытые вопросы',p.unresolved)+'<p><b>Следующий шаг:</b> '+esc(p.recommended_action||'—')+'</p><p class="hint">Проверьте содержание. Отправка в Bitrix24 возможна только отдельным действием руководителя.</p><button type="button" id="disc-ai-copy">Скопировать проект протокола</button></section>';
+ $('#disc-ai-copy').onclick=()=>navigator.clipboard?.writeText(text).then(()=>toast('Проект скопирован')).catch(()=>toast('Копирование недоступно'));
+ }catch(e){out.textContent=e.message}finally{btn.disabled=false}
 }
 function paint(rows){
  const root=$('#disc-messages');if(!root)return;const bottom=root.scrollHeight-root.scrollTop-root.clientHeight<80;
