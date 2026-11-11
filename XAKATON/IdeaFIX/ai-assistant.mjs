@@ -25,11 +25,12 @@ export async function handleAI({url,req,u,body,query,send,fail}){
  if(req.method!=='POST')fail(405,'Метод недоступен');
  const input=await body(req),ticketId=id(input.ticket_id);
  if(url.pathname==='/api/ai/news-brief'){
-  const kind=input.kind==='technologies'?'technologies':'vendors';
+  const kind=['technologies','leaders'].includes(input.kind)?input.kind:'vendors';
   const catalog=await import('./catalog.json',{with:{type:'json'}}).then(m=>m.default);
-  const items=kind==='vendors'?catalog.vendors:catalog.technical;
+  const leaders=['Honeywell','Siemens','Johnson Controls','Bosch Building Technologies','Schneider Electric','ABB','Eaton','Carrier Global','Halma','Hochiki'].map((name,i)=>({id:'leader-'+(i+1),name}));
+  const items=kind==='leaders'?leaders:kind==='vendors'?catalog.vendors:catalog.technical;
   const selected=items.find(x=>String(x.id)===String(input.topic_id));
-  if(!selected)fail(400,'Выберите вендора или технологию из каталога');
+  if(!selected)fail(400,'Выберите компанию или технологию из списка');
   const name=String(selected.name||selected.label?.[0]||'').slice(0,100);
   const source=String(input.source_text||'').trim().slice(0,14000);
   if(source.length<80)fail(400,'Добавьте текст реальной новости (не менее 80 символов). ИИ не должен придумывать публикации.');
