@@ -199,16 +199,21 @@ setInterval(()=>{if(me&&!document.hidden)refresh()},15000);
 
 function mountainProgress(stage){
  const keys=Object.keys(stages),at=Math.max(0,keys.indexOf(stage));
- // Nine stages run from the mountain foot (bottom) to its summit (top).
- const coords=[[19,90],[37,80],[59,72],[76,63],[56,54],[35,45],[51,35],[72,25],[83,12]];
- const path=coords.map(([x,y],i)=>(i?'L':'M')+x+' '+y).join(' ');
- const labels=keys.map((k,i)=>{
-  const [x,y]=coords[i],done=i<at,current=i===at;
-  const color=done?'#0e8643':current?'#a34d00':'#526581';
-  const bg=done?'#e1ffea':current?'#fff1d8':'#f1f5fb';
-  return '<div title="'+esc(stages[k])+'" style="position:absolute;left:'+x+'%;top:'+y+'%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:4px;white-space:nowrap;border-radius:24px;padding:4px 7px;background:'+bg+';border:1px solid '+(done?'#36ce75':current?'#ffa13a':'#c6d2e4')+';box-shadow:'+(done?'0 0 12px 3px rgba(27,224,93,.62)':'0 2px 5px #4563')+';font-size:clamp(9px,2.25vw,12px);font-weight:700;color:'+color+';z-index:'+(current?3:2)+'"><span style="display:inline-grid;place-items:center;border-radius:50%;width:17px;height:17px;flex:none;background:'+(done?'#20ca64':current?'#ff9a25':'#d9e2f0')+';color:'+(done?'white':'#344b6e')+'">'+(done?'✓':i+1)+'</span>'+esc(stages[k])+'</div>';
+ // Overlay the existing alpine-hero.webp used on the real IdeaFIX homepage.
+ // The switchback route follows the mountain from its foot to its summit.
+ const points=[[16,90],[35,83],[55,76],[73,67],[56,58],[39,49],[54,40],[69,30],[83,17]];
+ const trail=points.map(([x,y],i)=>(i?'L':'M')+x+' '+y).join(' ');
+ const markers=keys.map((k,i)=>{
+  const [x,y]=points[i],done=i<at,current=i===at;
+  const color=done?'#19df68':current?'#ff9c27':'#d2d9e5';
+  const labelPosition=i%2===0?'translate(-10%,-115%)':'translate(-90%,-115%)';
+  return '<g><circle cx="'+x+'" cy="'+y+'" r="'+(current?3.2:2.4)+'" fill="'+color+'" stroke="#fff" stroke-width=".65"'+(done?' filter="url(#glowMilestone)"':'')+'/><title>'+esc(stages[k])+'</title></g>';
  }).join('');
- return '<div aria-label="Маршрут идеи по горе от инсайта у подножия до результата на вершине" style="position:relative;width:100%;aspect-ratio:1/1.18;max-height:510px;overflow:hidden;margin:12px 0 16px;border-radius:20px;background:linear-gradient(180deg,#a8d5ff 0%,#e4f2ff 52%,#d2e4f7 100%)"><svg viewBox="0 0 100 110" preserveAspectRatio="none" style="width:100%;height:100%;position:absolute;inset:0" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ideaSlope" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffffff"/><stop offset=".55" stop-color="#9bbce4"/><stop offset="1" stop-color="#5c8ebf"/></linearGradient></defs><path d="M0 110 L0 86 L19 71 L31 78 L52 45 L61 55 L83 7 L100 48 L100 110 Z" fill="url(#ideaSlope)"/><path d="M68 42 L83 7 L93 30 L84 25 L78 29 Z" fill="#fff"/><path d="'+path+'" fill="none" stroke="#fb8d3c" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2.5 1.4" vector-effect="non-scaling-stroke"/></svg>'+labels+'</div><p class="hint">🟢 Пройдено: '+at+' из '+keys.length+' · 🟠 Текущий этап: '+esc(stages[keys[at]])+'</p>';
+ const names=keys.map((k,i)=>{
+  const [x,y]=points[i],done=i<at,current=i===at;
+  return '<span style="position:absolute;left:'+x+'%;top:'+y+'%;transform:translate('+(i%2===0?'-7%':'-93%')+',-140%);font-size:clamp(9px,2.3vw,12px);font-weight:750;line-height:1.1;padding:3px 5px;border-radius:7px;background:'+(done?'#e3ffeb':current?'#fff0d8':'#f2f6ff')+';color:#263d60;border:1px solid '+(done?'#20ce6c':current?'#ff9b26':'#cbd6e6')+';white-space:nowrap;max-width:46%;z-index:2">'+(i+1)+'. '+esc(stages[k])+'</span>';
+ }).join('');
+ return '<div aria-label="Девять этапов идеи на снежной горе IdeaFIX от подножия к вершине" style="position:relative;width:100%;aspect-ratio:1/1.18;max-height:510px;overflow:hidden;margin:12px 0 16px;border-radius:20px;background:#bad8f9 url(assets/alpine-hero.webp) center center/cover no-repeat"><svg viewBox="0 0 100 110" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%" xmlns="http://www.w3.org/2000/svg"><defs><filter id="glowMilestone" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="'+trail+'" fill="none" stroke="#ff7a2d" stroke-width="1.3" stroke-linecap="round" stroke-dasharray="2 1" vector-effect="non-scaling-stroke"/>'+markers+'</svg>'+names+'</div><p class="hint">🟢 Пройдено: '+at+' из '+keys.length+' · 🟠 Текущий этап: '+esc(stages[keys[at]])+'</p>';
 }
 function workflowView(t){
  const w=t.workflow||{},keys=Object.keys(stages),at=keys.indexOf(t.stage);
