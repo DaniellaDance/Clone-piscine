@@ -23,6 +23,7 @@ export async function handleBitrix(ctx){const {url,req,u,body,send,fail,query,po
  }
  const match=url.pathname.match(/^\/api\/tickets\/(\d+)\/bitrix$/);if(!match)return false;if(req.method!=='POST')fail(405,'Метод недоступен');
  const b=await body(req);let recipient;
+ const own=(await query('SELECT webhook FROM ideafix.bitrix_accounts WHERE app_user=$1',[u.id])).rows[0];if(!own?.webhook)fail(409,'Сначала подключите «Мой Битрикс»');
  // A row lock serializes a sender's concurrent requests. The committed pending record
  // prevents duplicates even when the remote service accepts a request but times out.
  const client=await pool.connect();let t,existing;
@@ -30,7 +31,7 @@ export async function handleBitrix(ctx){const {url,req,u,body,send,fail,query,po
  existing=(await client.query('SELECT * FROM ideafix.bitrix_deliveries WHERE ticket=$1 AND recipient=$2',[t.id,recipient])).rows[0];
  if(existing?.status==='sent'){await client.query('COMMIT');return send({ok:true,already_sent:true,task_id:existing.task_id,task_url:`${BITRIX_PORTAL}/company/personal/user/${recipient}/tasks/task/view/${existing.task_id}/`}),true}
  if(existing&&existing.status!=='failed')fail(409,'Отправка уже выполняется или ожидает проверки. Проверьте задачу в Битрикс24; повтор не создаётся.');
- const base=await config(client.query.bind(client));if(!base)fail(503,'Сначала подключите Битрикс24 в разделе «Управление»');
+ const base=own.webhook;
  const people=await bitrixCall(base,'user.get',{FILTER:{ID:recipient,ACTIVE:true,USER_TYPE:'employee'}});const person=people.result?.find(v=>Number(v.ID)===recipient);if(!person)fail(400,'Сотрудник не найден или больше не активен');
  const name=[person.LAST_NAME,person.NAME,person.SECOND_NAME].filter(Boolean).join(' ')||'ID '+recipient;
  await client.query("INSERT INTO ideafix.bitrix_deliveries(ticket,recipient,recipient_name,status) VALUES($1,$2,$3,'pending') ON CONFLICT(ticket,recipient) DO UPDATE SET status='pending',recipient_name=excluded.recipient_name",[t.id,recipient,name]);await client.query('COMMIT');
