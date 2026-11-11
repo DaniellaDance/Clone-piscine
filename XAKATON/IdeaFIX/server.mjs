@@ -61,7 +61,7 @@ if(url.pathname==='/api/partners'){
  if(req.method==='POST'){const b=await body(req),company=clean(b.company,2,120),contact=clean(b.contact_name,2,120),email=clean(b.contact_email,5,200);if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))fail(400,'Проверьте email партнёра');return send((await query('INSERT INTO ideafix.partners(company,contact_name,contact_email) VALUES($1,$2,$3) RETURNING id,company,contact_name,contact_email',[company,contact,email])).rows[0],201)}
  fail(405,'Метод недоступен');
 }
-const partnerRoute=url.pathname.match(/^\\/api\\/tickets\\/(\\d+)\\/partner-send$/);
+const partnerRoute=url.pathname.match(/^\/api\/tickets\/(\d+)\/partner-send$/);
 if(partnerRoute){
  if(u.role!=='director'&&u.role!=='admin')fail(403,'Отправка партнёрам доступна руководству');
  if(req.method!=='POST')fail(405,'Метод недоступен');
