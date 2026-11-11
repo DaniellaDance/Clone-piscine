@@ -33,15 +33,15 @@ while (Date.now() < deadline) {
   await new Promise(resolve => setTimeout(resolve, 5000));
 }
 if (!active) throw new Error('Timed out waiting for active Neon deployment');
-for (const route of ['/', '/mobile.html', '/desktop.html', '/assets/voice.js', '/assets/deployment.json']) {
+for (const route of ['/', '/mobile.html', '/desktop.html', '/assets/voice.js']) {
   const response = await fetch(url + route + '?ci=' + encodeURIComponent(GITHUB_SHA || Date.now()), {
     headers: { 'cache-control': 'no-cache' },
     signal: AbortSignal.timeout(20000)
   });
   if (!response.ok) throw new Error('Smoke test failed: ' + route + ' HTTP ' + response.status);
-  if (route === '/assets/deployment.json') {
-    const data = await response.json();
-    if (data.commit !== GITHUB_SHA) throw new Error('Deployed commit mismatch: ' + data.commit);
+  if (route === '/assets/voice.js') {
+    const source = await response.text();
+    if (!source.includes('ideafix-commit:' + GITHUB_SHA)) throw new Error('Deployed commit mismatch in voice asset');
   }
   console.log('OK', route, response.status);
 }
