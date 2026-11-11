@@ -19,7 +19,7 @@ function forDate(date=new Date()){
 }
 function html(date=new Date()){
  const lang=window.IFI18n?.lang||'ru',c=copy[lang]||copy.ru,{quote:q,key}=forDate(date),author=q.author[lang==='en'?1:lang==='kk'?2:0];
- return `<section id="daily-quote" class="daily-quote" data-user-text data-quote-key="${key}:${lang}" aria-label="${c.heading}"><div class="quote-heading"><strong>${c.heading}</strong><span>${c[q.topic]}</span></div><blockquote>«${escape(q.text[lang]||q.text.ru)}»</blockquote><div class="quote-credit"><span>${escape(author)} · ${q.company}</span><a href="${q.source}" target="_blank" rel="noopener noreferrer">${c.source} ↗</a>${c.translation?`<small>${c.translation}</small>`:''}</div></section>`;
+ return `<section id="daily-quote" class="daily-quote" data-user-text data-quote-key="${key}:${lang}" aria-label="${c.heading}"><blockquote>«${escape(q.text[lang]||q.text.ru)}»</blockquote><div class="quote-credit"><span>${escape(author)} · ${q.company}</span><a href="${q.source}" target="_blank" rel="noopener noreferrer">${c.source} ↗</a>${c.translation?`<small>${c.translation}</small>`:''}</div></section>`;
 }
 function update(){const el=document.getElementById('daily-quote');if(!el)return;const next=html();if(!next.includes(`data-quote-key="${el.dataset.quoteKey}"`))el.outerHTML=next}
 window.IFQuotes={html,forDate,count:quotes.length,update};

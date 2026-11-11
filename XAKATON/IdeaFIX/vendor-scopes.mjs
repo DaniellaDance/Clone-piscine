@@ -1,0 +1,5 @@
+export async function handleVendorScopes({url,req,u,body,send,fail,query,catalog}){
+ if(url.pathname!=='/api/vendor-scopes')return false;
+ if(req.method==='GET'){send((await query('SELECT vendor_id,industry_ids,source FROM ideafix.vendor_scopes')).rows);return true}
+ if(req.method!=='PUT')fail(405,'Метод недоступен');if(u.role!=='director')fail(403,'Справочник уточняет директор');const b=await body(req);if(!catalog.vendors.some(v=>v.id===b.vendor_id)||!Array.isArray(b.industry_ids)||b.industry_ids.length>catalog.industry.length||!b.industry_ids.every(id=>catalog.industry.some(x=>x.id===id)))fail(400,'Выберите вендора и отрасли из справочника');if(typeof b.source!=='string'||b.source.trim().length<5||b.source.length>500)fail(400,'Укажите основание связи с отраслью');await query('INSERT INTO ideafix.vendor_scopes(vendor_id,industry_ids,source) VALUES($1,$2,$3) ON CONFLICT(vendor_id) DO UPDATE SET industry_ids=excluded.industry_ids,source=excluded.source',[b.vendor_id,JSON.stringify([...new Set(b.industry_ids)]),b.source.trim()]);send({ok:true});return true;
+}

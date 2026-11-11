@@ -19,7 +19,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.schrack-seconet.com/company/worth-knowing/contact-persons-and-locations/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v2",
@@ -39,7 +41,9 @@
       "sources": [
         "https://www.avigilon.com/contact-us",
         "https://www.avigilon.com/offices"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v3",
@@ -58,7 +62,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.toa-global.com/en/profile/company/outline"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v4",
@@ -76,7 +82,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://vdel.com/en/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v5",
@@ -96,7 +104,9 @@
       "sources": [
         "https://www.komplitis.ru/complitech/software/sentinel-vms",
         "https://www.komplitis.ru/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v6",
@@ -116,7 +126,9 @@
       "sources": [
         "https://www.edwardsfiresafety.com/contact-us",
         "https://priority.edwardsfiresafety.com/Training/BradentonCampus"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v7",
@@ -134,7 +146,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.frontierpitts.com/about-frontier-pitts/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v8",
@@ -153,7 +167,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.conteg.com/ru/contact"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v9",
@@ -172,7 +188,9 @@
       "sources": [
         "https://www.cominfo-trade.com/contact",
         "https://www.cominfo-trade.com/about-us"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v10",
@@ -190,7 +208,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.commend.com/en-gb/legal/imprint/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v11",
@@ -209,7 +229,9 @@
       "sources": [
         "https://datalancabling.ru/about/contacts/",
         "https://datalancabling.ru/about/production/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v12",
@@ -228,7 +250,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.faac.biz/contacts"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v13",
@@ -248,7 +272,9 @@
       "sources": [
         "https://www.komplitis.ru/contact-us",
         "https://www.komplitis.ru/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v14",
@@ -267,7 +293,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.twinpro.ru/about-the-group/contacts/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v15",
@@ -286,7 +314,9 @@
       "sources": [
         "https://www.twinpro.ru/produktyi/",
         "https://www.twinpro.ru/about-the-group/contacts/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v16",
@@ -305,7 +335,9 @@
       "sources": [
         "https://www.twinpro.ru/produktyi/zarya/",
         "https://www.twinpro.ru/about-the-group/contacts/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v17",
@@ -324,7 +356,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://aamsystems.ru/kontakty/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v18",
@@ -342,7 +376,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://epotos.ru/kontakty"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v19",
@@ -360,7 +396,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://start-7.ru/contacts/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v20",
@@ -379,7 +417,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://sa-biysk.ru/contacts/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v21",
@@ -397,7 +437,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.uviscan.com/contact"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v22",
@@ -416,7 +458,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.satel.pl/en/contact/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v23",
@@ -434,7 +478,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.microsens.com/de/unternehmen/unternehmen/standorte"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v24",
@@ -452,7 +498,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://grouplba.com/fr/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v25",
@@ -471,7 +519,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://gplusm.de/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v26",
@@ -489,7 +539,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.fftsecurity.com/contact/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v27",
@@ -507,7 +559,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.extremenetworks.com/about-extreme-networks/company/how-to-buy/office-locations"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v28",
@@ -525,7 +579,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.cias.it/us/contacts/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v29",
@@ -543,7 +599,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://avixglobal.ru/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v30",
@@ -563,7 +621,9 @@
       "sources": [
         "https://www.firesecurityproducts.com/",
         "https://marketing.firesecurityproducts.com/ADVISOR-ADVANCED-APP/privacy-en.htm"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v31",
@@ -581,7 +641,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://afsystem.ru/contactnew"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v32",
@@ -599,7 +661,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.gst.com.cn/en/contactus/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v33",
@@ -619,7 +683,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://nsgate.ru/contacts"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v34",
@@ -637,7 +703,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.lenels2.com/en/contact-us/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v35",
@@ -656,7 +724,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.inter-m.com/en/company/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v36",
@@ -679,7 +749,9 @@
         "https://smartec-security.com/contacts_page/",
         "https://smartec-security.com/company/",
         "https://smartec-security.com/products/Videoregistratory_setevye_NVR/STNR_6462/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v37",
@@ -697,7 +769,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://magossystems.com/contact/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v38",
@@ -715,7 +789,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://www.rdm.com/contact/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v39",
@@ -734,7 +810,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://visy.fi/about-us/contact-information/"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v40",
@@ -753,7 +831,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://rail.wagnergroup.com/deSite/de/en/page/info/imprint"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     },
     {
       "id": "v41",
@@ -772,7 +852,9 @@
       "checked": "2026-11-11",
       "sources": [
         "https://spectron-ops.ru/en/contacts"
-      ]
+      ],
+      "industry": [],
+      "industry_sources": []
     }
   ],
   "technical": [
@@ -901,6 +983,51 @@
         "Күзеттік жарықтандыру"
       ],
       "url": "https://modus-trade.kz/tech/okhrannoe-osveshchenie/"
+    },
+    {
+      "id": "health",
+      "label": [
+        "Палатная связь",
+        "Nurse call systems",
+        "Палаталық байланыс"
+      ],
+      "url": ""
+    },
+    {
+      "id": "cabling",
+      "label": [
+        "Кабельные системы",
+        "Structured cabling",
+        "Кабельдік жүйелер"
+      ],
+      "url": ""
+    },
+    {
+      "id": "it",
+      "label": [
+        "ИТ и программные решения",
+        "IT and software solutions",
+        "АТ және бағдарламалық шешімдер"
+      ],
+      "url": ""
+    },
+    {
+      "id": "inspection",
+      "label": [
+        "Транспортный досмотр и распознавание",
+        "Vehicle inspection and recognition",
+        "Көлікті тексеру және тану"
+      ],
+      "url": ""
+    },
+    {
+      "id": "radar",
+      "label": [
+        "Радарная охрана периметра",
+        "Radar perimeter protection",
+        "Периметрді радармен қорғау"
+      ],
+      "url": ""
     }
   ],
   "industry": [

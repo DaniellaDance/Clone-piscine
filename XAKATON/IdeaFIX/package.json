@@ -1,1 +1,18 @@
-{"name":"ideafix","version":"2.0.0","private":true,"type":"module","scripts":{"start":"node server.mjs","test":"node --test test.mjs","build":"node scripts/icons.mjs"},"dependencies":{"pg":"8.16.3"},"engines":{"node":">=22"}}
+{
+  "name": "ideafix",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test test.mjs",
+    "build": "node scripts/icons.mjs",
+    "test:unit": "node --test bitrix.test.mjs proofread.test.mjs"
+  },
+  "dependencies": {
+    "pg": "8.16.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
