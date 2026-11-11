@@ -323,3 +323,26 @@ p,h1,h2,h3,small,.hint,.vendor-title,.vendor-card,.panel{overflow-wrap:anywhere}
 #view:has(.showcase-heading) .showcase-item:after{content:"";position:absolute;inset:2px 2px auto auto;width:26%;height:70%;transform:skewX(-19deg);background:linear-gradient(90deg,transparent,#ffffff38,transparent);pointer-events:none}
 #view:has(.showcase-heading) .showcase-ribbon{background:#fff0be;border-color:#e7bd52}
 @media(max-width:650px){#view:has(.showcase-heading) .showcase-heading{border-width:5px;border-bottom-width:9px;padding:16px 12px}#view:has(.showcase-heading) .showcase-grid{padding:22px 12px 20px;border-width:6px;border-bottom-width:12px;gap:18px;background:linear-gradient(110deg,#ffffff80,transparent 40%),linear-gradient(180deg,#e3f0fb,#f7fbff 55%,#d5e3f0)}#view:has(.showcase-heading) .showcase-item article{box-shadow:0 6px 0 #b7c6d5,0 9px 12px #354f6c25}}
+
+/* The selected glass showroom appears beside the home content only in wide/landscape layouts. */
+.home-showcase{display:none}
+@media(min-width:900px),(orientation:landscape) and (min-width:680px){
+ #view.list-screen:has(.home-showcase){display:grid;grid-template-columns:minmax(0,1fr) minmax(310px,38%);column-gap:14px;align-items:start}
+ #view.list-screen:has(.home-showcase)>.home-showcase{display:block;grid-column:2;grid-row:1 / span 12;position:sticky;top:12px;min-width:0;max-height:calc(100dvh - 95px);overflow-y:auto}
+ #view.list-screen:has(.home-showcase)>:not(.home-showcase){grid-column:1;min-width:0}
+ #view.list-screen:has(.home-showcase) .home-hero-wrap{min-width:0}
+}
+.home-showcase{border:7px solid #7a8ca2;border-bottom:12px solid #566d87;border-radius:15px;background:linear-gradient(115deg,#fff8 0%,transparent 30%,#fff4 40%,transparent 50%),linear-gradient(#d8eafb,#f8fbff 58%,#d4e4f3);box-shadow:inset 0 0 0 2px #dce8f4,0 12px 25px #1b385225;padding:14px 10px 17px}
+.home-showcase-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.home-showcase-head h2{font-size:clamp(18px,2.4vw,25px);color:#183c75;margin:4px 0 12px}
+.home-showcase-head button{font-size:12px;white-space:nowrap;padding:7px;border-radius:9px}
+.home-showcase-periods{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.home-showcase-periods button{flex:1 1 auto;font-size:11px;padding:7px 5px;border:1px solid #bad1ef;border-radius:14px;background:#f6fbff;color:#23426e}
+.home-showcase-periods button.active{background:#2354df;color:white}
+.home-showcase-shelves{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 10px;padding:10px 5px 15px;background:repeating-linear-gradient(180deg,transparent 0 175px,#9bb4cb 175px 181px,#f3f9ff 181px 186px,transparent 186px 205px)}
+.home-showcase-product{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-width:0;min-height:156px;padding:12px 7px;background:linear-gradient(130deg,#fff,#e8f3ff);border:2px solid #f9fcff;border-radius:12px;box-shadow:0 6px 0 #aebed0,0 11px 15px #344f6a33;color:#193354;text-align:center}
+.home-showcase-product strong{font-size:13px;line-height:1.25;overflow-wrap:anywhere}
+.home-showcase-product small{font-size:10px;color:#496284}
+.home-showcase-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:#d8e9ff;font-size:30px}
+.home-showcase-empty{grid-column:1/-1;padding:35px 12px;text-align:center;color:#526887;font-size:13px}
+@media(orientation:landscape) and (max-height:520px){#view.list-screen:has(.home-showcase)>.home-showcase{max-height:calc(100dvh - 60px)}.home-showcase-shelves{gap:10px}.home-showcase-product{min-height:115px}}
