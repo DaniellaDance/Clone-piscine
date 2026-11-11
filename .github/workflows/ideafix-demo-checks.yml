@@ -40,6 +40,7 @@ jobs:
       - name: Package Neon deployment archive
         run: |
           npm prune --omit=dev
+          printf '{"commit":"%s"}\\n' "$GITHUB_SHA" > public/deployment.json
           zip -q -r "$RUNNER_TEMP/ideafix-neon.zip" . -x '*.test.mjs' 'test.mjs' 'README.md' 'CONCEPT.md' '.gitignore'
           unzip -t "$RUNNER_TEMP/ideafix-neon.zip" | tail -n 1
       - name: Save deployment archive for Neon
@@ -49,3 +50,9 @@ jobs:
           path: ${{ runner.temp }}/ideafix-neon.zip
           retention-days: 7
           if-no-files-found: error
+      - name: Deploy to Neon Functions
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+        run: |
+          npm install --no-save --package-lock=false --ignore-scripts @neon/sdk
+          node scripts/deploy-neon.mjs "$RUNNER_TEMP/ideafix-neon.zip"
