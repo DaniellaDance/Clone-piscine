@@ -492,3 +492,5 @@ p,h1,h2,h3,small,.hint,.vendor-title,.vendor-card,.panel{overflow-wrap:anywhere}
 .vendor-clock{margin:10px 0;padding:12px;border:1px solid #d4e2f5;border-radius:12px;background:#f5f9ff}.vendor-clock h3{margin:0 0 8px;font-size:16px}.vendor-clock-times{display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:space-between}.vendor-clock-times span{font-size:14px}.vendor-clock p{margin:8px 0 3px;font-weight:650}.vendor-clock small{font-size:11px;color:#61748f}
 
 .vendor-email-panel{margin:10px 0;padding:12px;border:1px solid #d4e2f5;border-radius:12px;background:#fff}.vendor-email-panel h3{margin:0 0 7px;font-size:16px}.vendor-email-panel p{margin:7px 0;overflow-wrap:anywhere}.vendor-email-action{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 15px;border-radius:10px;background:#ff6b27;color:#fff!important;text-decoration:none;font-weight:700}
+
+.vendor-sender-label{display:grid;gap:6px;margin:12px 0;font-size:13px;font-weight:700;color:#24436d}.vendor-sender-select{width:100%;max-width:100%;min-height:42px;padding:8px;border:1px solid #cbd9ef;border-radius:9px;background:white;color:#23364c;font-size:14px}
