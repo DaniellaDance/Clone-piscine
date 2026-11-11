@@ -448,3 +448,16 @@ p,h1,h2,h3,small,.hint,.vendor-title,.vendor-card,.panel{overflow-wrap:anywhere}
 .client-avatar{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:12px;background:#e3edff}
 .client-form{display:grid;gap:12px}
 @media(min-width:800px){#view.ecosystem-screen .catalog-toolbar{grid-template-columns:minmax(0,1fr) 180px 240px auto}#view.ecosystem-screen .catalog-toolbar label,#view.ecosystem-screen .catalog-toolbar>a{grid-column:auto}}
+
+/* Partner world map */
+.partner-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.partner-tabs button{font-size:clamp(11px,2.4vw,14px);padding:10px 4px;overflow-wrap:anywhere}
+.partner-map-panel{background:#fff;border:1px solid #d7e2f2;border-radius:16px;padding:10px;min-width:0}
+.partner-map-heading{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.partner-map-heading small{color:#64748b;font-size:11px}
+#partner-world-map{height:clamp(290px,52vh,600px);width:100%;border-radius:12px;background:#dcecf6;overflow:hidden;z-index:0}
+.partner-map-details{padding:10px 2px;font-size:14px}
+.partner-map-company-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:7px;margin-top:8px}
+.partner-map-company-list button{text-align:left;padding:9px;background:#f4f8ff;border:1px solid #d8e4f7;border-radius:10px;min-width:0}
+.partner-map-company-list .vendor-brand{display:flex;align-items:center;gap:8px}
+.catalog-toolbar[hidden],.catalog-note[hidden],#vendor-groups-note[hidden]{display:none!important}
