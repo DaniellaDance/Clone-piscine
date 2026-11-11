@@ -359,3 +359,22 @@ p,h1,h2,h3,small,.hint,.vendor-title,.vendor-card,.panel{overflow-wrap:anywhere}
  .home-showcase-fullscreen .home-showcase-head h2{font-size:clamp(28px,4vw,48px)}
 }
 @media(max-width:899px){#home-showcase-expand{display:none}}
+
+/* Approved illuminated glass storefront, replacing the former plain list. */
+#view.list-screen:has(.showcase-heading){background:linear-gradient(#f5faff,#e5f1fc);min-width:0}
+.showcase-heading{position:relative;overflow:hidden;border:9px solid #728aa7;border-bottom:12px solid #59718e;border-radius:25px 25px 7px 7px!important;background:radial-gradient(ellipse at 50% 0,#fff 0%,#c7e7ff 50%,#9fc7e9 100%)!important;box-shadow:inset 0 0 0 3px #e9faff,0 12px 28px #2e4e7333;padding:18px!important}
+.showcase-heading:before{content:'✦';position:absolute;right:20px;top:8px;font-size:42px;color:#ffcb50;text-shadow:0 0 20px #ffca56}
+.showcase-heading h2{font-size:clamp(26px,4vw,44px)!important;text-shadow:0 2px 2px #fff;color:#123d79}
+.showcase-heading .showcase-periods button{border-radius:30px;box-shadow:0 2px 8px #315e9220}
+#view.list-screen:has(.showcase-heading) .showcase-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:18px!important;background:linear-gradient(90deg,#82dfff 0%,#d9f8ff 2%,#b8e6ff 4%,transparent 6%,transparent 94%,#b8e6ff 96%,#d9f8ff 98%,#82dfff 100%),repeating-linear-gradient(to bottom,#b6e0f3 0 224px,#7bdeff 224px 230px,#eaffff 230px 235px,#5489ad 235px 241px,#b6e0f3 241px 255px)!important;border:10px solid #6d88a7!important;border-radius:18px!important;padding:28px 18px!important;box-shadow:inset 0 0 0 3px #e3faff,0 10px 25px #24456835}
+.showcase-item{min-width:0!important}
+.showcase-glass-card{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:8px;text-align:center;width:100%;min-height:208px;padding:18px 10px 10px;border:2px solid #c4eaff;border-radius:20px;background:linear-gradient(125deg,#fffdf9 0%,#edf9ff 38%,#dcecff 75%,#fff 100%);box-shadow:0 0 0 2px #ffffff88 inset,0 6px 0 #73b2d8,0 10px 20px #2862a84d;color:#16365e;cursor:pointer;overflow:hidden}
+.showcase-glass-card:before{content:'';position:absolute;top:-15px;left:20%;width:60%;height:22px;border-radius:50%;background:#ffe3a0;filter:blur(12px)}
+.showcase-glass-card strong{font-size:clamp(13px,1.5vw,18px);line-height:1.2;overflow-wrap:anywhere}
+.showcase-glass-card small{font-size:12px;line-height:1.25;color:#476483;overflow-wrap:anywhere}
+.showcase-card-symbol{font-size:38px;line-height:1.1}
+.showcase-demo-label{position:absolute;top:0;right:0;background:#9d1cce;color:white;border-radius:0 14px 0 12px;padding:4px 9px;font-size:10px;font-weight:700}
+.showcase-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;font-size:12px;font-weight:700}
+.showcase-card-state{background:#c7f5d5;border-radius:12px;padding:4px 7px}
+@media(max-width:750px){#view.list-screen:has(.showcase-heading) .showcase-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:16px 10px!important;gap:12px!important}.showcase-glass-card{min-height:205px;padding:18px 7px 8px}.showcase-card-symbol{font-size:30px}.showcase-glass-card strong{font-size:13px}.showcase-glass-card small{font-size:11px}}
+@media(max-width:380px){#view.list-screen:has(.showcase-heading) .showcase-grid{grid-template-columns:minmax(0,1fr)!important}}
