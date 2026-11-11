@@ -20,12 +20,13 @@ export async function handlePlanner({url,req,u,body,send,fail,query,pool}){
   const tickets=(await query(`SELECT id,title,status,stage,due,workflow FROM ideafix.tickets WHERE recipient=$1 AND ((due >= $2 AND due < $3) OR workflow->>'deadline'=$4) ORDER BY due,id`,[u.id,window.from,window.to,window.day])).rows;
   tasks.push(...tickets.map(t=>({id:'ticket-'+t.id,ticket_id:t.id,title:(t.stage==='pilot'?'Пилот: ':'Обращение: ')+t.title,status:['done','reject'].includes(t.status)?'done':t.status==='new'?'new':'work',due_at:t.workflow?.deadline===window.day?null:t.due,source:'ideafix'})));
   const link=(await query('SELECT bitrix_user,bitrix_name FROM ideafix.planner_bitrix_links WHERE app_user=$1',[u.id])).rows[0];const config=(await query('SELECT webhook FROM ideafix.bitrix_config WHERE id=1')).rows[0];
+  const personal=(await query('SELECT app_user FROM ideafix.bitrix_accounts WHERE app_user=$1',[u.id])).rows.length;
   for(const task of tasks)if(task.bitrix_task&&link)task.url=BITRIX_PORTAL+'/company/personal/user/'+link.bitrix_user+'/tasks/task/view/'+task.bitrix_task+'/';
-  send({day:window.day,tasks,bitrix:{configured:!!(config?.webhook||process.env.BITRIX_WEBHOOK_URL),linked:!!link,person:link?.bitrix_name||null},canLink:u.role==='director'});return true;
+  send({day:window.day,tasks,bitrix:{configured:!!(personal||config?.webhook||process.env.BITRIX_WEBHOOK_URL),linked:!!link,person:link?.bitrix_name||null},canLink:u.role==='director'});return true;
  }
  if(url.pathname==='/api/planner/bitrix'&&req.method==='GET'){
   const link=(await query('SELECT bitrix_user FROM ideafix.planner_bitrix_links WHERE app_user=$1',[u.id])).rows[0];if(!link)fail(409,'Личный аккаунт Bitrix24 ещё не привязан');
-  const config=(await query('SELECT webhook FROM ideafix.bitrix_config WHERE id=1')).rows[0];const base=config?.webhook||process.env.BITRIX_WEBHOOK_URL;if(!base)fail(503,'Битрикс24 ещё не подключён');
+  const config=(await query('SELECT webhook FROM ideafix.bitrix_config WHERE id=1')).rows[0];const personal=(await query('SELECT webhook FROM ideafix.bitrix_accounts WHERE app_user=$1',[u.id])).rows[0];const base=personal?.webhook||config?.webhook||process.env.BITRIX_WEBHOOK_URL;if(!base)fail(503,'Битрикс24 ещё не подключён');
   const start=Number(url.searchParams.get('start')||0),field=url.searchParams.get('field')||'deadline';if(!Number.isSafeInteger(start)||start<0||start>10000000)fail(400,'Неверная страница');
   send(await bitrixDayPage({base,person:link.bitrix_user,field,start,window}));return true;
  }
@@ -34,7 +35,8 @@ export async function handlePlanner({url,req,u,body,send,fail,query,pool}){
   const task=(await query("INSERT INTO ideafix.planner_tasks(owner,title,description,planned_for,due_at,status,work_task,sync_status,duration_minutes) VALUES($1,$2,$3,$4,$5,'new',$6,$7,$8) RETURNING *",[u.id,b.title.trim(),(b.description||'').trim(),day,day+'T'+b.time+':00+05:00',b.kind==='work',b.kind==='work'?'queued':'personal',duration])).rows[0];const sync=await syncDayTask(query,task);send({ok:true,id:task.id,day,sync},201);return true;
  }
  if(url.pathname==='/api/planner/sync'&&req.method==='POST'){
-  const tasks=(await query("SELECT * FROM ideafix.planner_tasks WHERE owner=$1 AND work_task AND sync_status IN ('queued','failed') ORDER BY id LIMIT 20",[u.id])).rows;const results=[];for(const task of tasks)results.push(await syncDayTask(query,task));send({results});return true;
+  const tasks=(await query("SELECT * FROM ideafix.planner_tasks WHERE owner=$1 AND work_task AND sync_status IN ('queued','failed') ORDER BY id LIMIT 20",[u.id])).rows;const results=[];
+  for(const task of tasks)results.push(await syncDayTask(query,task));send({results});return true;
  }
  if(url.pathname==='/api/planner/calendar/preview'&&req.method==='POST'){
   const b=await body(req),range=dayWindow(new Date(),b.date||window.day);send({day:range.day,events:calendarDay(b.content,range)});return true;
@@ -51,7 +53,7 @@ export async function handlePlanner({url,req,u,body,send,fail,query,pool}){
  const match=url.pathname.match(/^\/api\/planner\/tasks\/(\d+)$/);
  if(match&&req.method==='PATCH'){const b=await body(req);if(!['new','work','done'].includes(b.status))fail(400,'Неизвестный статус');const r=await query('UPDATE ideafix.planner_tasks SET status=$1 WHERE id=$2 AND owner=$3 RETURNING id',[b.status,+match[1],u.id]);if(!r.rowCount)fail(404,'Личная задача не найдена');send({ok:true});return true}
  if(url.pathname==='/api/planner/identity'&&req.method==='PUT'){
-  if(u.role!=='director')fail(403,'Соответствие аккаунтов настраивает директор');const b=await body(req),person=Number(b.bitrix_user_id);if(!Number.isSafeInteger(person)||person<1||typeof b.app_user_id!=='string')fail(400,'Выберите сотрудника');if(!(await query('SELECT id FROM ideafix.users WHERE id=$1',[b.app_user_id])).rows.length)fail(400,'Аккаунт IdeaFix не найден');
+  if(u.role!=='director')fail(403,'Соответствие аккаунтов настраивает директор');const b=await body(req),person=Number(b.bitrix_user_id);if((await query('SELECT app_user FROM ideafix.bitrix_accounts WHERE app_user=$1',[b.app_user_id])).rows.length)fail(409,'Пользователь подключил личный Битрикс. Изменить его может сам пользователь.');if(!Number.isSafeInteger(person)||person<1||typeof b.app_user_id!=='string')fail(400,'Выберите сотрудника');if(!(await query('SELECT id FROM ideafix.users WHERE id=$1',[b.app_user_id])).rows.length)fail(400,'Аккаунт IdeaFix не найден');
   const config=(await query('SELECT webhook FROM ideafix.bitrix_config WHERE id=1')).rows[0],base=config?.webhook||process.env.BITRIX_WEBHOOK_URL;if(!base)fail(503,'Сначала подключите Битрикс24');const people=await bitrixCall(base,'user.get',{FILTER:{ID:person,ACTIVE:true,USER_TYPE:'employee'}}),p=people.result?.find(p=>Number(p.ID)===person);if(!p)fail(400,'Сотрудник Bitrix24 не найден');const name=[p.LAST_NAME,p.NAME,p.SECOND_NAME].filter(Boolean).join(' ')||'ID '+person;
   const duplicate=(await query('SELECT app_user FROM ideafix.planner_bitrix_links WHERE bitrix_user=$1',[person])).rows[0];if(duplicate&&duplicate.app_user!==b.app_user_id)fail(409,'Этот сотрудник Bitrix24 уже привязан к другому аккаунту IdeaFix');
   await query('INSERT INTO ideafix.planner_bitrix_links(app_user,bitrix_user,bitrix_name) VALUES($1,$2,$3) ON CONFLICT(app_user) DO UPDATE SET bitrix_user=excluded.bitrix_user,bitrix_name=excluded.bitrix_name',[b.app_user_id,person,name]);send({ok:true});return true;

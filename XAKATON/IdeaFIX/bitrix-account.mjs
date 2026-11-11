@@ -1,0 +1,9 @@
+import {bitrixCall,webhookBase,BITRIX_PORTAL} from './bitrix.mjs';
+export async function handleBitrixAccount({url,req,u,body,send,fail,query},call=bitrixCall){
+ if(url.pathname!=='/api/bitrix/account')return false;
+ if(req.method==='GET'){const row=(await query('SELECT bitrix_user,bitrix_name FROM ideafix.planner_bitrix_links WHERE app_user=$1',[u.id])).rows[0];const own=(await query('SELECT app_user FROM ideafix.bitrix_accounts WHERE app_user=$1',[u.id])).rows.length;send({connected:!!own,linked:!!row,name:row?.bitrix_name||null,portal:BITRIX_PORTAL});return true}
+ if(req.method==='PUT'){const b=await body(req),base=webhookBase(b.webhook);const r=await call(base,'user.current');const p=r.result;const id=Number(p?.ID);if(!Number.isSafeInteger(id)||id<1)fail(400,'Битрикс24 не подтвердил владельца вебхука');await call(base,'tasks.task.getFields');const name=[p.LAST_NAME,p.NAME,p.SECOND_NAME].filter(Boolean).join(' ')||'ID '+id;
+ const other=(await query('SELECT app_user FROM ideafix.planner_bitrix_links WHERE bitrix_user=$1',[id])).rows[0];if(other&&other.app_user!==u.id)fail(409,'Этот аккаунт Битрикс уже связан с другим пользователем IdeaFix');
+ await query(`WITH linked AS (INSERT INTO ideafix.planner_bitrix_links(app_user,bitrix_user,bitrix_name) VALUES($1,$2,$3) ON CONFLICT(app_user) DO UPDATE SET bitrix_user=excluded.bitrix_user,bitrix_name=excluded.bitrix_name RETURNING app_user) INSERT INTO ideafix.bitrix_accounts(app_user,webhook) SELECT app_user,$4 FROM linked ON CONFLICT(app_user) DO UPDATE SET webhook=excluded.webhook`,[u.id,id,name,base]);send({ok:true,connected:true,name});return true}
+ if(req.method==='DELETE'){await query('DELETE FROM ideafix.bitrix_accounts WHERE app_user=$1',[u.id]);await query('DELETE FROM ideafix.planner_bitrix_links WHERE app_user=$1',[u.id]);send({ok:true});return true}fail(405,'Метод недоступен');
+}

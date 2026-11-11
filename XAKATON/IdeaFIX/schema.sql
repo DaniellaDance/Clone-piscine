@@ -49,3 +49,5 @@ ALTER TABLE ideafix.planner_tasks ADD COLUMN IF NOT EXISTS sync_status text NOT 
 ALTER TABLE ideafix.planner_tasks ADD COLUMN IF NOT EXISTS bitrix_task bigint;
 ALTER TABLE ideafix.planner_tasks ADD COLUMN IF NOT EXISTS duration_minutes integer NOT NULL DEFAULT 30;
 CREATE UNIQUE INDEX IF NOT EXISTS planner_calendar_unique ON ideafix.planner_tasks(owner,external_key) WHERE external_key IS NOT NULL;
+
+CREATE TABLE IF NOT EXISTS ideafix.bitrix_accounts(app_user text PRIMARY KEY REFERENCES ideafix.users(id),webhook text NOT NULL);
