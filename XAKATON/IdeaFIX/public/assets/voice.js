@@ -130,7 +130,7 @@
      }
      collectSpeech();
      // Show interim words immediately, without treating them as permanent results.
-     const live=cleanSpeech(mergeSpeech(spoken,interim.trim()));
+     const live=mergeSpeech(spoken,interim.trim());
      area.value=(base?base+'\\n':'')+live;
      area.scrollTop=area.scrollHeight;
      say(c.listening);
