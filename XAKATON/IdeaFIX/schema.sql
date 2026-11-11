@@ -65,3 +65,6 @@ ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS first_response_due timestam
 
 CREATE TABLE IF NOT EXISTS ideafix.media_messages (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, sender_id text NOT NULL REFERENCES ideafix.users(id), recipient_id text NOT NULL REFERENCES ideafix.users(id), media_type text NOT NULL CHECK(media_type IN ('audio','video')), media_url text, transcript text NOT NULL DEFAULT '', transcript_status text NOT NULL DEFAULT 'pending' CHECK(transcript_status IN ('pending','ready','failed')), created_at timestamptz NOT NULL DEFAULT now());
 CREATE INDEX IF NOT EXISTS media_messages_recipient_created ON ideafix.media_messages(recipient_id,created_at DESC);
+
+CREATE TABLE IF NOT EXISTS ideafix.ticket_files (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, ticket integer NOT NULL REFERENCES ideafix.tickets(id) ON DELETE CASCADE, filename text NOT NULL, mime text NOT NULL, bytes bytea NOT NULL, summary text NOT NULL DEFAULT '', created_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS ticket_files_ticket ON ideafix.ticket_files(ticket);
