@@ -201,7 +201,7 @@ function mountainProgress(stage){
  const keys=Object.keys(stages),at=Math.max(0,keys.indexOf(stage));
  // Overlay the existing alpine-hero.webp used on the real IdeaFIX homepage.
  // The switchback route follows the mountain from its foot to its summit.
- const points=[[16,90],[35,83],[55,76],[73,67],[56,58],[39,49],[54,40],[69,30],[83,17]];
+ const points=[[19,23],[17,84],[36,78],[54,70],[72,63],[83,54],[56,26],[81,46],[88,37]];
  const trail=points.map(([x,y],i)=>(i?'L':'M')+x+' '+y).join(' ');
  const markers=keys.map((k,i)=>{
   const [x,y]=points[i],done=i<at,current=i===at;
