@@ -55,6 +55,22 @@ const token=randomBytes(32).toString('hex');await query("INSERT INTO ideafix.ses
 if(url.pathname==='/api/track'&&req.method==='POST'){const b=await body(req),t=await ticket(Number(b.id));if(!t.access_hash||hash(String(b.code))!==t.access_hash)fail(403,'Неверный код доступа');return send(await detail(null,t,true))}
 const u=await session(req);if(!u)fail(401,'Войдите в аккаунт');
 if(url.pathname==='/api/me')return send({...publicUser(u),departments});
+if(url.pathname==='/api/partners'){
+ if(u.role!=='director'&&u.role!=='admin')fail(403,'Список партнёров доступен руководству');
+ if(req.method==='GET')return send((await query('SELECT id,company,contact_name,contact_email FROM ideafix.partners ORDER BY company,contact_name')).rows);
+ if(req.method==='POST'){const b=await body(req),company=clean(b.company,2,120),contact=clean(b.contact_name,2,120),email=clean(b.contact_email,5,200);if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))fail(400,'Проверьте email партнёра');return send((await query('INSERT INTO ideafix.partners(company,contact_name,contact_email) VALUES($1,$2,$3) RETURNING id,company,contact_name,contact_email',[company,contact,email])).rows[0],201)}
+ fail(405,'Метод недоступен');
+}
+const partnerRoute=url.pathname.match(/^\\/api\\/tickets\\/(\\d+)\\/partner-send$/);
+if(partnerRoute){
+ if(u.role!=='director'&&u.role!=='admin')fail(403,'Отправка партнёрам доступна руководству');
+ if(req.method!=='POST')fail(405,'Метод недоступен');
+ const t=await ticket(Number(partnerRoute[1]));if(!visible(u,t))fail(403,'Нет доступа');
+ const b=await body(req),partner=(await query('SELECT * FROM ideafix.partners WHERE id=$1',[Number(b.partner_id)])).rows[0];if(!partner)fail(404,'Партнёр не найден');
+ const result=(await query("INSERT INTO ideafix.partner_outbox(ticket,partner,sender,status) VALUES($1,$2,$3,'prepared') RETURNING id",[t.id,partner.id,u.id])).rows[0];
+ return send({id:result.id,status:'prepared',message:'Подготовлено к отправке. Для доставки партнёру требуется подключённый почтовый канал.',contact_email:partner.contact_email},201);
+}
+
 const fileRoute=url.pathname.match(/^\/api\/tickets\/(\d+)\/files(?:\/(\d+))?$/);
 if(fileRoute){
  const t=await ticket(Number(fileRoute[1]));if(!visible(u,t))fail(403,'Нет доступа к вложениям');
