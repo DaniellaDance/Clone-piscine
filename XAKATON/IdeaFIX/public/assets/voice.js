@@ -9,6 +9,32 @@
   area.parentElement.after(toolbar);area.spellcheck=true;
   const find=s=>toolbar.querySelector(s),start=find('[data-dictate]'),check=find('[data-check]'),select=find('select'),status=find('[data-voice-status]'),preview=find('[data-preview]'),edited=find('[data-edited]');select.value=lang;
   let recognition=null,listening=false,busy=false,closed=false,reviewed=null,version=0,controller=null,session=0,manualStop=false,segments=new Map(),spoken='',archived=[];
+  // SpeechRecognition can re-emit earlier final phrases with different result indices,
+  // especially after a silent pause or an automatic recognition restart.
+  const words=text=>text.trim().split(/\\s+/).filter(Boolean);
+  const key=text=>text.toLocaleLowerCase().replace(/[.,!?;:…«»"“”]/g,'').trim();
+  function mergeSpeech(previous,next){
+   const a=words(previous),b=words(next);
+   if(!b.length)return previous;
+   const ak=a.map(key),bk=b.map(key);
+   // Ignore a repeated result or a fragment already included in the transcript.
+   for(let i=0;i<=ak.length-bk.length;i++){
+    if(bk.every((word,j)=>word===ak[i+j]))return previous;
+   }
+   // A browser may deliver a longer revision of the most recent phrase.
+   for(let i=0;i<ak.length;i++){
+    if(ak.slice(i).every((word,j)=>word===bk[j]))
+     return [...a.slice(0,i),...b].join(' ');
+   }
+   // Do not append overlapping words twice.
+   return [...a,...b].join(' ');
+  }
+  function collectSpeech(){
+   let text=archived.join(' ');
+   for(const [,phrase] of [...segments.entries()].sort((a,b)=>a[0]-b[0]))
+    text=mergeSpeech(text,phrase);
+   spoken=text.trim();
+  }
   const say=message=>{status.textContent=message};
   const controls=()=>{start.textContent=listening?c.stop:c.dictate;start.setAttribute('aria-pressed',String(listening));start.classList.toggle('recording',listening);check.disabled=listening||busy;select.disabled=listening||busy;start.disabled=!Recognition||busy;area.readOnly=listening;form.querySelector('button[type=submit]').disabled=listening||busy};
   const invalidate=()=>{version++;reviewed=null;preview.hidden=true;controller?.abort();busy=false;controls()};area.addEventListener('input',invalidate);
@@ -45,16 +71,7 @@
       if(!phrase)continue;
       segments.set(i,phrase);
      }
-     const complete=[...segments.entries()].sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
-     // Only final speech recognition results are retained. Interim revisions are never appended.
-     const prior=archived.join(' ').trim();
-     const current=complete.join(' ').trim();
-     const priorWords=prior.split(/\\s+/).filter(Boolean),currentWords=current.split(/\\s+/).filter(Boolean);
-     let overlap=0;
-     for(let n=Math.min(priorWords.length,currentWords.length);n>0;n--){
-      if(priorWords.slice(-n).join(' ').toLocaleLowerCase()===currentWords.slice(0,n).join(' ').toLocaleLowerCase()){overlap=n;break}
-     }
-     spoken=[prior,...currentWords.slice(overlap)].filter(Boolean).join(' ').trim();
+     collectSpeech();
      say(c.listening);
     };
     recognition.onerror=event=>{
@@ -67,7 +84,7 @@
      if(closed||session!==id)return;
      if(!manualStop){
       // Browsers can stop recognition on silence. Continue recording until the user stops.
-      archived=spoken?[spoken]:[];segments=new Map();try{begin()}catch{manualStop=true;say(c.network)}
+      archived=spoken?[spoken]:[];segments=new Map();try{begin()}catch{manualStop=true;listening=false;controls();say(c.network)}
       return;
      }
      listening=false;controls();
