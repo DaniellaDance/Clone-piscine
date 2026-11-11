@@ -57,6 +57,7 @@ const token=randomBytes(32).toString('hex');await query("INSERT INTO ideafix.ses
 if(url.pathname==='/api/track'&&req.method==='POST'){const b=await body(req),t=await ticket(Number(b.id));if(!t.access_hash||hash(String(b.code))!==t.access_hash)fail(403,'Неверный код доступа');return send(await detail(null,t,true))}
 const u=await session(req);if(!u)fail(401,'Войдите в аккаунт');
 if(url.pathname==='/api/me')return send({...publicUser(u),departments});
+if(url.pathname==='/api/completed-kz-projects'&&req.method==='GET')return send((await query('SELECT id,name,city,vendor_name,description,latitude,longitude FROM ideafix.completed_kz_projects ORDER BY city,name')).rows);
 if(url.pathname==='/api/regular-clients'){
  if(u.role!=='director'&&u.role!=='admin')fail(403,'Справочник клиентов доступен руководству');
  if(req.method==='GET')return send((await query('SELECT id,company,contact_name,contact_email,notes FROM ideafix.regular_clients ORDER BY company')).rows);
