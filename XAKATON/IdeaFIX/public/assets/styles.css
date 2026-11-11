@@ -378,3 +378,7 @@ p,h1,h2,h3,small,.hint,.vendor-title,.vendor-card,.panel{overflow-wrap:anywhere}
 .showcase-card-state{background:#c7f5d5;border-radius:12px;padding:4px 7px}
 @media(max-width:750px){#view.list-screen:has(.showcase-heading) .showcase-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:16px 10px!important;gap:12px!important}.showcase-glass-card{min-height:205px;padding:18px 7px 8px}.showcase-card-symbol{font-size:30px}.showcase-glass-card strong{font-size:13px}.showcase-glass-card small{font-size:11px}}
 @media(max-width:380px){#view.list-screen:has(.showcase-heading) .showcase-grid{grid-template-columns:minmax(0,1fr)!important}}
+
+/* Restore original vivid skier colors: old quote gradient was washing out the photo. */
+.home-hero-wrap .quote-head::before{content:none!important;background:none!important}
+.home-hero-wrap .quote-head{filter:none!important;opacity:1!important;background-blend-mode:normal!important}
