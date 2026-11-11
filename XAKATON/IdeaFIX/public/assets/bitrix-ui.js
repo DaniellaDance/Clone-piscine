@@ -1,9 +1,31 @@
 window.IFBitrix={
- ticket(t){return t.stage==='proposal'&&t.canSendProposal?`<section class="hint bitrix-proposal"><h3>Задача коллеге в Битрикс24</h3><p>Выбранный сотрудник станет исполнителем. Задача появится в его разделе «Мои задачи».</p><form id="bitrix-send" class="stack"><label>Найти сотрудника<input id="bitrix-search" type="search" maxlength="100" autocomplete="off"></label><button type="button" id="bitrix-find">Найти</button><label>Исполнитель в Битрикс24<select name="recipient_id" required data-user-text><option value="">—</option></select></label><button type="button" id="bitrix-more" hidden>Ещё сотрудники</button><p id="bitrix-state" role="status">Загружаем сотрудников…</p><button type="submit" class="primary" disabled>Отправить предложение в битрикс</button><div class="error" role="alert"></div><div id="bitrix-result"></div></form></section>`:''},
- async bindTicket(t){const f=document.querySelector('#bitrix-send');if(!f)return;let next=null;const select=f.elements.recipient_id,submit=f.querySelector('[type=submit]'),state=f.querySelector('#bitrix-state'),more=f.querySelector('#bitrix-more');
- const load=async(append=false)=>{submit.disabled=true;try{const data=await api('/bitrix/users?search='+encodeURIComponent(f.querySelector('#bitrix-search').value)+'&start='+(append?next:0));if(!f.isConnected)return;if(!append)select.innerHTML='<option value="">—</option>';for(const person of data.users){if([...select.options].some(v=>v.value===person.id))continue;const option=document.createElement('option');option.value=person.id;option.textContent=person.name+(person.position?' · '+person.position:'')+' · ID '+person.id;select.append(option)}next=data.next;more.hidden=next===null;state.textContent=data.users.length?'Выберите исполнителя задачи':'Сотрудники не найдены';submit.disabled=!select.value}catch(e){if(f.isConnected){state.textContent=e.message;submit.disabled=true}}};
- select.onchange=()=>submit.disabled=!select.value;f.querySelector('#bitrix-find').onclick=()=>load();f.querySelector('#bitrix-search').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();load()}};more.onclick=()=>load(true);
- bindForm('#bitrix-send',async b=>{const result=await api('/tickets/'+t.id+'/bitrix',{recipient_id:b.recipient_id});if(!f.isConnected)return;const target=f.querySelector('#bitrix-result');target.replaceChildren();const a=document.createElement('a');a.href=result.task_url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Открыть задачу в Битрикс24';target.append(a);state.textContent=result.already_sent?'Задача уже была создана':'Задача создана в личном кабинете исполнителя';toast(state.textContent)});await load();
+ ticket(t){return t.stage==='proposal'&&t.canSendProposal?`<section class="hint bitrix-proposal"><h3>Отправить руководителю отдела в Битрикс24</h3><p>Выберите руководителя из списка. Задача появится в его разделе «Мои задачи» только после нажатия кнопки отправки.</p><form id="bitrix-send" class="stack"><label>Руководитель отдела<select name="recipient_id" required data-user-text><option value="">Выберите руководителя</option></select></label><p id="bitrix-state" role="status">Загружаем список руководителей…</p><button type="submit" class="primary" disabled>Отправить задачу руководителю</button><div class="error" role="alert"></div><div id="bitrix-result"></div></form></section>`:''},
+ async bindTicket(t){
+  const f=document.querySelector('#bitrix-send');if(!f)return;
+  const select=f.elements.recipient_id,submit=f.querySelector('[type=submit]'),state=f.querySelector('#bitrix-state');
+  select.onchange=()=>{submit.disabled=!select.value};
+  try{
+   let start=0,people=[],pages=0;
+   do{
+    const data=await api('/bitrix/users?start='+start);
+    if(!f.isConnected)return;
+    people.push(...data.users);
+    start=data.next;pages++;
+   }while(start!==null&&pages<20);
+   const leaders=people.filter(p=>/руковод|начальник|директор|заведующ|head of|department head|director|chief/i.test(p.position||'')).sort((a,b)=>a.name.localeCompare(b.name,'ru'));
+   for(const p of leaders){
+    const option=document.createElement('option');option.value=p.id;option.textContent=p.name+(p.position?' — '+p.position:'');select.append(option);
+   }
+   state.textContent=leaders.length?'Выберите руководителя отдела': 'В Битрикс24 не найдены сотрудники с должностью руководителя. Проверьте заполнение должностей в Битрикс24.';
+   if(start!==null)state.textContent+=' Показаны первые '+people.length+' сотрудников; список может быть неполным.';
+  }catch(e){if(f.isConnected)state.textContent='Не удалось загрузить руководителей: '+e.message}
+  bindForm('#bitrix-send',async b=>{
+   const result=await api('/tickets/'+t.id+'/bitrix',{recipient_id:b.recipient_id});
+   if(!f.isConnected)return;
+   const target=f.querySelector('#bitrix-result');target.replaceChildren();
+   const a=document.createElement('a');a.href=result.task_url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Открыть задачу в Битрикс24';target.append(a);
+   state.textContent=result.already_sent?'Задача уже была создана':'Задача создана у выбранного руководителя';toast(state.textContent);
+  });
  },
  async settings(view){const panel=document.createElement('section');panel.className='panel';panel.innerHTML='<h2>Битрикс24</h2><p>b24-hdamjr.bitrix24.kz</p><p id="bitrix-connection" role="status">Проверяем подключение…</p>';view.querySelector('.page-head').after(panel);
  try{const status=await api('/bitrix/status');if(!panel.isConnected)return;panel.querySelector('#bitrix-connection').textContent=status.configured?'Подключён. Предложения создают задачи выбранным сотрудникам.':'Не подключён. Для отправки задач нужен входящий вебхук.';if(me.role==='director'){const b=document.createElement('button');b.textContent=status.configured?'Обновить подключение Битрикс24':'Подключить Битрикс24';b.onclick=()=>this.connect();panel.append(b)}}catch(e){panel.querySelector('#bitrix-connection').textContent=e.message}
