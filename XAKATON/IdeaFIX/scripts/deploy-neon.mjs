@@ -1,8 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { createNeonClient } from '@neon/sdk';
 
-const { NEON_API_KEY, GITHUB_SHA, GEMINI_API_KEY } = process.env;
+const { NEON_API_KEY, GITHUB_SHA, GEMINI_API_KEY, GEMINI_MODEL } = process.env;
 if (!GEMINI_API_KEY?.trim()) throw new Error('Missing GitHub Actions secret GEMINI_API_KEY; refusing to deploy without AI credentials');
+if (!GEMINI_MODEL?.trim()) throw new Error('Gemini model preflight did not select a model');
 if (!NEON_API_KEY) throw new Error('Missing GitHub Actions secret NEON_API_KEY');
 const projectId = 'aged-wildflower-12030818';
 const branchId = 'br-wandering-hat-b9hqnoxc';
@@ -18,7 +19,7 @@ const deployment = await neon.functions.deploy({
   zip: new File([archive], 'ideafix-neon.zip', { type: 'application/zip' }),
   runtime: 'nodejs24',
   // Neon merges supplied keys with existing deployment environment; omitted keys remain unchanged.
-  environment: { GEMINI_API_KEY: GEMINI_API_KEY.trim() }
+  environment: { GEMINI_API_KEY: GEMINI_API_KEY.trim(), GEMINI_MODEL: GEMINI_MODEL.trim() }
 });
 console.log('Neon accepted deployment:', deployment?.id ?? 'pending');
 const deadline = Date.now() + 240000;
