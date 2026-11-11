@@ -37,3 +37,15 @@ jobs:
           test -s public/mobile.html
           test -s public/desktop.html
           test -s public/install.html
+      - name: Package Neon deployment archive
+        run: |
+          npm prune --omit=dev
+          zip -q -r "$RUNNER_TEMP/ideafix-neon.zip" . -x '*.test.mjs' 'test.mjs' 'README.md' 'CONCEPT.md' '.gitignore'
+          unzip -t "$RUNNER_TEMP/ideafix-neon.zip" | tail -n 1
+      - name: Save deployment archive for Neon
+        uses: actions/upload-artifact@v4
+        with:
+          name: ideafix-neon-${{ github.sha }}
+          path: ${{ runner.temp }}/ideafix-neon.zip
+          retention-days: 7
+          if-no-files-found: error
