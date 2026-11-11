@@ -346,3 +346,16 @@ p,h1,h2,h3,small,.hint,.vendor-title,.vendor-card,.panel{overflow-wrap:anywhere}
 .home-showcase-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:#d8e9ff;font-size:30px}
 .home-showcase-empty{grid-column:1/-1;padding:35px 12px;text-align:center;color:#526887;font-size:13px}
 @media(orientation:landscape) and (max-height:520px){#view.list-screen:has(.home-showcase)>.home-showcase{max-height:calc(100dvh - 60px)}.home-showcase-shelves{gap:10px}.home-showcase-product{min-height:115px}}
+
+/* Fullscreen showcase: desktop only, without changing the mobile tab. */
+.home-showcase-actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.home-showcase-actions button{font-size:12px;white-space:nowrap;padding:7px;border-radius:9px}
+@media(min-width:900px){
+ #view.list-screen:has(.home-showcase-fullscreen)>.home-showcase.home-showcase-fullscreen{display:block;position:fixed;inset:10px;z-index:9999;width:auto;max-height:calc(100dvh - 20px);overflow-y:auto;padding:clamp(12px,2vw,28px);border-width:10px}
+ .home-showcase-fullscreen .home-showcase-shelves{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;padding:25px}
+ .home-showcase-fullscreen .home-showcase-product{min-height:210px}
+ .home-showcase-fullscreen .home-showcase-product strong{font-size:clamp(16px,1.5vw,23px)}
+ .home-showcase-fullscreen .home-showcase-icon{width:70px;height:70px;font-size:42px}
+ .home-showcase-fullscreen .home-showcase-head h2{font-size:clamp(28px,4vw,48px)}
+}
+@media(max-width:899px){#home-showcase-expand{display:none}}
