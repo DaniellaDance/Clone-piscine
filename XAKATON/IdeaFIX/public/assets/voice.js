@@ -38,7 +38,7 @@
     recognition=new Recognition();recognition.lang={ru:'ru-RU',en:'en-US',kk:'kk-KZ'}[select.value];
     recognition.continuous=true;recognition.interimResults=true;
     recognition.onresult=event=>{
-     if(closed||session!==id||manualStop)return;
+     if(closed||session!==id)return;
      for(let i=event.resultIndex;i<event.results.length;i++){
       const result=event.results[i];if(!result.isFinal)continue;
       const phrase=result[0].transcript.trim().replace(/\\s+/g,' ');
@@ -47,7 +47,14 @@
      }
      const complete=[...segments.entries()].sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
      // Only final speech recognition results are retained. Interim revisions are never appended.
-     spoken=[...archived,...complete].filter((phrase,index,array)=>index===0||phrase.toLocaleLowerCase()!==array[index-1].toLocaleLowerCase()).join(' ').trim();
+     const prior=archived.join(' ').trim();
+     const current=complete.join(' ').trim();
+     const priorWords=prior.split(/\\s+/).filter(Boolean),currentWords=current.split(/\\s+/).filter(Boolean);
+     let overlap=0;
+     for(let n=Math.min(priorWords.length,currentWords.length);n>0;n--){
+      if(priorWords.slice(-n).join(' ').toLocaleLowerCase()===currentWords.slice(0,n).join(' ').toLocaleLowerCase()){overlap=n;break}
+     }
+     spoken=[prior,...currentWords.slice(overlap)].filter(Boolean).join(' ').trim();
      say(c.listening);
     };
     recognition.onerror=event=>{
