@@ -33,6 +33,7 @@ jobs:
         run: |
           node --check public/assets/app.js
           node --check public/assets/discussions.js
+          node --check ai-assistant.mjs
           node --check discussions.mjs
           node --check discussions.test.mjs
       - name: Unit tests (no production database)
@@ -59,6 +60,7 @@ jobs:
       - name: Deploy to Neon Functions
         env:
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           npm install --no-save --package-lock=false --ignore-scripts @neon/sdk
           node scripts/deploy-neon.mjs "$RUNNER_TEMP/ideafix-neon.zip"
