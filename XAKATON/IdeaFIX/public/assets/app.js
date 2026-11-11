@@ -54,8 +54,12 @@ function journey(){
  const steps=[['insight','Инсайт'],['discussion','Обсуждение'],['decision','Решение'],['pilot','Пилот'],['result','Результат']];
  return '<section class="stage-journey" aria-label="Этапы пути от идеи до результата">'+steps.map(([id,label])=>'<div class="stage-tile stage-'+id+'"><button type="button" class="stage-select'+(stageFilter===id?' is-active':'')+'" data-stage="'+id+'" aria-pressed="'+(stageFilter===id)+'" title="Показать этап: '+label+'"><span class="stage-icon">'+stageIcon(id)+'</span><span class="stage-title">'+label+'</span></button>'+(id==='insight'?'<button type="button" id="record-idea" aria-label="Записать идею голосом, текстом или видео">＋ Записать идею <span aria-hidden="true">🎙</span></button>':'')+'</div>').join('')+'</section>';
 }
+function openAISecretary(){
+ const total=items.length,active=items.filter(t=>!['result','done','closed'].includes(t.stage)).length,pilots=items.filter(t=>t.stage==='pilot').length;
+ modal('ИИ Секретарь',`<section class="panel"><h3>Помощник директора</h3><p>Сводка по доступным идеям</p><div class="stats"><div><strong>${total}</strong><p>Идей</p></div><div><strong>${active}</strong><p>В работе</p></div><div><strong>${pilots}</strong><p>Пилотов</p></div></div><h3>Что требует внимания?</h3><p>Подготовить анализ идей · Составить план совещания · Показать результаты пилотов</p><p class="hint">ИИ-анализ пока не подключён. Показаны текущие данные системы.</p></section>`);
+}
 function shell(){
- const nav=[['feed','Главная'],['mine','Мои инсайты'],['ideas','Витрина идей'],['vendors','Контакты вендоров'],['ecosystem','Вендоры'],['meetings','График совещаний'],['planner','План дня'],['pilots','Пилоты'],['organization','Отделы и сотрудники'],...(['director','lead'].includes(me.role)?[['chat','Чат руководителей'],['discussions','Обсуждения идей']]:[]),...(['director','lead','admin'].includes(me.role)?[['pulse','Пульс компании']]:[]),...(['director','admin'].includes(me.role)?[['settings','Управление']]:[]),['apps','Приложения']];
+ const nav=[['feed','Главная'],['mine','Мои инсайты'],['ideas','Витрина идей'],['vendors','Контакты вендоров'],['ecosystem','Вендоры'],['meetings','График совещаний'],['planner','План дня'],['pilots','Пилоты'],['organization','Отделы и сотрудники'],...(['director','lead'].includes(me.role)?[['chat','Чат руководителей'],['discussions','Обсуждения идей']]:[]),...(['director','lead','admin'].includes(me.role)?[['pulse','Пульс компании']]:[]),...(['director','admin'].includes(me.role)?[['settings','Управление']]:[]),['ai-secretary','ИИ Секретарь'],['apps','Приложения']];
  const leading=[['feed','Главная','⌂'],['mine','Мои идеи','◉'],['ecosystem','Вендоры','♧']];
  const other=nav.filter(([id])=>!leading.some(([key])=>key===id));
  const navButton=(id,label,glyph)=>'<button type="button" data-page="'+id+'" class="bottom-link'+(page===id?' active':'')+'" title="'+label+'"><span class="bottom-icon" aria-hidden="true">'+glyph+'</span><span class="bottom-text">'+label+'</span></button>';
@@ -64,7 +68,7 @@ function shell(){
  $('#media-inbox-button').onclick=showMediaInbox;
  $('#connect-my-bitrix').onclick=()=>window.IFBitrixAccount.open();
  $('#logout').onclick=async()=>{try{await window.IFPush?.detach();await api('/logout',{});login()}catch(e){toast(e.message)}};
- document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{page=b.dataset.page;filter='';term='';stageFilter='';shell();render()});
+ document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{if(b.dataset.page==='ai-secretary'){document.querySelector('.bottom-more')?.removeAttribute('open');openAISecretary();return}page=b.dataset.page;filter='';term='';stageFilter='';shell();render()});
 }
 
 async function refresh(initial=false){try{const next=await api('/tickets');if(!initial&&items.length&&next.some(n=>!items.some(i=>i.id===n.id))){toast('Появился новый инсайт');sound()}items=next;if(initial)shell();if(initial||(!$('#modal').open&&!document.querySelector('input:focus,textarea:focus,select:focus')))await render();const c=$('#connection');if(c)c.textContent='● Онлайн'}catch(e){if(e.status===401)login();else{const c=$('#connection');if(c)c.textContent='○ Нет связи';if(initial)toast(e.message)}}}
