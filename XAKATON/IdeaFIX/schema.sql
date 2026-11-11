@@ -71,3 +71,30 @@ CREATE INDEX IF NOT EXISTS ticket_files_ticket ON ideafix.ticket_files(ticket);
 
 CREATE TABLE IF NOT EXISTS ideafix.partners (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, company text NOT NULL, contact_name text NOT NULL, contact_email text NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE IF NOT EXISTS ideafix.partner_outbox (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, ticket integer NOT NULL REFERENCES ideafix.tickets(id), partner bigint NOT NULL REFERENCES ideafix.partners(id), sender text NOT NULL REFERENCES ideafix.users(id), status text NOT NULL DEFAULT 'prepared', created_at timestamptz NOT NULL DEFAULT now());
+
+
+-- Independent conversations, one selected idea/problem per leadership discussion.
+CREATE TABLE IF NOT EXISTS ideafix.discussion_topics (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  ticket_id integer NOT NULL REFERENCES ideafix.tickets(id) ON DELETE CASCADE,
+  created_by text NOT NULL REFERENCES ideafix.users(id),
+  created timestamptz NOT NULL DEFAULT now(),
+  closed_at timestamptz,
+  closed_by text REFERENCES ideafix.users(id)
+);
+CREATE INDEX IF NOT EXISTS ideafix_discussion_topics_created ON ideafix.discussion_topics(created DESC);
+CREATE TABLE IF NOT EXISTS ideafix.discussion_messages (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  topic_id bigint NOT NULL REFERENCES ideafix.discussion_topics(id) ON DELETE CASCADE,
+  author text NOT NULL REFERENCES ideafix.users(id),
+  text text NOT NULL CHECK(length(text) BETWEEN 1 AND 3000),
+  created timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS ideafix_discussion_messages_order ON ideafix.discussion_messages(topic_id,id);
+CREATE TABLE IF NOT EXISTS ideafix.discussion_exports (
+  topic_id bigint PRIMARY KEY REFERENCES ideafix.discussion_topics(id) ON DELETE CASCADE,
+  filename text NOT NULL,
+  bytes bytea NOT NULL,
+  message_count integer NOT NULL,
+  generated_at timestamptz NOT NULL DEFAULT now()
+);
