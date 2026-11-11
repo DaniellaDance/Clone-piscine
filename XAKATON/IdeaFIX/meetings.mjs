@@ -1,3 +1,4 @@
+import {mirrorIdea} from './bitrix-events.mjs';
 const managers=u=>['director','admin','lead'].includes(u.role);
 const top=u=>['director','admin'].includes(u.role);
 export const canManageMeeting=(u,m)=>top(u)||(u.role==='lead'&&m.department===u.department);
@@ -30,7 +31,7 @@ export async function handleMeetings({url,req,res,u,body,send,fail,query,manage,
  if(match[2]==='agenda'&&req.method==='POST'){
   if(!managers(u)||!canSeeMeeting(u,m))fail(403,'План совещания доступен директору и руководителям');
   const b=await body(req);if(!Number.isSafeInteger(b.ticket_id)||b.ticket_id<1)fail(400,'Укажите номер обращения');const t=(await query('SELECT * FROM ideafix.tickets WHERE id=$1',[b.ticket_id])).rows[0];if(!t)fail(404,'Обращение не найдено');if(!manage(u,t))fail(403,'Нет доступа к обращению');
-  const added=await query('INSERT INTO ideafix.meeting_agenda(meeting_id,ticket_id,added_by) VALUES($1,$2,$3) ON CONFLICT DO NOTHING RETURNING ticket_id',[m.id,t.id,u.id]);if(added.rowCount)await event(t.id,u,`Включено в повестку: ${m.title}`);send({ok:true,alreadyAdded:!added.rowCount});return true;
+  const added=await query('INSERT INTO ideafix.meeting_agenda(meeting_id,ticket_id,added_by) VALUES($1,$2,$3) ON CONFLICT DO NOTHING RETURNING ticket_id',[m.id,t.id,u.id]);if(added.rowCount)await event(t.id,u,`Включено в повестку: ${m.title}`);const bitrix_sync=await mirrorIdea({query,ticket:t,u,kind:'discussion',meeting:m});send({ok:true,alreadyAdded:!added.rowCount,bitrix_sync});return true;
  }
  if(req.method!=='GET')fail(405,'Метод недоступен');
  if(!managers(u))fail(403,'Материалы доступны руководителям');

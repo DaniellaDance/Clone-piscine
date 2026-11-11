@@ -39,6 +39,6 @@ await call('/logout',{},fresh.cookie);assert.equal((await call('/me',null,fresh.
 // Remove only fixtures created by this test, including the anonymous fixture.
 await db.query('DELETE FROM ideafix.events WHERE ticket=$1',[anon.data.id]);await db.query('DELETE FROM ideafix.tickets WHERE id=$1',[anon.data.id]);
 }finally{
-if(uid.length){await db.query('DELETE FROM ideafix.events WHERE ticket IN (SELECT id FROM ideafix.tickets WHERE author=ANY($1))',[uid]);await db.query('DELETE FROM ideafix.votes WHERE voter=ANY($1) OR ticket IN(SELECT id FROM ideafix.tickets WHERE author=ANY($1))',[uid]);await db.query('DELETE FROM ideafix.tickets WHERE author=ANY($1)',[uid]);await db.query('DELETE FROM ideafix.sessions WHERE user_id=ANY($1)',[uid]);await db.query('DELETE FROM ideafix.users WHERE id=ANY($1)',[uid])}await db.end();}
+if(uid.length){await db.query('DELETE FROM ideafix.planner_tasks WHERE owner=ANY($1)',[uid]);await db.query('DELETE FROM ideafix.events WHERE ticket IN (SELECT id FROM ideafix.tickets WHERE author=ANY($1))',[uid]);await db.query('DELETE FROM ideafix.votes WHERE voter=ANY($1) OR ticket IN(SELECT id FROM ideafix.tickets WHERE author=ANY($1))',[uid]);await db.query('DELETE FROM ideafix.tickets WHERE author=ANY($1)',[uid]);await db.query('DELETE FROM ideafix.sessions WHERE user_id=ANY($1)',[uid]);await db.query('DELETE FROM ideafix.users WHERE id=ANY($1)',[uid])}await db.end();}
 }
 
