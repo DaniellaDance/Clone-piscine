@@ -120,7 +120,7 @@ function showDirectorAnalytics(){
 
 function shell(){
  const nav=[['feed','Главная'],['mine','Мои инсайты'],['ideas','Витрина идей'],['vendors','Контакты'],['ecosystem','Вендоры'],['meetings','График совещаний'],['planner','План дня'],['organization','Отделы и сотрудники'],...(['director','lead'].includes(me.role)?[['chat','Чат руководителей'],['discussions','Обсуждения идей']]:[]),...(['director','lead','admin'].includes(me.role)?[['pulse','Пульс компании']]:[]),...(['director','admin'].includes(me.role)?[['settings','Управление']]:[]),['ai-secretary','ИИ Секретарь'],['preferences','Настройки'],['apps','Приложения']];
- const leading=[['feed','Главная','⌂'],['mine','Мои идеи','◉'],['ideas','Витрина','▣'],['ecosystem','Вендоры','♧']];
+ const leading=[['feed','Главная','⌂'],['mine','Мои идеи','◉'],['ideas','Витрина','▣'],['ecosystem','Мои партнёры','🌐']];
  const other=nav.filter(([id])=>!leading.some(([key])=>key===id));
  const navGroups=[['Идеи',['discussions']],['Рабочие инструменты',['vendors','meetings','planner','chat','organization']],['Аналитика',['pulse']],['Система',['settings','preferences','apps','ai-secretary']]];
  const moreMenu=navGroups.map(([group,ids])=>{const entries=other.filter(([id])=>ids.includes(id));return entries.length?'<details class="more-group"><summary>'+group+'</summary>'+entries.map(([id,label])=>'<button type="button" data-page="'+id+'" class="'+(page===id?'active':'')+'">'+label+'</button>').join('')+'</details>':''}).join('');
