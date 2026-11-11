@@ -55,6 +55,28 @@ const token=randomBytes(32).toString('hex');await query("INSERT INTO ideafix.ses
 if(url.pathname==='/api/track'&&req.method==='POST'){const b=await body(req),t=await ticket(Number(b.id));if(!t.access_hash||hash(String(b.code))!==t.access_hash)fail(403,'Неверный код доступа');return send(await detail(null,t,true))}
 const u=await session(req);if(!u)fail(401,'Войдите в аккаунт');
 if(url.pathname==='/api/me')return send({...publicUser(u),departments});
+const fileRoute=url.pathname.match(/^\/api\/tickets\/(\d+)\/files(?:\/(\d+))?$/);
+if(fileRoute){
+ const t=await ticket(Number(fileRoute[1]));if(!visible(u,t))fail(403,'Нет доступа к вложениям');
+ if(req.method==='GET'&&fileRoute[2]){
+  const f=(await query('SELECT filename,mime,bytes FROM ideafix.ticket_files WHERE id=$1 AND ticket=$2',[fileRoute[2],t.id])).rows[0];
+  if(!f)fail(404,'Файл не найден');
+  res.writeHead(200,{'Content-Type':'application/octet-stream','Content-Disposition':"attachment; filename*=UTF-8''"+encodeURIComponent(f.filename),'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'});res.end(f.bytes);return;
+ }
+ if(req.method==='GET'){const files=(await query('SELECT id,filename,mime,octet_length(bytes) AS size,summary FROM ideafix.ticket_files WHERE ticket=$1 ORDER BY id',[t.id])).rows;return send(files)}
+ if(req.method==='POST'&&!fileRoute[2]){
+  if(!manage(u,t)&&t.author!==u.id)fail(403,'Добавлять вложения может автор или ответственный');
+  const b=await body(req,4200000),filename=clean(b.filename,1,160).replace(/[\\/\r\n]/g,'_'),mime=String(b.mime||'application/octet-stream').slice(0,100);
+  if(!/^[a-z\d.+-]+\/[a-z\d.+-]+$/i.test(mime))fail(400,'Неверный формат файла');
+  if(typeof b.base64!=='string'||!b.base64.length||b.base64.length>2800000||!/^[A-Za-z0-9+/]+={0,2}$/.test(b.base64))fail(400,'Файл должен быть не более 2 МБ');
+  const bytes=Buffer.from(b.base64,'base64');if(!bytes.length||bytes.length>2097152)fail(413,'Максимальный размер файла — 2 МБ');
+  const count=(await query('SELECT count(*)::int AS n FROM ideafix.ticket_files WHERE ticket=$1',[t.id])).rows[0].n;if(count>=3)fail(400,'Не более 3 файлов на заявку');
+  const summary=typeof b.summary==='string'?b.summary.trim().slice(0,350):'';
+  const row=(await query('INSERT INTO ideafix.ticket_files(ticket,filename,mime,bytes,summary) VALUES($1,$2,$3,$4,$5) RETURNING id,filename,mime,octet_length(bytes) AS size,summary',[t.id,filename,mime,bytes,summary])).rows[0];return send(row,201);
+ }
+ fail(405,'Метод не поддерживается');
+}
+
 if(url.pathname==='/api/logout'){const tok=(req.headers.cookie||'').match(/if_session=([^;]+)/)?.[1];if(tok)await query('DELETE FROM ideafix.sessions WHERE token=$1',[hash(tok)]);res.setHeader('Set-Cookie','if_session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax');return send({ok:true})}
 if(await handleMediaMessages({url,req,u,body,query,send,fail}))return;
 if(await handleVendorWorkspace({url,req,u,query,send,fail,catalog}))return;
