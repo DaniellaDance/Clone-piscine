@@ -199,7 +199,7 @@ setInterval(()=>{if(me&&!document.hidden)refresh()},15000);
 
 function mountainProgress(stage){
  const keys=Object.keys(stages),at=Math.max(0,keys.indexOf(stage));
- const icons=['💡','📝','📋','💬','📊','⚖️','🚀','⚙️','🚩'];
+ const icons=['💡','✍️','🆔','💬','📊','⚖️','🚀','⚙️','🚩'];
  // Positions follow the photographed snow mountain, with Insight and Pilot in the sky.
  const points=[[19,23],[17,84],[36,78],[54,70],[72,63],[83,54],[56,26],[81,46],[88,37]];
  const trail=points.map(([x,y],i)=>(i?'L':'M')+x+' '+y).join(' ');
