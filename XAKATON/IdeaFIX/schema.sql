@@ -59,3 +59,6 @@ CREATE TABLE IF NOT EXISTS ideafix.bitrix_actions(ticket integer NOT NULL REFERE
 
 ALTER TABLE ideafix.meetings ADD COLUMN IF NOT EXISTS vendor_id text NOT NULL DEFAULT '';
 CREATE INDEX IF NOT EXISTS meetings_vendor_time ON ideafix.meetings(vendor_id,starts_at);
+
+ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS first_response_minutes integer NOT NULL DEFAULT 1440;
+ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS first_response_due timestamptz;
