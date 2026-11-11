@@ -64,3 +64,6 @@ a{color:#204bce}a:hover{text-decoration:underline}.primary{background:#ff6a28;bo
 .vendor-brand{display:inline-flex;align-items:center;gap:10px;min-width:0;vertical-align:middle}.vendor-brand>span:last-child{overflow-wrap:anywhere}.vendor-logo,.vendor-logo-fallback{flex:none;width:40px;height:40px;object-fit:contain;background:#f0f3f8;border:1px solid #e2e7f0;border-radius:8px;padding:4px;box-sizing:border-box}.vendor-logo-fallback{display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#51617b}.vendor-alpha-row button,.vendor-group-members button{width:100%}.vendor-single-group button{max-width:100%}.vendor-title h2 .vendor-brand{font-size:inherit}
 
 .vendor-logo-dark{background:#334155}.vendor-workspace h3{margin:24px 0 12px}.vendor-work-item{display:grid;gap:6px;padding:12px 0;border-bottom:1px solid #dbe2ef}.vendor-work-item small{color:#657086}.vendor-work-item button{text-align:left;white-space:normal}
+
+/* Compact navigation: every destination appears once. */
+aside .nav-more{min-width:0}aside .nav-more summary{cursor:pointer;padding:10px 15px;font-size:13px;font-weight:600}aside .nav-more button{display:block;width:100%}@media(max-width:800px){aside .nav-more{flex:0 0 auto}aside .nav-more[open]{min-width:180px}aside .nav-more button{white-space:normal}}
