@@ -229,3 +229,7 @@ aside .nav-more{min-width:0}aside .nav-more summary{cursor:pointer;padding:10px 
 .stage-journey .secretary-stage .stage-select:hover{background:#f4f7fc;color:#1a3769}
 @media(max-width:820px){.stage-journey .secretary-stage{padding:5px;min-height:100px}.stage-journey .secretary-stage .stage-select{min-height:66px}.stage-journey .secretary-stage .stage-icon{width:37px;height:37px}}
 @media(max-width:370px){.stage-journey .secretary-stage{padding:3px;min-height:93px}.stage-journey .secretary-stage .stage-select{min-height:60px;padding:2px 0}.stage-journey .secretary-stage .stage-icon{width:29px;height:29px;font-size:17px}}
+
+/* Approved skier hero on Fix Idea homepage; leave login scene unchanged. */
+.home-hero-wrap .quote-head{background-image:url('./fixidea_skier.webp');background-color:#cbe4ff;background-size:cover;background-position:center center;min-height:clamp(190px,28vw,310px)}
+@media(max-width:650px){.home-hero-wrap .quote-head{min-height:190px;background-position:35% center}}
