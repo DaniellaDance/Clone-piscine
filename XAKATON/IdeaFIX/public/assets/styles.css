@@ -233,3 +233,21 @@ aside .nav-more{min-width:0}aside .nav-more summary{cursor:pointer;padding:10px 
 /* Approved skier hero on Fix Idea homepage; leave login scene unchanged. */
 .home-hero-wrap .quote-head{background-image:url('./fixidea_skier.webp');background-color:#cbe4ff;background-size:cover;background-position:center center;min-height:clamp(190px,28vw,310px)}
 @media(max-width:650px){.home-hero-wrap .quote-head{min-height:190px;background-position:35% center}}
+
+/* Postal parcel-style tracking for idea workflow */
+.parcel-tracking{margin:12px 0 18px;padding:15px;border:1px solid #dce5f3;border-radius:17px;background:#fff;color:#24354c}
+.tracking-summary{display:flex;flex-wrap:wrap;gap:5px 15px;justify-content:space-between;margin:0 0 18px;padding:10px 12px;border-radius:10px;background:#f1f5fb;font-size:13px}
+.tracking-summary span{color:#50627d}
+.tracking-list{list-style:none;margin:0;padding:0 0 0 4px}
+.tracking-step{position:relative;display:flex;align-items:flex-start;gap:13px;min-height:66px}
+.tracking-step:not(:last-child)::before{content:'';position:absolute;left:15px;top:32px;bottom:0;width:2px;background:#dce4ef}
+.tracking-step.done:not(:last-child)::before{background:#2ca36d}
+.tracking-marker{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;flex:0 0 32px;width:32px;height:32px;border:2px solid #cbd6e5;border-radius:50%;background:#fff;color:#8593a6;font-size:13px;font-weight:800}
+.tracking-step.done .tracking-marker{background:#2ca36d;border-color:#2ca36d;color:#fff}
+.tracking-step.current .tracking-marker{background:#fff4e7;border-color:#ed922a;color:#d77a0a}
+.tracking-info{display:flex;flex-direction:column;gap:2px;padding:2px 0 14px;min-width:0}
+.tracking-info strong{font-size:15px;color:#273950}
+.tracking-info small{font-size:12px;color:#7b889a}
+.tracking-step.current .tracking-info strong{color:#c66d08}
+.tracking-step.done .tracking-info small{color:#238254}
+@media(max-width:480px){.parcel-tracking{padding:12px}.tracking-step{min-height:60px}.tracking-info strong{font-size:14px}}
