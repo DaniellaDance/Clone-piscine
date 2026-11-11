@@ -382,3 +382,11 @@ p,h1,h2,h3,small,.hint,.vendor-title,.vendor-card,.panel{overflow-wrap:anywhere}
 /* Restore original vivid skier colors: old quote gradient was washing out the photo. */
 .home-hero-wrap .quote-head::before{content:none!important;background:none!important}
 .home-hero-wrap .quote-head{filter:none!important;opacity:1!important;background-blend-mode:normal!important}
+
+/* Compact, grouped More menu; preserve all distinct tools. */
+.bottom-more-menu .more-group{border-bottom:1px solid #e1e9f4;margin:0;padding:0}
+.bottom-more-menu .more-group:last-child{border-bottom:0}
+.bottom-more-menu .more-group>summary{cursor:pointer;padding:11px 13px;font-weight:700;color:#20467c;list-style:none;display:flex;align-items:center;justify-content:space-between}
+.bottom-more-menu .more-group>summary::after{content:'+';font-size:19px}
+.bottom-more-menu .more-group[open]>summary::after{content:'−'}
+.bottom-more-menu .more-group>button{display:block;width:100%;padding:10px 16px 10px 24px;text-align:left}
