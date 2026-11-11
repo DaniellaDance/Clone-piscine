@@ -245,11 +245,20 @@ function workflowView(t){
  const w=t.workflow||{},keys=Object.keys(stages),at=keys.indexOf(t.stage);
  const fields=[['insight','Что заметили'],['proposal','Что предлагаем изменить'],['benefit','Польза для компании'],['discussion','Итоги обсуждения'],['cost','Затраты и ресурсы'],['effect','Ожидаемый эффект'],['feasibility','Реализуемость и риски'],['reason','Обоснование решения'],['pilot','План пилота'],['pilotResult','Результат пилота'],['owner','Ответственный'],['deadline','Срок внедрения'],['implementation','Что внедрено'],['before','Показатель до'],['after','Показатель после'],['result','Итог и обратная связь автору']];
  let html='<section class="workflow"><h3>От инсайта до результата</h3>'+mountainProgress(t.stage);
+ if(t.stage==='discussion')html+='<div class="hint" style="margin:12px 0"><strong>После обсуждения</strong><p>Выберите дальнейшее действие по идее.</p><div style="display:flex;flex-wrap:wrap;gap:8px"><button type="button" id="discussion-to-bitrix" class="primary">Отправить в Битрикс24</button><button type="button" id="discussion-revise">Доработать</button></div><p id="discussion-action-status" role="status"></p></div>';
  html+=window.IFBitrix?.ticket(t)||'';
  if(!t.canManage)return html+fields.filter(([k])=>w[k]).map(([k,label])=>`<p class="pre"><b>${label}:</b> <span data-user-text>${esc(w[k])}</span></p>`).join('')+'</section>';
  return html+`<form id="workflow" class="stack"><label>Текущий этап<select name="stage">${options(stages,t.stage)}</select></label><p class="hint">Этапы проходят по порядку. Можно сохранить текущий этап или вернуться к доработке. Для перехода система проверит необходимые данные.</p>`+fields.map(([k,label])=>`<label>${label}${k==='deadline'?`<input type="date" name="${k}" value="${esc(w[k]||'')}">`:`<textarea name="${k}" maxlength="2000" rows="2">${esc(w[k]||(k==='insight'?t.body:k==='proposal'&&t.kind==='idea'?t.body:''))}</textarea>`}</label>`).join('')+`<label>Решение<select name="decision"><option value="">Ещё не принято</option>${options({approved:'Принять',revise:'Доработать',rejected:'Отклонить'},w.decision)}</select></label><div class="error" role="alert"></div><button type="submit" class="primary">Сохранить этап</button></form></section>`;
 }
-function bindWorkflow(t){window.IFBitrix?.bindTicket(t);window.IFPilot?.ticket(t);stageFields();bindForm('#workflow',async b=>{const saved=await api('/tickets/'+t.id+'/workflow',b,'PUT');$('#modal').close();await refresh();await openTicket(t.id);toast(saved.bitrix_sync?.message||saved.pilot_sync?.message||'Этап и результаты сохранены')})}
+function bindWorkflow(t){
+ const send=document.querySelector('#discussion-to-bitrix'),revise=document.querySelector('#discussion-revise');
+ if(send)send.onclick=async()=>{
+  const state=document.querySelector('#discussion-action-status');
+  send.disabled=true;
+  try{const result=await api('/tickets/'+t.id+'/bitrix-actions',{action:'task'},'POST');state.textContent=result.message||'Запрос отправлен в Битрикс24';if(result.url){const a=document.createElement('a');a.href=result.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=' Открыть в Битрикс24';state.append(a)}}catch(e){state.textContent=e.message}finally{send.disabled=false}
+ };
+ if(revise)revise.onclick=()=>{const form=document.querySelector('#workflow');if(!form){toast('Доработка доступна руководителю идеи');return}form.elements.stage.value='proposal';form.scrollIntoView({behavior:'smooth',block:'start'});toast('Выбран этап «Предложение». Уточните данные и нажмите «Сохранить этап».')};
+ window.IFBitrix?.bindTicket(t);window.IFPilot?.ticket(t);stageFields();bindForm('#workflow',async b=>{const saved=await api('/tickets/'+t.id+'/workflow',b,'PUT');$('#modal').close();await refresh();await openTicket(t.id);toast(saved.bitrix_sync?.message||saved.pilot_sync?.message||'Этап и результаты сохранены')})}
 
 function organizeTicket(){
  const d=$('#modal'),head=d.querySelector('.dialoghead'),flow=d.querySelector('.workflow');if(!flow)return;
