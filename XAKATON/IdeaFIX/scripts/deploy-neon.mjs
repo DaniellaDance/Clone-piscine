@@ -1,7 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import { createNeonClient } from '@neon/sdk';
 
-const { NEON_API_KEY, GITHUB_SHA } = process.env;
+const { NEON_API_KEY, GITHUB_SHA, GEMINI_API_KEY } = process.env;
+if (!GEMINI_API_KEY?.trim()) throw new Error('Missing GitHub Actions secret GEMINI_API_KEY; refusing to deploy without AI credentials');
 if (!NEON_API_KEY) throw new Error('Missing GitHub Actions secret NEON_API_KEY');
 const projectId = 'aged-wildflower-12030818';
 const branchId = 'br-wandering-hat-b9hqnoxc';
@@ -15,7 +16,9 @@ console.log('Deploying verified IdeaFIX ZIP:', archive.byteLength, 'bytes');
 const deployment = await neon.functions.deploy({
   projectId, branchId, slug,
   zip: new File([archive], 'ideafix-neon.zip', { type: 'application/zip' }),
-  runtime: 'nodejs24'
+  runtime: 'nodejs24',
+  // Neon merges supplied keys with existing deployment environment; omitted keys remain unchanged.
+  environment: { GEMINI_API_KEY: GEMINI_API_KEY.trim() }
 });
 console.log('Neon accepted deployment:', deployment?.id ?? 'pending');
 const deadline = Date.now() + 240000;
