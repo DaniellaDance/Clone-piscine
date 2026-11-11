@@ -271,20 +271,13 @@ setInterval(()=>{if(me&&!document.hidden)refresh()},15000);
 
 function mountainProgress(stage){
  const keys=Object.keys(stages),at=Math.max(0,keys.indexOf(stage));
- const icons=['💡','✍️','🆔','💬','📊','⚖️','🚀','⚙️','🪙'];
- // Positions follow the photographed snow mountain, with Insight and Pilot in the sky.
- const points=[[19,23],[17,84],[36,78],[54,70],[72,63],[83,54],[56,26],[81,46],[88,37]];
- const trail=points.map(([x,y],i)=>(i?'L':'M')+x+' '+y).join(' ');
- const markers=keys.map((k,i)=>{
-  const [x,y]=points[i],done=i<at,current=i===at;
-  return '<g><circle cx="'+x+'" cy="'+y+'" r="'+(current?3.1:2.4)+'" fill="'+(done?'#20e76d':current?'#ff9d25':'#ccd5e5')+'" stroke="white" stroke-width=".6"'+(done?' filter="url(#glowMilestone)"':'')+'/><title>'+esc(stages[k])+'</title></g>';
+ const rows=keys.map((key,i)=>{
+  const done=i<at,current=i===at,kind=done?'done':current?'current':'pending';
+  const mark=done?'✓':current?'●':String(i+1);
+  const detail=done?'Этап пройден':current?'Текущий этап':'Ожидает выполнения';
+  return '<li class="tracking-step '+kind+'"'+(current?' aria-current="step"':'')+'><span class="tracking-marker" aria-hidden="true">'+mark+'</span><span class="tracking-info"><strong>'+esc(stages[key])+'</strong><small>'+detail+'</small></span></li>';
  }).join('');
- const labels=keys.map((k,i)=>{
-  const [x,y]=points[i],done=i<at,current=i===at;
-  const bg=done?'rgba(229,255,236,.96)':current?'rgba(255,239,209,.98)':'rgba(246,249,255,.96)';
-  return '<span '+(i===8?'role="button" tabindex="0" data-finance-coin="1" ':'')+'title="'+esc(stages[k])+'" style="position:absolute;left:'+x+'%;top:'+y+'%;transform:translate('+(i%2===0?'-7%':'-93%')+',-140%);display:inline-flex;align-items:center;gap:3px;padding:3px 5px;border-radius:9px;background:'+bg+';color:#263d60;border:1px solid '+(done?'#22d36d':current?'#ff9824':'#cbd6e6')+';box-shadow:'+(done?'0 0 11px 3px rgba(25,235,92,.58)':current?'0 0 9px 2px rgba(255,154,35,.38)':'0 2px 5px #52657a33')+';font-size:clamp(9px,2.2vw,12px);font-weight:750;line-height:1.15;white-space:nowrap;max-width:48%;z-index:2"><span aria-hidden="true" style="font-size:clamp(14px,3.2vw,19px)">'+icons[i]+'</span>'+esc(stages[k])+'</span>';
- }).join('');
- return '<div aria-label="Девять этапов FixIdea с отдельными значками на снежной горе" style="position:relative;width:100%;aspect-ratio:1/1.18;max-height:510px;overflow:hidden;margin:12px 0 16px;border-radius:20px;background:#bad8f9 url(assets/alpine-hero.webp) center center/cover no-repeat"><svg viewBox="0 0 100 110" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%" xmlns="http://www.w3.org/2000/svg"><defs><filter id="glowMilestone" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="'+trail+'" fill="none" stroke="#ff7a2d" stroke-width="1.3" stroke-linecap="round" stroke-dasharray="2 1" vector-effect="non-scaling-stroke"/>'+markers+'</svg>'+labels+'</div><p class="hint">🟢 Пройдено: '+at+' из '+keys.length+' · 🟠 Текущий этап: '+esc(stages[keys[at]])+'</p>';
+ return '<div class="parcel-tracking" aria-label="Отслеживание этапов идеи"><p class="tracking-summary"><strong>Пройдено: '+at+' из '+keys.length+'</strong><span>Сейчас: '+esc(stages[keys[at]])+'</span></p><ol class="tracking-list">'+rows+'</ol></div>';
 }
 function workflowView(t){
  const w=t.workflow||{},keys=Object.keys(stages),at=keys.indexOf(t.stage);
