@@ -131,7 +131,8 @@ if(flow&&req.method==='PUT'){
  const t=await ticket(Number(flow[1]));if(!manage(u,t))fail(403,'Этапами управляет руководитель');
  const b=await body(req),stages=['insight','proposal','registration','discussion','evaluation','decision','pilot','implementation','result'];
  if(!stages.includes(b.stage))fail(400,'Неизвестный этап');
- const w={};for(const key of ['insight','proposal','benefit','discussion','cost','effect','feasibility','decision','reason','pilot','pilotResult','owner','deadline','implementation','before','after','result'])w[key]=typeof b[key]==='string'?b[key].trim().slice(0,2000):'';
+ const w={};for(const key of ['insight','proposal','benefit','discussion','cost','effect','feasibility','decision','reason','pilot','pilotResult','owner','deadline','implementation','before','after','result','pilotIncome','pilotExpense','implementationIncome','implementationExpense'])w[key]=typeof b[key]==='string'?b[key].trim().slice(0,2000):'';
+ for(const key of ['pilotIncome','pilotExpense','implementationIncome','implementationExpense']){if(w[key]!==''&&(!/^\\d+(?:[.,]\\d{1,2})?$/.test(w[key])||Number(w[key].replace(',','.'))>1000000000000))fail(400,'Укажите корректную сумму в тенге: '+key)}
  if(w.deadline&&!/^\d{4}-\d{2}-\d{2}$/.test(w.deadline))fail(400,'Проверьте срок');
  if(w.insight.length<5||w.proposal.length<5)fail(400,'Опишите инсайт и предложение');
  const at=stages.indexOf(b.stage),prev=stages.indexOf(t.stage);
