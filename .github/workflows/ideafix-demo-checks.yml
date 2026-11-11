@@ -29,6 +29,12 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Build
         run: npm run build
+      - name: Validate IdeaFIX UI and discussion API syntax
+        run: |
+          node --check public/assets/app.js
+          node --check public/assets/discussions.js
+          node --check discussions.mjs
+          node --check discussions.test.mjs
       - name: Unit tests (no production database)
         run: npm run test:unit
       - name: Check demo pages
