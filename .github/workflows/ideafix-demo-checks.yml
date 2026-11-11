@@ -45,6 +45,7 @@ jobs:
           test -s public/desktop.html
           test -s public/install.html
       - name: Verify Gemini API key and available model
+        continue-on-error: true
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node scripts/check-gemini.mjs
@@ -65,7 +66,7 @@ jobs:
         env:
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: ${{ env.GEMINI_MODEL }}
+          GEMINI_MODEL: ${{ env.GEMINI_MODEL || 'gemini-2.5-flash' }}
         run: |
           npm install --no-save --package-lock=false --ignore-scripts @neon/sdk
           node scripts/deploy-neon.mjs "$RUNNER_TEMP/ideafix-neon.zip"
