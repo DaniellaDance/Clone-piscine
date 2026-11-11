@@ -54,3 +54,5 @@ CREATE TABLE IF NOT EXISTS ideafix.bitrix_accounts(app_user text PRIMARY KEY REF
 
 ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS offering_id text NOT NULL DEFAULT '';
 ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS offering_name text NOT NULL DEFAULT '';
+
+CREATE TABLE IF NOT EXISTS ideafix.bitrix_actions(ticket integer NOT NULL REFERENCES ideafix.tickets(id),app_user text NOT NULL REFERENCES ideafix.users(id),action text NOT NULL CHECK(action IN ('discussion','project')),status text NOT NULL,remote_id bigint,PRIMARY KEY(ticket,app_user,action));

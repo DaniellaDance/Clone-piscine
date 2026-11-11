@@ -1,3 +1,4 @@
+import {handleBitrixActions} from './bitrix-actions.mjs';
 import {mirrorIdea} from './bitrix-events.mjs';
 import {handleBitrixAccount} from './bitrix-account.mjs';
 import http from 'node:http';
@@ -54,6 +55,7 @@ if(url.pathname==='/api/track'&&req.method==='POST'){const b=await body(req),t=a
 const u=await session(req);if(!u)fail(401,'Войдите в аккаунт');
 if(url.pathname==='/api/me')return send({...publicUser(u),departments});
 if(url.pathname==='/api/logout'){const tok=(req.headers.cookie||'').match(/if_session=([^;]+)/)?.[1];if(tok)await query('DELETE FROM ideafix.sessions WHERE token=$1',[hash(tok)]);res.setHeader('Set-Cookie','if_session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax');return send({ok:true})}
+if(await handleBitrixActions({url,req,u,body,send,fail,query,manage}))return;
 if(await handleBitrixAccount({url,req,u,body,send,fail,query}))return;
 if(await handlePlanner({url,req,u,body:r=>body(r,600000),send,fail,query,pool}))return;
 if(await handlePilotConfig({url,req,res,u,body,send,fail,query,manage,event}))return;
