@@ -56,6 +56,42 @@
    spoken=removeEchoes(text).trim();
   }
   const say=message=>{status.textContent=message};
+  function stopTone(){
+   try{
+    const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;
+    const context=new Audio(),osc=context.createOscillator(),gain=context.createGain();
+    osc.type='sine';osc.frequency.value=680;gain.gain.setValueAtTime(0.035,context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,context.currentTime+0.11);
+    osc.connect(gain).connect(context.destination);osc.start();osc.stop(context.currentTime+0.12);
+    osc.onended=()=>context.close();
+   }catch{}
+  }
+  function cleanSpeech(text){
+   return removeEchoes(text)
+    .replace(/(^|[.!?]\\s+)(?:э+|эм+|мм+|мг+|ну+)(?:[,.]?\\s+)/giu,'$1')
+    .replace(/\\b(?:э+|эм+|мм+)\\b[,.]?\\s*/giu,'')
+    .replace(/\\s+([,.!?])/g,'$1').replace(/\\s{2,}/g,' ').trim();
+  }
+  async function finishVoice(base,id){
+   if(closed||session!==id)return;
+   listening=false;controls();
+   const source=cleanSpeech(spoken);
+   if(!source){say(c.nospeech);return}
+   const original=(base?base+'\\n':'')+source;
+   area.value=original;area.dispatchEvent(new Event('input',{bubbles:true}));
+   busy=true;controls();say(c.working);
+   const requestVersion=version;
+   try{
+    const response=await fetch('/api/text/prepare',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:original,language:select.value}),signal:AbortSignal.timeout(15000)});
+    if(!response.ok)throw new Error('Text check unavailable');
+    const result=await response.json();
+    if(!closed&&session===id&&version===requestVersion&&area.value===original&&typeof result.text==='string'&&result.text.trim()){
+     area.value=cleanSpeech(result.text);area.dispatchEvent(new Event('input',{bubbles:true}));
+     reviewed=area.value;say(c.ready);
+    }
+   }catch{if(!closed&&session===id)say(c.unavailable)}
+   finally{busy=false;controls()}
+  }
   const controls=()=>{start.textContent=listening?c.stop:c.dictate;start.setAttribute('aria-pressed',String(listening));start.classList.toggle('recording',listening);check.disabled=listening||busy;select.disabled=listening||busy;start.disabled=!Recognition||busy;area.readOnly=listening;form.querySelector('button[type=submit]').disabled=listening||busy};
   const invalidate=()=>{version++;reviewed=null;preview.hidden=true;controller?.abort();busy=false;controls()};area.addEventListener('input',invalidate);
   async function review(){
@@ -75,7 +111,7 @@
   find('[data-share]').onclick=async()=>{const text=edited.value.trim();if(text.length<10){say(c.empty);return}try{if(navigator.share)await navigator.share({title:'IdeaFix',text});else{await navigator.clipboard.writeText(text);say(c.copied)}}catch(e){if(e.name!=='AbortError')say(c.copyFailed)}};
   check.onclick=review;
   start.onclick=()=>{
-   if(listening){manualStop=true;recognition?.stop();return}
+   if(listening){manualStop=true;stopTone();recognition?.stop();return}
    if(!Recognition)return;
    invalidate();const id=++session;const base=area.value.trimEnd();segments=new Map();spoken='';archived=[];manualStop=false;
    listening=true;controls();say(c.listening);
@@ -85,13 +121,18 @@
     recognition.continuous=true;recognition.interimResults=true;
     recognition.onresult=event=>{
      if(closed||session!==id)return;
-     for(let i=event.resultIndex;i<event.results.length;i++){
-      const result=event.results[i];if(!result.isFinal)continue;
+     let interim='';
+     for(let i=0;i<event.results.length;i++){
+      const result=event.results[i];if(!result.isFinal){interim+=' '+result[0].transcript;continue}
       const phrase=result[0].transcript.trim().replace(/\\s+/g,' ');
       if(!phrase)continue;
       segments.set(i,phrase);
      }
      collectSpeech();
+     // Show interim words immediately, without treating them as permanent results.
+     const live=cleanSpeech(mergeSpeech(spoken,interim.trim()));
+     area.value=(base?base+'\\n':'')+live;
+     area.scrollTop=area.scrollHeight;
      say(c.listening);
     };
     recognition.onerror=event=>{
@@ -107,11 +148,7 @@
       archived=spoken?[spoken]:[];segments=new Map();try{begin()}catch{manualStop=true;listening=false;controls();say(c.network)}
       return;
      }
-     listening=false;controls();
-     const normalized=removeEchoes(spoken).trim();
-     if(normalized){area.value=(base?base+'\\n':'')+normalized;area.dispatchEvent(new Event('input',{bubbles:true}));say(c.reviewFirst)}
-     else say(c.nospeech);
-     // Text is displayed only after explicit stop; review is opened by the user.
+     finishVoice(base,id);
     };
     recognition.start();
    }
