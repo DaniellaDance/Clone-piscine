@@ -62,3 +62,6 @@ CREATE INDEX IF NOT EXISTS meetings_vendor_time ON ideafix.meetings(vendor_id,st
 
 ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS first_response_minutes integer NOT NULL DEFAULT 1440;
 ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS first_response_due timestamptz;
+
+CREATE TABLE IF NOT EXISTS ideafix.media_messages (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, sender_id text NOT NULL REFERENCES ideafix.users(id), recipient_id text NOT NULL REFERENCES ideafix.users(id), media_type text NOT NULL CHECK(media_type IN ('audio','video')), media_url text, transcript text NOT NULL DEFAULT '', transcript_status text NOT NULL DEFAULT 'pending' CHECK(transcript_status IN ('pending','ready','failed')), created_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS media_messages_recipient_created ON ideafix.media_messages(recipient_id,created_at DESC);
