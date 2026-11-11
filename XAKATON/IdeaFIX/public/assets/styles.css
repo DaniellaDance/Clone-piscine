@@ -169,3 +169,52 @@ aside .nav-more{min-width:0}aside .nav-more summary{cursor:pointer;padding:10px 
  .home-ideas-title{font-size:14px}
 }
 @media(max-height:560px){.quote-head{min-height:100px}.stage-tile{min-height:75px}.stage-select{min-height:49px}.stage-icon{width:29px;height:29px}.home-stats{display:none}.bottom-nav{flex-basis:50px}}
+
+
+/* Topic-based leadership discussion workspace. */
+.discussion-screen{display:flex!important;flex-direction:column;gap:10px;overflow:auto!important;min-height:0}
+.discussion-heading{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.discussion-heading h1{margin:0;font-size:clamp(17px,2vw,24px);color:#163b83}
+.discussion-heading button{font-size:12px;padding:7px 11px}
+.discussion-screen .panel{margin:0;min-height:0;overflow:auto}
+.discussion-screen .panel h2{font-size:16px;margin-bottom:6px}
+.discussion-screen .panel p{font-size:12px;margin:5px 0 10px}
+.discussion-create{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.discussion-create select{min-width:160px;flex:1;font-size:12px}
+.discussion-create button{flex:0 0 auto}
+.discussion-topic{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 5px;border-bottom:1px solid #e3e9f4}
+.discussion-topic b{display:block;font-size:13px;color:#173962;overflow-wrap:anywhere}
+.discussion-topic small{display:block;font-size:11px;margin:3px 0 0}
+.discussion-topic button{flex-shrink:0;font-size:12px;padding:6px 10px}
+.discussion-subject{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#eef4ff;border:1px solid #cad8f5;border-radius:12px;padding:10px}
+.discussion-subject b{color:#173c76;font-size:14px;overflow-wrap:anywhere}
+.discussion-subject span{color:#56708f;font-size:11px;white-space:nowrap}
+#disc-messages{flex:1;min-height:110px;overflow:auto;overscroll-behavior:contain;background:#f5f8ff;border:1px solid #dce5f3;border-radius:13px;padding:13px;display:flex;flex-direction:column;gap:8px}
+.discussion-message{background:#fff;border:1px solid #dbe5f6;padding:11px 12px;border-radius:13px;max-width:90%;align-self:flex-start;overflow-wrap:anywhere}
+.discussion-message.own{background:#e9f3ff;border-color:#bcd2fa;align-self:flex-end}
+.discussion-message small{display:block;font-size:10px;color:#506581;margin:0 0 5px}
+.discussion-message p{white-space:pre-wrap;margin:0;font-size:13px;color:#243855}
+#disc-send{flex:0 0 auto;display:grid;gap:7px}
+#disc-send label{font-size:12px}
+#disc-send textarea{min-height:60px;max-height:130px;font-size:13px}
+.discussion-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0}
+.discussion-actions button{font-size:12px;min-height:38px;padding:7px 12px}
+.discussion-actions #disc-close{margin-left:auto;border-color:#ffce9e;color:#a14817;background:#fff7ed}
+#disc-send .hint{margin:0;font-size:11px}
+@media(max-width:650px){
+ .discussion-screen{gap:8px}
+ .discussion-heading h1{font-size:17px}
+ .discussion-heading button{font-size:10px;padding:6px}
+ .discussion-screen .panel{padding:10px}
+ .discussion-create{display:grid;grid-template-columns:minmax(0,1fr)}
+ .discussion-create button{width:100%}
+ .discussion-topic{gap:6px}
+ .discussion-topic b{font-size:11px}
+ .discussion-topic button{padding:7px 6px;font-size:10px}
+ .discussion-subject b{font-size:12px}
+ .discussion-subject span{font-size:10px}
+ #disc-messages{padding:8px}
+ .discussion-message{max-width:98%;padding:9px}
+ .discussion-actions button{font-size:10px;padding:6px}
+ .discussion-actions #disc-close{margin-left:0}
+}
