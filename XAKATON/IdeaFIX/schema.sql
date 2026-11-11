@@ -36,3 +36,16 @@ CREATE TABLE IF NOT EXISTS ideafix.channel_tests(request_key text PRIMARY KEY,pr
 CREATE TABLE IF NOT EXISTS ideafix.vendor_scopes(vendor_id text PRIMARY KEY,industry_ids jsonb NOT NULL DEFAULT '[]',source text NOT NULL);
 
 CREATE TABLE IF NOT EXISTS ideafix.push_subscriptions(endpoint text PRIMARY KEY,user_id text NOT NULL REFERENCES ideafix.users(id) ON DELETE CASCADE,subscription jsonb NOT NULL,created timestamptz NOT NULL DEFAULT now());
+
+CREATE TABLE IF NOT EXISTS ideafix.planner_tasks(id serial PRIMARY KEY,owner text NOT NULL REFERENCES ideafix.users(id),title text NOT NULL,description text NOT NULL DEFAULT '',planned_for date NOT NULL,due_at timestamptz,status text NOT NULL DEFAULT 'new' CHECK(status IN ('new','work','done')),is_demo boolean NOT NULL DEFAULT false,created timestamptz NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS planner_tasks_owner_day ON ideafix.planner_tasks(owner,planned_for);
+CREATE UNIQUE INDEX IF NOT EXISTS planner_demo_unique ON ideafix.planner_tasks(owner,title,planned_for) WHERE is_demo;
+CREATE TABLE IF NOT EXISTS ideafix.planner_bitrix_links(app_user text PRIMARY KEY REFERENCES ideafix.users(id),bitrix_user bigint UNIQUE NOT NULL,bitrix_name text NOT NULL);
+
+ALTER TABLE ideafix.planner_tasks ADD COLUMN IF NOT EXISTS source text NOT NULL DEFAULT 'local';
+ALTER TABLE ideafix.planner_tasks ADD COLUMN IF NOT EXISTS external_key text;
+ALTER TABLE ideafix.planner_tasks ADD COLUMN IF NOT EXISTS work_task boolean NOT NULL DEFAULT false;
+ALTER TABLE ideafix.planner_tasks ADD COLUMN IF NOT EXISTS sync_status text NOT NULL DEFAULT 'personal';
+ALTER TABLE ideafix.planner_tasks ADD COLUMN IF NOT EXISTS bitrix_task bigint;
+ALTER TABLE ideafix.planner_tasks ADD COLUMN IF NOT EXISTS duration_minutes integer NOT NULL DEFAULT 30;
+CREATE UNIQUE INDEX IF NOT EXISTS planner_calendar_unique ON ideafix.planner_tasks(owner,external_key) WHERE external_key IS NOT NULL;

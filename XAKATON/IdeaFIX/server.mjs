@@ -11,6 +11,7 @@ import {handleChat} from './chat.mjs';
 import {handleChannelConfig} from './chat-channels.mjs';
 import {handleVendorScopes} from './vendor-scopes.mjs';
 import {handlePush,notifyTicket} from './push.mjs';
+import {handlePlanner} from './planner.mjs';
 import {proofread} from './proofread.mjs';
 import {handleMeetings} from './meetings.mjs';
 const catalog=JSON.parse(await readFile(new URL('./catalog.json',import.meta.url),'utf8'));
@@ -30,7 +31,7 @@ const visible=(u,t)=>manage(u,t)||t.recipient===u.id||(!t.anonymous&&t.author===
 const clean=(v,min=1,max=5000)=>{if(typeof v!=='string'||v.trim().length<min||v.length>max)fail(400,`Введите текст: от ${min} до ${max} символов`);return v.trim()};
 const publicUser=u=>({id:u.id,name:u.name,role:u.role,department:u.department,login:u.login});
 const attempts=new Map();
-async function body(req){let b='';for await(const c of req){b+=c;if(b.length>30000)fail(413,'Слишком большой запрос')}try{return JSON.parse(b||'{}')}catch{fail(400,'Некорректный JSON')}}
+async function body(req,limit=30000){const chunks=[];let size=0;for await(const c of req){const bytes=Buffer.isBuffer(c)?c:Buffer.from(c);size+=bytes.length;if(size>limit)fail(413,'Слишком большой запрос');chunks.push(bytes)}try{return JSON.parse(Buffer.concat(chunks).toString('utf8')||'{}')}catch{fail(400,'Некорректный JSON')}}
 async function session(req){const token=(req.headers.cookie||'').split(';').map(s=>s.trim()).find(s=>s.startsWith('if_session='))?.slice(11);if(!token)return null;return (await query('SELECT u.* FROM ideafix.users u JOIN ideafix.sessions s ON s.user_id=u.id WHERE s.token=$1 AND s.expires>now()',[hash(token)])).rows[0]||null}
 async function event(id,u,text,internal=false,client=pool){await client.query('INSERT INTO ideafix.events(ticket,actor,text,internal) VALUES($1,$2,$3,$4)',[id,u.name,text,internal])}
 async function ticket(id){const t=(await query('SELECT * FROM ideafix.tickets WHERE id=$1',[id])).rows[0];if(!t)fail(404,'Инсайт не найден');return t}
@@ -51,6 +52,7 @@ if(url.pathname==='/api/track'&&req.method==='POST'){const b=await body(req),t=a
 const u=await session(req);if(!u)fail(401,'Войдите в аккаунт');
 if(url.pathname==='/api/me')return send({...publicUser(u),departments});
 if(url.pathname==='/api/logout'){const tok=(req.headers.cookie||'').match(/if_session=([^;]+)/)?.[1];if(tok)await query('DELETE FROM ideafix.sessions WHERE token=$1',[hash(tok)]);res.setHeader('Set-Cookie','if_session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax');return send({ok:true})}
+if(await handlePlanner({url,req,u,body:r=>body(r,600000),send,fail,query,pool}))return;
 if(await handlePilotConfig({url,req,res,u,body,send,fail,query,manage,event}))return;
 if(await handleBitrix({url,req,u,body,send,fail,query,pool,event,manage}))return;
 if(url.pathname==='/api/text/prepare'){

@@ -10,6 +10,7 @@
     "test:unit": "node --test bitrix.test.mjs proofread.test.mjs"
   },
   "dependencies": {
+    "node-ical": "^0.27.6",
     "pg": "8.16.3",
     "web-push": "^4.0.0"
   },
