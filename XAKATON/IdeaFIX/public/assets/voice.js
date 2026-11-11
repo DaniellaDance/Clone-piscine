@@ -8,7 +8,7 @@
   toolbar.innerHTML=`<div class="voice-actions"><button type="button" data-dictate aria-pressed="false">${c.dictate}</button><label>${c.language}<select data-speech-lang><option value="ru">Русский</option><option value="en">English</option><option value="kk">Қазақша</option></select></label><button type="button" data-check>${c.check}</button></div><small>${c.notice}</small><p data-voice-status role="status" aria-live="polite"></p><section class="voice-preview" data-preview hidden><h3>${c.review}</h3><p data-check-result></p><details><summary>${c.original}</summary><p class="pre" data-original></p></details><details data-changes-wrap hidden><summary>${c.changes}</summary><p class="pre" data-changes></p></details><textarea data-edited maxlength="5000" rows="5" aria-label="${c.review}"></textarea><div class="voice-actions"><button type="button" data-apply class="primary">${c.apply}</button><button type="button" data-share>${c.share}</button><button type="button" data-preview-close>${c.close}</button></div></section>`;
   area.parentElement.after(toolbar);area.spellcheck=true;
   const find=s=>toolbar.querySelector(s),start=find('[data-dictate]'),check=find('[data-check]'),select=find('select'),status=find('[data-voice-status]'),preview=find('[data-preview]'),edited=find('[data-edited]');select.value=lang;
-  let recognition=null,listening=false,busy=false,closed=false,reviewed=null,version=0,controller=null,session=0,manualStop=false,segments=new Map(),spoken='';
+  let recognition=null,listening=false,busy=false,closed=false,reviewed=null,version=0,controller=null,session=0,manualStop=false,segments=new Map(),spoken='',archived=[];
   const say=message=>{status.textContent=message};
   const controls=()=>{start.textContent=listening?c.stop:c.dictate;start.setAttribute('aria-pressed',String(listening));start.classList.toggle('recording',listening);check.disabled=listening||busy;select.disabled=listening||busy;start.disabled=!Recognition||busy;area.readOnly=listening;form.querySelector('button[type=submit]').disabled=listening||busy};
   const invalidate=()=>{version++;reviewed=null;preview.hidden=true;controller?.abort();busy=false;controls()};area.addEventListener('input',invalidate);
@@ -31,7 +31,7 @@
   start.onclick=()=>{
    if(listening){manualStop=true;recognition?.stop();return}
    if(!Recognition)return;
-   invalidate();const id=++session;const base=area.value.trimEnd();segments=new Map();spoken='';manualStop=false;
+   invalidate();const id=++session;const base=area.value.trimEnd();segments=new Map();spoken='';archived=[];manualStop=false;
    listening=true;controls();say(c.listening);
    function begin(){
     if(closed||session!==id||manualStop)return;
@@ -47,7 +47,7 @@
      }
      const complete=[...segments.entries()].sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
      // Only final speech recognition results are retained. Interim revisions are never appended.
-     spoken=complete.join(' ').trim();
+     spoken=[...archived,...complete].filter((phrase,index,array)=>index===0||phrase.toLocaleLowerCase()!==array[index-1].toLocaleLowerCase()).join(' ').trim();
      say(c.listening);
     };
     recognition.onerror=event=>{
@@ -60,7 +60,7 @@
      if(closed||session!==id)return;
      if(!manualStop){
       // Browsers can stop recognition on silence. Continue recording until the user stops.
-      segments=new Map();try{begin()}catch{manualStop=true;say(c.network)}
+      archived=spoken?[spoken]:[];segments=new Map();try{begin()}catch{manualStop=true;say(c.network)}
       return;
      }
      listening=false;controls();
@@ -75,7 +75,7 @@
   };
   form.addEventListener('submit',event=>{if(listening||busy||reviewed!==area.value){event.preventDefault();event.stopImmediatePropagation();if(listening||busy)say(c.wait);else review()}},true);
   const cleanup=()=>{closed=true;session++;controller?.abort();recognition?.abort();listening=false};dialog.addEventListener('close',cleanup,{once:true});dialog.addEventListener('cancel',cleanup,{once:true});
-  document.addEventListener('visibilitychange',()=>{if(document.hidden&&listening){manualStop=true;recognition?.stop()}},{signal:(()=>{const a=new AbortController();dialog.addEventListener('close',()=>a.abort(),{once:true});return a.signal})()});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden&&listening){say(c.listening)}},{signal:(()=>{const a=new AbortController();dialog.addEventListener('close',()=>a.abort(),{once:true});return a.signal})()});
   controls();if(!Recognition)say(c.unsupported);
  }
  window.IFVoice={mount};
