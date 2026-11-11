@@ -12,6 +12,7 @@ import {handlePilotConfig} from './pilot-bitrix.mjs';
 import {validateVendorScope} from './catalog-rules.mjs';
 import {handleDemo} from './demo.mjs';
 import {handleChat} from './chat.mjs';
+import {handleDiscussions} from './discussions.mjs';
 import {handleChannelConfig} from './chat-channels.mjs';
 import {handleVendorScopes} from './vendor-scopes.mjs';
 import {handlePush,notifyTicket} from './push.mjs';
@@ -115,6 +116,7 @@ if(await handlePush({url,req,u,body,send,fail,query}))return;
 if(await handleVendorScopes({url,req,u,body,send,fail,query,catalog}))return;
 if(await handleChannelConfig({url,req,u,body,send,fail,query}))return;
 if(await handleChat({url,req,u,body,query,send,fail}))return;
+if(await handleDiscussions({url,req,u,body,query,pool,send,fail,res}))return;
 if(await handleDemo({url,req,u,send,fail,pool,password,randomUUID}))return;
 if(url.pathname==='/api/directory'){if(req.method!=='GET')fail(405,'Метод недоступен');return send((await query('SELECT id,name,role,department FROM ideafix.users ORDER BY department,role,name LIMIT 1000')).rows)}
 if(url.pathname==='/api/users'){if(!staff(u))fail(403,'Нет доступа');if(req.method==='PUT'){const b=await body(req);if(!roles.includes(b.role)||!departments.includes(b.department))fail(400,'Проверьте роль и отдел');const old=(await query('SELECT * FROM ideafix.users WHERE id=$1',[b.id])).rows[0];if(!old)fail(404,'Пользователь не найден');if(old.role==='director'&&b.role!=='director')fail(400,'Директора нельзя понизить');if(u.role!=='director')fail(403,'Роли назначает директор');await query('UPDATE ideafix.users SET role=$1,department=$2 WHERE id=$3',[b.role,b.department,b.id])}return send((await query('SELECT id,login,name,role,department FROM ideafix.users ORDER BY name LIMIT 300')).rows)}
