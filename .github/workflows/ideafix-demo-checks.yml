@@ -40,7 +40,7 @@ jobs:
       - name: Package Neon deployment archive
         run: |
           npm prune --omit=dev
-          printf '{"commit":"%s"}' "$GITHUB_SHA" > public/deployment.json
+          printf '{"commit":"%s"}' "$GITHUB_SHA" > public/assets/deployment.json
           zip -q -r "$RUNNER_TEMP/ideafix-neon.zip" . -x '*.test.mjs' 'test.mjs' 'README.md' 'CONCEPT.md' '.gitignore'
           unzip -t "$RUNNER_TEMP/ideafix-neon.zip" | tail -n 1
       - name: Save deployment archive for Neon
