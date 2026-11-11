@@ -1,0 +1,57 @@
+name: HorseCup Neon deploy
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'HorseCup/**'
+      - '.github/workflows/horsecup-neon.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: horsecup-neon-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: HorseCup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: HorseCup/package-lock.json
+      - name: Install
+        run: npm ci --no-audit --no-fund
+      - name: Syntax checks
+        run: |
+          node --check server.mjs
+          node --check accounts.mjs
+          node --check race-engine.mjs
+          node --check js/game.js
+      - name: Unit tests
+        run: npm test
+      - name: Prepare optimized images
+        run: npm run assets
+      - name: Package HorseCup
+        run: |
+          npm prune --omit=dev
+          zip -q -r "$RUNNER_TEMP/horsecup-neon.zip" . -x '*.test.mjs' 'downloads/*' 'node_modules/.cache/*' 'README.md'
+          unzip -t "$RUNNER_TEMP/horsecup-neon.zip" | tail -1
+      - name: Save build
+        uses: actions/upload-artifact@v4
+        with:
+          name: horsecup-neon-${{ github.sha }}
+          path: ${{ runner.temp }}/horsecup-neon.zip
+          retention-days: 7
+      - name: Deploy and verify on Neon
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          HORSECUP_DATABASE_URL: ${{ secrets.HORSECUP_DATABASE_URL }}
+        run: |
+          npm install --no-save --package-lock=false --ignore-scripts @neon/sdk
+          node scripts/deploy-neon.mjs "$RUNNER_TEMP/horsecup-neon.zip"
