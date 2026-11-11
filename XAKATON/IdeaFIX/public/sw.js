@@ -1,4 +1,4 @@
-const CACHE='ideafix-shell-v19';
+const CACHE='ideafix-shell-v20';
 const files=['./index.html','./mobile.html','./desktop.html','./install.html','./assets/app.js','./assets/push-ui.js','./assets/channel-ui.js','./assets/chat.js','./assets/organization.js','./assets/pilot-ui.js','./assets/marck-script.ttf','./assets/voice.js','./assets/meetings.js','./assets/print.css','./assets/print.js','./assets/bitrix-ui.js','./assets/daily-quotes.js','./assets/catalog.js','./assets/catalog-ui.js','./assets/translations.js','./assets/i18n.js','./assets/styles.css','./assets/manrope.woff2','./assets/noto-sans.woff2','./assets/brand-mark.svg','./assets/alpine-route.svg','./assets/alpine-hero.webp','./assets/icon.svg','./assets/icon-192.png','./assets/icon-512.png','./manifest.webmanifest'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(files)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('ideafix-shell-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

@@ -1,7 +1,7 @@
 const managers=u=>['director','admin','lead'].includes(u.role);
 const top=u=>['director','admin'].includes(u.role);
 export const canManageMeeting=(u,m)=>top(u)||(u.role==='lead'&&m.department===u.department);
-const canSee=(u,m)=>top(u)||!m.department||m.department===u.department;
+export const canSeeMeeting=(u,m)=>top(u)||!m.department||m.department===u.department;
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function buildSpeech(meeting,tickets){
  const date=new Intl.DateTimeFormat('ru-RU',{timeZone:'Asia/Almaty',dateStyle:'long',timeStyle:'short'}).format(new Date(meeting.starts_at));
@@ -22,13 +22,13 @@ export async function handleMeetings({url,req,res,u,body,send,fail,query,manage,
   const month=url.searchParams.get('month');let from,to;
   if(month){if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))fail(400,'Месяц: ГГГГ-ММ');from=new Date(month+'-01T00:00:00+05:00');const [year,number]=month.split('-').map(Number);to=new Date(Date.UTC(year,number,1)-5*3600000)}else{from=new Date(Date.now()-3600000);to=new Date(Date.now()+366*86400000)}
   const rows=(await query(`SELECT m.*, (SELECT count(*)::int FROM ideafix.meeting_agenda a JOIN ideafix.tickets t ON t.id=a.ticket_id WHERE a.meeting_id=m.id AND ($4 OR (t.department=$3 AND $5))) agenda_count FROM ideafix.meetings m WHERE starts_at >= $1 AND starts_at < $2 AND ($4 OR department='' OR department=$3) ORDER BY starts_at LIMIT 500`,[from,to,u.department,top(u),u.role==='lead'])).rows;
-  send(rows.map(m=>({...m,owner:undefined,canManage:canManageMeeting(u,m)})));return true;
+  send(rows.map(m=>({...m,owner:undefined,canManage:canManageMeeting(u,m),canAddAgenda:managers(u)&&canSeeMeeting(u,m)})));return true;
  }
  const match=url.pathname.match(/^\/api\/meetings\/(\d+)(?:\/(agenda|speech|print))?$/);if(!match)fail(404,'Встреча не найдена');
- const m=(await query('SELECT * FROM ideafix.meetings WHERE id=$1',[Number(match[1])])).rows[0];if(!m)fail(404,'Встреча не найдена');if(!canSee(u,m))fail(403,'Нет доступа к встрече');
+ const m=(await query('SELECT * FROM ideafix.meetings WHERE id=$1',[Number(match[1])])).rows[0];if(!m)fail(404,'Встреча не найдена');if(!canSeeMeeting(u,m))fail(403,'Нет доступа к встрече');
  if(!match[2]&&req.method==='PUT'){if(!canManageMeeting(u,m))fail(403,'Нет доступа к планированию');const b=validate(await body(req));const updated=(await query('UPDATE ideafix.meetings SET title=$1,kind=$2,starts_at=$3,department=$4,location=$5 WHERE id=$6 RETURNING *',[b.title,b.kind,b.starts_at,b.department,b.location,m.id])).rows[0];send({...updated,owner:undefined,canManage:true});return true}
  if(match[2]==='agenda'&&req.method==='POST'){
-  if(!managers(u)||!canManageMeeting(u,m))fail(403,'Повесткой управляет руководитель');
+  if(!managers(u)||!canSeeMeeting(u,m))fail(403,'План совещания доступен директору и руководителям');
   const b=await body(req);if(!Number.isSafeInteger(b.ticket_id)||b.ticket_id<1)fail(400,'Укажите номер обращения');const t=(await query('SELECT * FROM ideafix.tickets WHERE id=$1',[b.ticket_id])).rows[0];if(!t)fail(404,'Обращение не найдено');if(!manage(u,t))fail(403,'Нет доступа к обращению');
   const added=await query('INSERT INTO ideafix.meeting_agenda(meeting_id,ticket_id,added_by) VALUES($1,$2,$3) ON CONFLICT DO NOTHING RETURNING ticket_id',[m.id,t.id,u.id]);if(added.rowCount)await event(t.id,u,`Включено в повестку: ${m.title}`);send({ok:true,alreadyAdded:!added.rowCount});return true;
  }
@@ -38,8 +38,8 @@ export async function handleMeetings({url,req,res,u,body,send,fail,query,manage,
  const rows=(await query(`SELECT t.* FROM ideafix.tickets t WHERE ($2 OR (t.department=$3 AND $4)) AND (EXISTS(SELECT 1 FROM ideafix.meeting_agenda a WHERE a.meeting_id=$1 AND a.ticket_id=t.id) OR ($5 AND t.status='new' AND ($6='' OR t.department=$6))) ORDER BY t.created,t.id`,[m.id,top(u),u.department,u.role==='lead',includeNew,m.department])).rows;
  if(match[2]==='speech'||match[2]==='print'){
   const text=buildSpeech(m,rows);
-  if(match[2]==='speech'){send({meeting:{...m,owner:undefined,canManage:canManageMeeting(u,m)},text,ticket_ids:rows.map(t=>t.id),include_new:includeNew});return true}
+  if(match[2]==='speech'){send({meeting:{...m,owner:undefined,canManage:canManageMeeting(u,m),canAddAgenda:managers(u)&&canSeeMeeting(u,m)},text,ticket_ids:rows.map(t=>t.id),include_new:includeNew});return true}
   res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(`<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(m.title)} — IdeaFix</title><link rel="stylesheet" href="/assets/print.css"><script defer src="/assets/print.js"></script><body><nav><button id="print">Распечатать / сохранить PDF</button><span>Текст можно отредактировать перед печатью. Изменения остаются в этом окне.</span></nav><article contenteditable="true" aria-label="Текст выступления">${escape(text)}</article></body></html>`);return true;
  }
- send({meeting:{...m,owner:undefined,canManage:canManageMeeting(u,m)},tickets:rows.map(({id,title,body,department,status})=>({id,title,body,department,status}))});return true;
+ send({meeting:{...m,owner:undefined,canManage:canManageMeeting(u,m),canAddAgenda:managers(u)&&canSeeMeeting(u,m)},tickets:rows.map(({id,title,body,department,status})=>({id,title,body,department,status}))});return true;
 }
