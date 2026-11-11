@@ -57,6 +57,12 @@ const token=randomBytes(32).toString('hex');await query("INSERT INTO ideafix.ses
 if(url.pathname==='/api/track'&&req.method==='POST'){const b=await body(req),t=await ticket(Number(b.id));if(!t.access_hash||hash(String(b.code))!==t.access_hash)fail(403,'Неверный код доступа');return send(await detail(null,t,true))}
 const u=await session(req);if(!u)fail(401,'Войдите в аккаунт');
 if(url.pathname==='/api/me')return send({...publicUser(u),departments});
+if(url.pathname==='/api/regular-clients'){
+ if(u.role!=='director'&&u.role!=='admin')fail(403,'Справочник клиентов доступен руководству');
+ if(req.method==='GET')return send((await query('SELECT id,company,contact_name,contact_email,notes FROM ideafix.regular_clients ORDER BY company')).rows);
+ if(req.method==='POST'){const b=await body(req);const company=clean(b.company,2,120),contact=String(b.contact_name||'').trim().slice(0,120),email=String(b.contact_email||'').trim().slice(0,200),notes=String(b.notes||'').trim().slice(0,500);if(email&&!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))fail(400,'Проверьте email');return send((await query('INSERT INTO ideafix.regular_clients(company,contact_name,contact_email,notes) VALUES($1,$2,$3,$4) RETURNING id,company,contact_name,contact_email,notes',[company,contact,email,notes])).rows[0],201)}
+ fail(405,'Метод недоступен');
+}
 if(url.pathname==='/api/partners'){
  if(u.role!=='director'&&u.role!=='admin')fail(403,'Список партнёров доступен руководству');
  if(req.method==='GET')return send((await query('SELECT id,company,contact_name,contact_email FROM ideafix.partners ORDER BY company,contact_name')).rows);
