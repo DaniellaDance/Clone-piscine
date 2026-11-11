@@ -390,3 +390,18 @@ p,h1,h2,h3,small,.hint,.vendor-title,.vendor-card,.panel{overflow-wrap:anywhere}
 .bottom-more-menu .more-group>summary::after{content:'+';font-size:19px}
 .bottom-more-menu .more-group[open]>summary::after{content:'−'}
 .bottom-more-menu .more-group>button{display:block;width:100%;padding:10px 16px 10px 24px;text-align:left}
+
+/* Restore the approved home showcase: right-hand desktop cabinet, mobile navigation button. */
+@media(min-width:900px){
+ #view.list-screen:has(> .home-showcase){display:grid!important;grid-template-columns:minmax(0,1fr) minmax(330px,40%)!important;gap:16px;align-items:start}
+ #view.list-screen:has(> .home-showcase)>.home-showcase{display:block!important;grid-column:2;grid-row:1 / span 20;position:sticky;top:10px;max-height:calc(100dvh - 105px);overflow-y:auto}
+ #view.list-screen:has(> .home-showcase)>:not(.home-showcase){grid-column:1;min-width:0}
+}
+@media(max-width:899px) and (orientation:portrait){
+ #view.list-screen:has(> .home-showcase)>.home-showcase{display:none!important}
+}
+.home-showcase-shelves{background:repeating-linear-gradient(to bottom,#c5e8fb 0 174px,#72d4ff 174px 180px,#f5ffff 180px 185px,#678eb6 185px 193px,#c5e8fb 193px 207px)}
+.home-showcase-product{background:linear-gradient(135deg,#fff,#d8eeff 65%,#fff);box-shadow:inset 0 0 0 2px #ffffffbb,0 5px 0 #70b6df,0 8px 18px #2362a74d;border:2px solid #b9e8ff}
+.bottom-nav{display:flex;justify-content:space-around}
+.bottom-nav>.bottom-link,.bottom-nav>.bottom-more{min-width:0;flex:1}
+@media(max-width:420px){.bottom-nav .bottom-text{font-size:10px!important}.bottom-nav .bottom-icon{font-size:22px}}
