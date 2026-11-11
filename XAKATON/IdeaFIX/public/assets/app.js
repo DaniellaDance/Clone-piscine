@@ -30,6 +30,7 @@ async function recordIdeaVideo(){
   <p class="hint">Видео записывается только с вашего разрешения. Перед отправкой его можно просмотреть или удалить.</p>
   <video id="idea-video-preview" autoplay muted playsinline style="width:100%;max-height:48vh;background:#14202a;border-radius:12px"></video>
   <p id="idea-video-status" role="status">Подготовка камеры…</p>
+  <label>Текст видеообращения<textarea id="idea-video-transcript" rows="5" placeholder="Во время записи здесь появятся распознанные слова. После остановки проверьте текст."></textarea></label>
   <div style="display:flex;flex-wrap:wrap;gap:8px">
    <button type="button" id="idea-video-stop" class="primary" disabled>Остановить запись</button>
    <button type="button" id="idea-video-share" hidden>Поделиться видео</button>
@@ -37,14 +38,53 @@ async function recordIdeaVideo(){
    <button type="button" id="idea-video-retake" hidden>Перезаписать</button>
   </div></div>`);
  const dialog=$('#modal'),video=$('#idea-video-preview'),status=$('#idea-video-status');
- const stop=$('#idea-video-stop'),share=$('#idea-video-share'),download=$('#idea-video-download'),retake=$('#idea-video-retake');
+ const stop=$('#idea-video-stop'),share=$('#idea-video-share'),download=$('#idea-video-download'),retake=$('#idea-video-retake'),transcript=$('#idea-video-transcript');
+ let speech=null,spokenParts=new Map(),speechFinal='',speechStopped=false;
+ const updateWords=()=>{let value=[...spokenParts.entries()].sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ').trim();transcript.value=value;return value};
+ const stopSpeech=()=>{speechStopped=true;try{speech?.stop()}catch{}};
+ const startSpeech=()=>{
+  const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!Speech){status.textContent='Камера работает. Автоматическая расшифровка недоступна в этом браузере: текст можно ввести вручную.';return}
+  speechStopped=false;spokenParts.clear();transcript.value='';
+  const launch=()=>{
+   if(speechStopped||closed)return;
+   speech=new Speech();speech.lang=document.documentElement.lang==='kk'?'kk-KZ':'ru-RU';
+   speech.continuous=true;speech.interimResults=true;
+   speech.onresult=e=>{
+    let interim='';
+    for(let i=0;i<e.results.length;i++){
+     const result=e.results[i],words=result[0]?.transcript?.trim()||'';
+     if(result.isFinal)spokenParts.set(i,words);else interim+=' '+words;
+    }
+    const stable=[...spokenParts.entries()].sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ');
+    transcript.value=(speechFinal+' '+stable+' '+interim).trim();
+   };
+   speech.onend=()=>{
+    if(speechStopped||closed)return;
+    const next=updateWords();
+    if(next&&!speechFinal.endsWith(next))speechFinal=(speechFinal+' '+next).trim();
+    spokenParts.clear();
+    try{launch()}catch{}
+   };
+   try{speech.start()}catch{status.textContent='Расшифровка временно недоступна. Видео продолжает записываться.'}
+  };
+  launch();
+ };
+ const finalizeText=async()=>{
+  const original=transcript.value.trim();
+  if(!original)return;
+  try{
+   const response=await fetch('/api/text/prepare',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:original,language:'ru'}),signal:AbortSignal.timeout(15000)});
+   if(response.ok){const result=await response.json();if(typeof result.text==='string'&&result.text.trim())transcript.value=result.text}
+  }catch{}
+ };
  let stream=null,recorder=null,chunks=[],blob=null,url=null,closed=false;
  const cleanup=()=>{stream?.getTracks().forEach(t=>t.stop());stream=null};
- const release=()=>{closed=true;cleanup();if(recorder?.state==='recording')recorder.stop();if(url)URL.revokeObjectURL(url)};
+ const release=()=>{closed=true;stopSpeech();cleanup();if(recorder?.state==='recording')recorder.stop();if(url)URL.revokeObjectURL(url)};
  dialog.addEventListener('close',release,{once:true});
  const begin=async()=>{
   cleanup();if(url){URL.revokeObjectURL(url);url=null}
-  blob=null;chunks=[];share.hidden=true;download.hidden=true;retake.hidden=true;stop.disabled=true;
+  blob=null;chunks=[];speechFinal='';spokenParts.clear();transcript.value='';share.hidden=true;download.hidden=true;retake.hidden=true;stop.disabled=true;
   if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status.textContent='Запись видео не поддерживается этим браузером.';return}
   try{
    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
@@ -53,28 +93,29 @@ async function recordIdeaVideo(){
    const type=['video/webm;codecs=vp8,opus','video/webm','video/mp4'].find(t=>MediaRecorder.isTypeSupported(t));
    recorder=new MediaRecorder(stream,type?{mimeType:type}:undefined);
    recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
-   recorder.onstop=()=>{
-    cleanup();if(closed)return;
+   recorder.onstop=async()=>{
+    stopSpeech();cleanup();if(closed)return;
+    await finalizeText();
     blob=new Blob(chunks,{type:recorder.mimeType||'video/webm'});
     if(!blob.size){status.textContent='Видео не записалось. Попробуйте ещё раз.';retake.hidden=false;return}
     url=URL.createObjectURL(blob);video.srcObject=null;video.src=url;video.muted=false;video.controls=true;video.play().catch(()=>{});
     status.textContent='Видео готово. Выберите, кому отправить его через меню «Поделиться», либо сохраните файл.';
     share.hidden=false;download.hidden=false;retake.hidden=false;stop.disabled=true;
    };
-   recorder.start(1000);stop.disabled=false;status.textContent='Идёт запись видео и звука. Нажмите «Остановить запись», когда закончите.';
+   recorder.start(1000);startSpeech();stop.disabled=false;status.textContent='Идёт запись видео и звука. Нажмите «Остановить запись», когда закончите.';
   }catch(e){cleanup();status.textContent=e.name==='NotAllowedError'?'Разрешите доступ к камере и микрофону.':'Не удалось включить камеру: '+e.message}
  };
- stop.onclick=()=>{if(recorder?.state==='recording'){recorder.stop();stop.disabled=true;status.textContent='Подготовка видео…'}};
+ stop.onclick=()=>{if(recorder?.state==='recording'){stopSpeech();recorder.stop();stop.disabled=true;status.textContent='Подготовка видео…'}};
  const file=()=>new File([blob],blob.type.includes('mp4')?'ideafix-idea.mp4':'ideafix-idea.webm',{type:blob.type});
  share.onclick=async()=>{
   if(!blob)return;
   try{
    const f=file();
    if(!navigator.share||!navigator.canShare?.({files:[f]})){status.textContent='Ваш браузер не поддерживает отправку видео. Сохраните файл и прикрепите его в рабочем чате.';return}
-   await navigator.share({files:[f],title:'Видеообращение IdeaFIX',text:'Видеообращение'});
+   await navigator.share({files:[f],title:'Видеообращение IdeaFIX',text:transcript.value.trim()||'Видеообращение'});
   }catch(e){if(e.name!=='AbortError')status.textContent='Не удалось поделиться видео. Сохраните файл и отправьте вручную.'}
  };
- download.onclick=()=>{if(!blob)return;const a=document.createElement('a');a.href=url;a.download=file().name;a.click()};
+ download.onclick=()=>{if(!blob)return;const a=document.createElement('a');a.href=url;a.download=file().name;a.click();if(transcript.value.trim()){const textBlob=new Blob([transcript.value],{type:'text/plain;charset=utf-8'});const textUrl=URL.createObjectURL(textBlob);const b=document.createElement('a');b.href=textUrl;b.download='ideafix-idea-transcript.txt';b.click();setTimeout(()=>URL.revokeObjectURL(textUrl),2000)}};
  retake.onclick=()=>{video.pause();begin()};
  await begin();
 }
