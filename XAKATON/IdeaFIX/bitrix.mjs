@@ -23,11 +23,11 @@ export async function handleBitrix(ctx){const {url,req,u,body,send,fail,query,po
  }
  const match=url.pathname.match(/^\/api\/tickets\/(\d+)\/bitrix$/);if(!match)return false;if(req.method!=='POST')fail(405,'Метод недоступен');
  const b=await body(req);let recipient;
- const own=(await query('SELECT webhook FROM ideafix.bitrix_accounts WHERE app_user=$1',[u.id])).rows[0];if(!own?.webhook)fail(409,'Сначала подключите «Мой Битрикс»');
+
  // A row lock serializes a sender's concurrent requests. The committed pending record
  // prevents duplicates even when the remote service accepts a request but times out.
  const client=await pool.connect();let t,existing;
- try{await client.query('BEGIN');t=(await client.query('SELECT * FROM ideafix.tickets WHERE id=$1 FOR UPDATE',[Number(match[1])])).rows[0];if(!t)fail(404,'Инсайт не найден');if(!manage(u,t)&&(t.anonymous||t.author!==u.id))fail(403,'Отправка доступна автору и руководителю');if(t.stage!=='proposal')fail(409,'Отправить предложение в Битрикс можно только на стадии «Предложение»'); if(!/^[1-9]\d*$/.test(String(b.recipient_id||'')))fail(400,'Выберите сотрудника Битрикс24');recipient=Number(b.recipient_id);if(!Number.isSafeInteger(recipient))fail(400,'Выберите сотрудника Битрикс24');
+ try{await client.query('BEGIN');t=(await client.query('SELECT * FROM ideafix.tickets WHERE id=$1 FOR UPDATE',[Number(match[1])])).rows[0];if(!t)fail(404,'Инсайт не найден');if(!manage(u,t)&&(t.anonymous||t.author!==u.id))fail(403,'Отправка доступна автору и руководителю');if(t.stage!=='proposal')fail(409,'Отправить предложение в Битрикс можно только на стадии «Предложение»');const own=(await query('SELECT webhook FROM ideafix.bitrix_accounts WHERE app_user=$1',[u.id])).rows[0];if(!own?.webhook)fail(409,'Сначала подключите «Мой Битрикс»'); if(!/^[1-9]\d*$/.test(String(b.recipient_id||'')))fail(400,'Выберите сотрудника Битрикс24');recipient=Number(b.recipient_id);if(!Number.isSafeInteger(recipient))fail(400,'Выберите сотрудника Битрикс24');
  existing=(await client.query('SELECT * FROM ideafix.bitrix_deliveries WHERE ticket=$1 AND recipient=$2',[t.id,recipient])).rows[0];
  if(existing?.status==='sent'){await client.query('COMMIT');return send({ok:true,already_sent:true,task_id:existing.task_id,task_url:`${BITRIX_PORTAL}/company/personal/user/${recipient}/tasks/task/view/${existing.task_id}/`}),true}
  if(existing&&existing.status!=='failed')fail(409,'Отправка уже выполняется или ожидает проверки. Проверьте задачу в Битрикс24; повтор не создаётся.');
