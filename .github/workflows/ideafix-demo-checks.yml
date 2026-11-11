@@ -32,6 +32,9 @@ jobs:
       - name: Validate IdeaFIX UI and discussion API syntax
         run: |
           node --check public/assets/app.js
+          node --check public/assets/catalog-ui.js
+          node --check server.mjs
+          node --input-type=module -e "import fs from 'node:fs';const s=fs.readFileSync('server.mjs','utf8');for(const host of ['unpkg.com','cdn.jsdelivr.net','tile.openstreetmap.org'])if(!s.includes(host))throw Error('Map CSP missing: '+host);"
           node --check public/assets/discussions.js
           node --check ai-assistant.mjs
           node --check discussions.mjs
