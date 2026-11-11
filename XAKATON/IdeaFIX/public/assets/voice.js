@@ -29,11 +29,31 @@
    // Do not append overlapping words twice.
    return [...a,...b].join(' ');
   }
+  // Remove repeated adjacent phrases produced inside one recognition result.
+  // Keep ordinary intentional repetitions of one or two words.
+  function removeEchoes(text){
+   const tokens=words(text),normalized=tokens.map(key);
+   let changed=true,passes=0;
+   while(changed&&passes++<12){
+    changed=false;
+    outer:for(let size=Math.min(24,Math.floor(tokens.length/2));size>=2;size--){
+     for(let i=0;i+2*size<=tokens.length;i++){
+      let equal=true;
+      for(let j=0;j<size;j++)if(normalized[i+j]!==normalized[i+size+j]){equal=false;break}
+      if(equal){
+       tokens.splice(i+size,size);normalized.splice(i+size,size);
+       changed=true;break outer;
+      }
+     }
+    }
+   }
+   return tokens.join(' ');
+  }
   function collectSpeech(){
    let text=archived.join(' ');
    for(const [,phrase] of [...segments.entries()].sort((a,b)=>a[0]-b[0]))
     text=mergeSpeech(text,phrase);
-   spoken=text.trim();
+   spoken=removeEchoes(text).trim();
   }
   const say=message=>{status.textContent=message};
   const controls=()=>{start.textContent=listening?c.stop:c.dictate;start.setAttribute('aria-pressed',String(listening));start.classList.toggle('recording',listening);check.disabled=listening||busy;select.disabled=listening||busy;start.disabled=!Recognition||busy;area.readOnly=listening;form.querySelector('button[type=submit]').disabled=listening||busy};
@@ -88,7 +108,7 @@
       return;
      }
      listening=false;controls();
-     const normalized=spoken.trim();
+     const normalized=removeEchoes(spoken).trim();
      if(normalized){area.value=(base?base+'\\n':'')+normalized;area.dispatchEvent(new Event('input',{bubbles:true}));say(c.reviewFirst)}
      else say(c.nospeech);
      // Text is displayed only after explicit stop; review is opened by the user.
