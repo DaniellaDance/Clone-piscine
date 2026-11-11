@@ -97,6 +97,9 @@ if(fileRoute){
 
 if(url.pathname==='/api/logout'){const tok=(req.headers.cookie||'').match(/if_session=([^;]+)/)?.[1];if(tok)await query('DELETE FROM ideafix.sessions WHERE token=$1',[hash(tok)]);res.setHeader('Set-Cookie','if_session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax');return send({ok:true})}
 if(await handleMediaMessages({url,req,u,body,query,send,fail}))return;
+if(req.method==='GET'&&url.pathname==='/api/secretary/news-topics'){
+ return send({vendors:catalog.vendors.map(v=>({id:v.id,name:v.name,country:v.country})),technologies:catalog.technical.map(t=>({id:t.id,label:t.label}))});
+}
 if(await handleVendorWorkspace({url,req,u,query,send,fail,catalog}))return;
 if(await handleBitrixActions({url,req,u,body,send,fail,query,manage}))return;
 if(await handleBitrixAccount({url,req,u,body,send,fail,query}))return;
