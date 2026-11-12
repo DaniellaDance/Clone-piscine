@@ -1,0 +1,58 @@
+name: IdeaFIX — build and deploy Neon Functions
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'XAKATON/IdeaFIX/**'
+      - '.github/workflows/ideafix-neon-functions.yml'
+  workflow_dispatch:
+concurrency:
+  group: ideafix-neon-production
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  verify-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: XAKATON/IdeaFIX
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: XAKATON/IdeaFIX/package-lock.json
+      - name: Install app dependencies
+        run: npm ci
+      - name: Verify unit tests
+        run: npm run test:unit
+      - name: Generate installable icons
+        run: npm run build
+      - name: Mark client revision
+        run: printf '\n/* ideafix-commit:%s */\n' "$GITHUB_SHA" >> public/assets/voice.js
+      - name: Install Neon SDK for deploy command
+        run: npm install --no-save --package-lock=false @neon/sdk
+      - name: Build Neon function ZIP
+        run: |
+          zip -q -r "$RUNNER_TEMP/ideafix-neon.zip" . \
+            -x '*.test.mjs' 'test.mjs' 'scripts/*' '.env*' '*.zip' '*.log'
+          unzip -t "$RUNNER_TEMP/ideafix-neon.zip" | tail -1
+      - name: Publish to Neon Functions and verify live revision
+        if: ${{ env.NEON_API_KEY != '' }}
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          FREEBUFF_MODEL: ${{ vars.FREEBUFF_MODEL }}
+          AI_PROVIDER: ${{ vars.AI_PROVIDER }}
+        run: node scripts/deploy-neon.mjs "$RUNNER_TEMP/ideafix-neon.zip"
+      - name: Explain missing deployment credentials
+        if: ${{ env.NEON_API_KEY == '' }}
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+        run: |
+          echo 'NEON_API_KEY is missing in GitHub Actions secrets'
+          exit 1
