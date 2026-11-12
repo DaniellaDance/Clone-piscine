@@ -43,7 +43,7 @@ while (Date.now() < deadline) {
   await new Promise(resolve => setTimeout(resolve, 5000));
 }
 if (!active) throw new Error('Timed out waiting for active Neon deployment');
-for (const route of ['/', '/mobile.html', '/desktop.html', '/assets/voice.js']) {
+for (const route of ['/', '/mobile.html', '/desktop.html', '/assets/voice.js', '/assets/catalog-ui.js']) {
   let verified = false;
   for (let attempt = 1; attempt <= 40; attempt++) {
     const response = await fetch(url + route + '?ci=' + encodeURIComponent(GITHUB_SHA || Date.now()) + '&attempt=' + attempt, {
@@ -52,11 +52,13 @@ for (const route of ['/', '/mobile.html', '/desktop.html', '/assets/voice.js']) 
       signal: AbortSignal.timeout(20000)
     });
     if (response.ok) {
-      if (route !== '/assets/voice.js') verified = true;
+      if (route !== '/assets/voice.js' && route !== '/assets/catalog-ui.js') verified = true;
       else {
         const source = await response.text();
-        verified = source.includes('ideafix-commit:' + GITHUB_SHA);
-        if (!verified) console.log('Revision check:', response.status, source.match(/ideafix-commit:([a-f0-9]+)/g)?.slice(-1) || 'no revision marker');
+        const map = route === '/assets/catalog-ui.js';
+        const revision = (map ? 'ideafix-map-commit:' : 'ideafix-commit:') + GITHUB_SHA;
+        verified = source.includes(revision) && (!map || (source.includes('data-map-future') && source.includes('if(!futureMode){') && source.includes('showDirectory();draw()')));
+        if (!verified) console.log('Revision or map feature check failed:', route, response.status);
       }
     }
     if (verified) { console.log('OK', route, response.status); break; }
