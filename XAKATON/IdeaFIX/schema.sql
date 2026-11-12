@@ -106,3 +106,11 @@ ALTER TABLE ideafix.regular_clients ADD COLUMN IF NOT EXISTS longitude double pr
 ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS published_at timestamptz;
 
 CREATE TABLE IF NOT EXISTS ideafix.completed_kz_projects (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, name text NOT NULL UNIQUE, city text NOT NULL, vendor_name text NOT NULL DEFAULT '', description text NOT NULL DEFAULT '', latitude double precision NOT NULL CHECK(latitude BETWEEN 40 AND 56), longitude double precision NOT NULL CHECK(longitude BETWEEN 46 AND 88), completed_on date, created_at timestamptz NOT NULL DEFAULT now());
+
+CREATE TABLE IF NOT EXISTS ideafix.bitrix_project_finances (
+ owner text NOT NULL REFERENCES ideafix.users(id) ON DELETE CASCADE,
+ remote_key text NOT NULL, title text NOT NULL,
+ phase text NOT NULL CHECK(phase IN ('pilot','project')),
+ income numeric(16,2),expense numeric(16,2),source_url text NOT NULL,
+ imported_at timestamptz NOT NULL DEFAULT now(),PRIMARY KEY(owner,remote_key)
+);

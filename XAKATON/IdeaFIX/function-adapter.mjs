@@ -1,8 +1,9 @@
 import {handleRequest,init} from './server.mjs';
 let ready;
 export default {async fetch(request){
-ready ||= init().catch(e=>{ready=null;throw e});await ready;
-const url=new URL(request.url), headers=Object.fromEntries(request.headers);
+const url=new URL(request.url);
+if(url.pathname.startsWith('/api/')){ready ||= init().catch(e=>{ready=null;throw e});await ready}
+const headers=Object.fromEntries(request.headers);
 headers.host=url.host;headers['x-forwarded-proto']=url.protocol.slice(0,-1);
 const req={url:url.pathname+url.search,headers,method:request.method,socket:{remoteAddress:'function'},async *[Symbol.asyncIterator](){yield Buffer.from(await request.arrayBuffer())}};
 const outputHeaders=new Headers();let status=200,output;

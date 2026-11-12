@@ -1,0 +1,19 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {financialAmount,bitrixFinanceRows,handleProjectImport} from './bitrix-project-import.mjs';
+test('blank or malformed sums stay unknown; explicit zero and decimals are retained',()=>{assert.equal(financialAmount(null),null);assert.equal(financialAmount(''),null);assert.equal(financialAmount('1|USD'),null);assert.equal(financialAmount('0'),0);assert.equal(financialAmount('12,50'),12.5);assert.equal(financialAmount('-5'),null)});
+test('project totals are complete only when all task values are present; pilot container does not double-count',()=>{
+ const rows=bitrixFinanceRows([{ID:'1',NAME:'Объект'},{ID:'2',NAME:'Пилотные проекты'}],[{id:'11',title:'Задача',groupId:'1',ufIncome:'100',ufExpense:'20'},{id:'12',title:'Без суммы',groupId:'1',ufIncome:null,ufExpense:'10'},{id:'21',title:'Пилот А',groupId:'2',ufIncome:'50',ufExpense:'0'}],'UF_INCOME','UF_EXPENSE');
+ assert.equal(rows.length,2);assert.equal(rows[0].income,null);assert.equal(rows[0].expense,30);assert.equal(rows[1].phase,'pilot');assert.equal(rows[1].income,50);assert.equal(rows[1].expense,0);
+});
+test('import requires personal connection and never calls Bitrix without it',async()=>{await assert.rejects(()=>handleProjectImport({url:new URL('https://test/api/bitrix/project-import'),req:{method:'GET'},u:{id:'u',role:'director'},query:async()=>({rows:[]}),fail:(status)=>{throw Object.assign(Error(),{status})}},()=>assert.fail()),{status:409})});
+test('ordinary employees cannot read project finances',async()=>{await assert.rejects(()=>handleProjectImport({url:new URL('https://test/api/project-finances'),req:{method:'GET'},u:{id:'u',role:'employee'},query:()=>assert.fail(),fail:(status)=>{throw Object.assign(Error(),{status})}}),{status:403})});
+test('preview follows all pages, accepts only selected numeric custom fields, and does not write data',async()=>{
+ let writes=0,response;const query=async sql=>{if(sql.startsWith('SELECT webhook'))return {rows:[{webhook:'personal'}]};writes++;throw Error('Write during preview')};
+ const call=async(base,method,p)=>{assert.equal(base,'personal');if(method==='tasks.task.getFields')return {result:{fields:{UF_INCOME:{type:'double',title:'Доход'},UF_EXPENSE:{type:'double',title:'Расход'}}}};if(method==='sonet_group.get')return p.start===0?{result:[{ID:1,NAME:'Первый'}],next:50}:{result:[{ID:2,NAME:'Второй'}]};if(method==='tasks.task.list')return {result:{tasks:[{id:1,title:'Тест',groupId:1,ufIncome:'20',ufExpense:'10'}]}};throw Error(method)};
+ await handleProjectImport({url:new URL('https://test/api/bitrix/project-import?income_field=UF_INCOME&expense_field=UF_EXPENSE'),req:{method:'GET'},u:{id:'u',role:'director'},query,send:r=>response=r,fail:()=>assert.fail()},call);assert.equal(writes,0);assert.equal(response.rows.length,2);assert.equal(response.rows[0].income,20);
+});
+test('repeat imports use account-scoped upsert and reject stale selections',async()=>{
+ let saved=0;const query=async(sql,p)=>{if(sql.startsWith('SELECT webhook'))return {rows:[{webhook:'personal'}]};assert.match(sql,/ON CONFLICT\(owner,remote_key\) DO UPDATE/);const rows=JSON.parse(p[0]);assert.equal(rows[0].owner,'u');saved++;return {rows:[{remote_key:'project:1'}]}};
+ const call=async(base,method)=>method==='tasks.task.getFields'?{result:{fields:{}}}:method==='sonet_group.get'?{result:[{ID:1,NAME:'Проект'}]}:{result:{tasks:[]}};
+ const ctx={url:new URL('https://test/api/bitrix/project-import'),req:{method:'POST'},u:{id:'u',role:'director'},query,body:async()=>({selected_keys:['project:1']}),send:()=>{},fail:(status)=>{throw Object.assign(Error(),{status})}};
+ await handleProjectImport(ctx,call);await handleProjectImport(ctx,call);assert.equal(saved,2);await assert.rejects(()=>handleProjectImport({...ctx,body:async()=>({selected_keys:['project:999']})},call),{status:409});
+});
