@@ -1,5 +1,9 @@
 CREATE SCHEMA IF NOT EXISTS ideafix;
+-- Fathom tables follow users below; secrets are never returned to the browser.
 CREATE TABLE IF NOT EXISTS ideafix.users(id text PRIMARY KEY, login text UNIQUE NOT NULL, name text NOT NULL, password text NOT NULL, role text NOT NULL DEFAULT 'employee', department text NOT NULL);
+CREATE TABLE IF NOT EXISTS ideafix.fathom_connections(owner text PRIMARY KEY REFERENCES ideafix.users(id) ON DELETE CASCADE,route text UNIQUE NOT NULL,secret text,enabled boolean NOT NULL DEFAULT false);
+CREATE TABLE IF NOT EXISTS ideafix.fathom_recordings(id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,owner text NOT NULL REFERENCES ideafix.users(id) ON DELETE CASCADE,recording_id text NOT NULL,title text NOT NULL,source_url text NOT NULL DEFAULT '',summary text NOT NULL DEFAULT '',transcript jsonb NOT NULL DEFAULT '[]',action_items jsonb NOT NULL DEFAULT '[]',created timestamptz NOT NULL DEFAULT now(),UNIQUE(owner,recording_id));
+CREATE TABLE IF NOT EXISTS ideafix.fathom_outputs(recording bigint REFERENCES ideafix.fathom_recordings(id) ON DELETE CASCADE,output_key text NOT NULL,target_id integer NOT NULL,kind text NOT NULL CHECK(kind IN ('task','idea')),PRIMARY KEY(recording,output_key));
 CREATE TABLE IF NOT EXISTS ideafix.sessions(token text PRIMARY KEY, user_id text REFERENCES ideafix.users(id), expires timestamptz NOT NULL);
 CREATE TABLE IF NOT EXISTS ideafix.text_check_limits(user_id text PRIMARY KEY REFERENCES ideafix.users(id) ON DELETE CASCADE,window_start timestamptz NOT NULL DEFAULT now(),n integer NOT NULL DEFAULT 0);
 CREATE TABLE IF NOT EXISTS ideafix.meetings(id serial PRIMARY KEY,title text NOT NULL,kind text NOT NULL DEFAULT 'meeting',starts_at timestamptz NOT NULL,department text NOT NULL DEFAULT '',location text NOT NULL DEFAULT '',owner text NOT NULL REFERENCES ideafix.users(id),created timestamptz NOT NULL DEFAULT now());
@@ -114,3 +118,4 @@ CREATE TABLE IF NOT EXISTS ideafix.bitrix_project_finances (
  income numeric(16,2),expense numeric(16,2),source_url text NOT NULL,
  imported_at timestamptz NOT NULL DEFAULT now(),PRIMARY KEY(owner,remote_key)
 );
+

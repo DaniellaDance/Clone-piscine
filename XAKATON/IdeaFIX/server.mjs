@@ -1,3 +1,4 @@
+import {handleFathom,receiveFathom} from './fathom.mjs';
 import {handleProjectImport} from './bitrix-project-import.mjs';
 import {handleAI} from './ai-assistant.mjs';
 import {handleMediaMessages} from './media-messages.mjs';
@@ -48,6 +49,7 @@ export const handleRequest=async(req,res)=>{const url=new URL(req.url,'http://lo
 const send=(data,status=200)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(data))};
 try{
 if(!url.pathname.startsWith('/api/')){let p=url.pathname==='/'?'/index.html':decodeURIComponent(url.pathname);if(!/^\/(index\.html|mobile\.html|desktop\.html|install\.html|deployment\.json|sw\.js|manifest\.webmanifest|assets\/[\w.-]+)$/.test(p))fail(404,'Файл не найден');const f=await readFile(new URL('./public'+p,import.meta.url));const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.ttf':'font/ttf','.woff2':'font/woff2','.txt':'text/plain; charset=utf-8','.webmanifest':'application/manifest+json'};res.writeHead(200,{'Content-Type':mime[extname(p)]||'application/octet-stream','Cache-Control':'no-cache'});return res.end(f)}
+if(await receiveFathom({url,req,query,send,fail}))return;
 if(req.method!=='GET'&&req.headers.origin&&req.headers.origin!==`${req.headers['x-forwarded-proto']||'http'}://${req.headers.host}`)fail(403,'Недопустимый источник');
 if(url.pathname==='/api/health'){await query('SELECT 1');return send({ok:true,version:'2.0.0',database:true})}
 if(url.pathname==='/api/login'||url.pathname==='/api/register'){
@@ -57,6 +59,7 @@ if(url.pathname==='/api/register'){const name=clean(b.name,2,100),dep=department
 const token=randomBytes(32).toString('hex');await query("INSERT INTO ideafix.sessions VALUES($1,$2,now()+interval '30 days')",[hash(token),u.id]);res.setHeader('Set-Cookie',`if_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=2592000${process.env.NODE_ENV==='production'?'; Secure':''}`);return send(publicUser(u));}
 if(url.pathname==='/api/track'&&req.method==='POST'){const b=await body(req),t=await ticket(Number(b.id));if(!t.access_hash||hash(String(b.code))!==t.access_hash)fail(403,'Неверный код доступа');return send(await detail(null,t,true))}
 const u=await session(req);if(!u)fail(401,'Войдите в аккаунт');
+if(await handleFathom({url,req,u,body,query,pool,send,fail}))return;
 if(url.pathname==='/api/me')return send({...publicUser(u),departments});
 if(url.pathname==='/api/completed-kz-projects'){
  if(req.method==='GET')return send((await query('SELECT id,name,city,vendor_name,description,latitude,longitude FROM ideafix.completed_kz_projects ORDER BY city,name')).rows);
@@ -179,5 +182,6 @@ fail(404,'Маршрут не найден');
 export const server=http.createServer(handleRequest);
 if(!process.env.NEON_FUNCTION){await init();server.listen(Number(process.env.PORT)||3000,'0.0.0.0',()=>console.log('IdeaFix ready'));}
 process.on('SIGTERM',()=>server.close(()=>pool.end().then(()=>process.exit(0))));
+
 
 

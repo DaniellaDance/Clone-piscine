@@ -7,7 +7,7 @@
     "start": "node server.mjs",
     "test": "node --test test.mjs",
     "build": "node scripts/icons.mjs",
-    "test:unit": "node --test bitrix.test.mjs proofread.test.mjs discussions.test.mjs ai-assistant.test.mjs bitrix-project-import.test.mjs director-dashboard.test.mjs media-recording.test.mjs"
+    "test:unit": "node --test bitrix.test.mjs proofread.test.mjs discussions.test.mjs ai-assistant.test.mjs bitrix-project-import.test.mjs director-dashboard.test.mjs media-recording.test.mjs fathom.test.mjs"
   },
   "dependencies": {
     "node-ical": "^0.27.6",
@@ -18,4 +18,3 @@
     "node": ">=22"
   }
 }
-
