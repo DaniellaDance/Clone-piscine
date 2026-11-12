@@ -11,7 +11,7 @@
   let recognition=null,listening=false,busy=false,closed=false,reviewed=null,version=0,controller=null,session=0,manualStop=false,segments=new Map(),spoken='',archived=[];
   // SpeechRecognition can re-emit earlier final phrases with different result indices,
   // especially after a silent pause or an automatic recognition restart.
-  const words=text=>text.trim().split(/\\s+/).filter(Boolean);
+  const words=text=>text.trim().split(/\s+/).filter(Boolean);
   const key=text=>text.toLocaleLowerCase().replace(/[.,!?;:…«»"“”]/g,'').trim();
   function mergeSpeech(previous,next){
    const a=words(previous),b=words(next);
@@ -68,16 +68,16 @@
   }
   function cleanSpeech(text){
    return removeEchoes(text)
-    .replace(/(^|[.!?]\\s+)(?:э+|эм+|мм+|мг+|ну+)(?:[,.]?\\s+)/giu,'$1')
-    .replace(/\\b(?:э+|эм+|мм+)\\b[,.]?\\s*/giu,'')
-    .replace(/\\s+([,.!?])/g,'$1').replace(/\\s{2,}/g,' ').trim();
+    .replace(/(^|[.!?]\s+)(?:э+|эм+|мм+|мг+|ну+)(?:[,.]?\s+)/giu,'$1')
+    .replace(/\\b(?:э+|эм+|мм+)\\b[,.]?\s*/giu,'')
+    .replace(/\s+([,.!?])/g,'$1').replace(/\s{2,}/g,' ').trim();
   }
   async function finishVoice(base,id){
    if(closed||session!==id)return;
    listening=false;controls();
    const source=cleanSpeech(spoken);
    if(!source){say(c.nospeech);return}
-   const original=(base?base+'\\n':'')+source;
+   const original=(base?base+'\n':'')+source;
    area.value=original;area.dispatchEvent(new Event('input',{bubbles:true}));
    busy=true;controls();say(c.working);
    const requestVersion=version;
@@ -124,14 +124,14 @@
      let interim='';
      for(let i=0;i<event.results.length;i++){
       const result=event.results[i];if(!result.isFinal){interim+=' '+result[0].transcript;continue}
-      const phrase=result[0].transcript.trim().replace(/\\s+/g,' ');
+      const phrase=result[0].transcript.trim().replace(/\s+/g,' ');
       if(!phrase)continue;
       segments.set(i,phrase);
      }
      collectSpeech();
      // Show interim words immediately, without treating them as permanent results.
      const live=mergeSpeech(spoken,interim.trim());
-     area.value=(base?base+'\\n':'')+live;
+     area.value=(base?base+'\n':'')+live;
      area.scrollTop=area.scrollHeight;
      say(c.listening);
     };
@@ -155,9 +155,10 @@
    try{begin()}catch{listening=false;controls();say(c.denied)}
   };
   form.addEventListener('submit',event=>{if(listening||busy||reviewed!==area.value){event.preventDefault();event.stopImmediatePropagation();if(listening||busy)say(c.wait);else review()}},true);
-  const cleanup=()=>{closed=true;session++;controller?.abort();recognition?.abort();listening=false};dialog.addEventListener('close',cleanup,{once:true});dialog.addEventListener('cancel',cleanup,{once:true});
+  const cleanup=()=>{closed=true;session++;controller?.abort();recognition?.abort();listening=false};dialog.addEventListener('close',()=>{if(!dialog.open)cleanup()},{once:true});dialog.addEventListener('ideafix-modal-replace',cleanup,{once:true});dialog.addEventListener('cancel',cleanup,{once:true});
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&listening){say(c.listening)}},{signal:(()=>{const a=new AbortController();dialog.addEventListener('close',()=>a.abort(),{once:true});return a.signal})()});
   controls();if(!Recognition)say(c.unsupported);
  }
  window.IFVoice={mount};
 })();
+

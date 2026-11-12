@@ -9,7 +9,7 @@ const options=(o,selected)=>Object.entries(o).map(([v,t])=>`<option value="${esc
 const depOptions=selected=>options(Object.fromEntries(deps.map(d=>[d,d])),selected);
 function toast(text){$('#toast').textContent=text;$('#toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').classList.remove('show'),5500)}
 async function api(path,data,method){const r=await fetch('/api'+path,{method:method||(data?'POST':'GET'),headers:data?{'Content-Type':'application/json'}:{},body:data?JSON.stringify(data):undefined,signal:AbortSignal.timeout(25000)}).catch(e=>{throw new Error(e.name==='TimeoutError'||e.name==='AbortError'?'Сервер отвечает слишком долго. Повторите запрос.':'Нет соединения с сервером. Проверьте интернет.')});const j=await r.json();if(!r.ok){const e=new Error(j.error||'Ошибка запроса');e.status=r.status;throw e}return j}
-function modal(title,content){const d=$('#modal');d.innerHTML=`<div class="dialoghead"><h2>${esc(title)}</h2><button data-close aria-label="Закрыть">×</button></div>${content}`;d.showModal();d.querySelector('[data-close]').onclick=()=>d.close()}
+function modal(title,content){const d=$('#modal');d.dispatchEvent(new Event('ideafix-modal-replace'));d.innerHTML=`<div class="dialoghead"><h2>${esc(title)}</h2><button data-close aria-label="Закрыть">×</button></div>${content}`;if(!d.open)d.showModal();d.querySelector('[data-close]').onclick=()=>d.close()}
 function formError(form,e){let p=form.querySelector('.error');if(!p){p=document.createElement('p');p.className='error';form.append(p)}p.textContent=e.message}
 function bindForm(id,fn){const f=$(id);if(!f)return;f.onsubmit=async e=>{e.preventDefault();const b=f.querySelector('button[type=submit]');if(b)b.disabled=true;try{await fn(Object.fromEntries(new FormData(f)),f)}catch(err){formError(f,err)}finally{if(b)b.disabled=false}}}
 const brand=`<div class="brand"><img class="brand-mark" src="assets/brand-mark.svg" alt="Логотип Fix Idea"><div><strong>Fix Idea</strong><small class="brand-slogan">От идеи до победы!</small></div></div>`;
@@ -142,24 +142,26 @@ function sound(){try{const a=new AudioContext(),o=a.createOscillator(),g=a.creat
 function head(title,sub=''){return `<div class="page-head"><div><div class="eyebrow">Ваш голос имеет значение</div><h1>${title}</h1><p class="muted">${sub}</p></div><button id="new" class="primary">＋ Инсайт</button></div>`}
 function chooseIdeaMode(){
  modal('Записать идею',`<div class="voice-actions" style="display:grid;gap:12px;padding:12px 0"><button type="button" id="idea-by-voice" class="primary">🎙 Записать голосом</button><button type="button" id="idea-by-text">✍ Написать текстом</button><button type="button" id="idea-by-video">🎥 Записать видеообращение</button></div>`);
- $('#idea-by-voice').onclick=()=>{ $('#modal').close();newTicket();const button=$('#create [data-dictate]');if(button&&!button.disabled)button.click() };
- $('#idea-by-text').onclick=()=>{ $('#modal').close();newTicket();$('#create textarea[name=body]')?.focus() };
- $('#idea-by-video').onclick=()=>{ $('#modal').close();recordIdeaVideo() };
+ $('#idea-by-voice').onclick=()=>recordIdeaVideo('audio');
+ $('#idea-by-text').onclick=()=>{newTicket();$('#create textarea[name=body]')?.focus() };
+ $('#idea-by-video').onclick=()=>recordIdeaVideo('video');
 }
-async function recordIdeaVideo(){
- modal('Видеообращение',`<div style="display:grid;gap:12px">
-  <p class="hint">Видео записывается только с вашего разрешения. Перед отправкой его можно просмотреть или удалить.</p>
-  <video id="idea-video-preview" autoplay muted playsinline style="width:100%;max-height:48vh;background:#14202a;border-radius:12px"></video>
-  <p id="idea-video-status" role="status">Подготовка камеры…</p>
-  <label>Текст видеообращения<textarea id="idea-video-transcript" rows="5" placeholder="Во время записи здесь появятся распознанные слова. После остановки проверьте текст."></textarea></label>
+async function recordIdeaVideo(mediaType='video'){
+ const audioOnly=mediaType==='audio';
+ modal(audioOnly?'Аудиообращение':'Видеообращение',`<div style="display:grid;gap:12px">
+  <p class="hint">Нажмите «Начать запись». Микрофон и камера включатся только после нажатия и вашего разрешения.</p>
+  <${audioOnly?'audio':'video'} id="idea-video-preview" muted playsinline controls style="width:100%;max-height:35vh;background:#14202a;border-radius:12px"></${audioOnly?'audio':'video'}>
+  <p id="idea-video-status" role="status">Готово к записи. Нажмите «Начать запись».</p>
+  <label>Текст обращения<textarea id="idea-video-transcript" rows="5" placeholder="Во время записи здесь появятся распознанные слова. После остановки проверьте текст."></textarea></label>
   <div style="display:flex;flex-wrap:wrap;gap:8px">
+   <button type="button" id="idea-video-start" class="primary">● Начать запись</button>
    <button type="button" id="idea-video-stop" class="primary" disabled>Остановить запись</button>
-   <button type="button" id="idea-video-share" hidden>Поделиться видео</button>
-   <button type="button" id="idea-video-download" hidden>Сохранить видео</button>
-   <button type="button" id="idea-video-retake" hidden>Перезаписать</button>
+   <button type="button" id="idea-video-share" hidden>Поделиться записью</button>
+   <button type="button" id="idea-video-download" hidden>Сохранить запись</button>
+   <button type="button" id="idea-media-use" hidden>Создать идею с этой записью</button><button type="button" id="idea-video-retake" hidden>Перезаписать</button>
   </div></div>`);
  const dialog=$('#modal'),video=$('#idea-video-preview'),status=$('#idea-video-status');
- const stop=$('#idea-video-stop'),share=$('#idea-video-share'),download=$('#idea-video-download'),retake=$('#idea-video-retake'),transcript=$('#idea-video-transcript');
+ const start=$('#idea-video-start'),use=$('#idea-media-use'),stop=$('#idea-video-stop'),share=$('#idea-video-share'),download=$('#idea-video-download'),retake=$('#idea-video-retake'),transcript=$('#idea-video-transcript');
  let speech=null,spokenParts=new Map(),speechFinal='',speechStopped=false;
  const updateWords=()=>{let value=[...spokenParts.entries()].sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ').trim();transcript.value=value;return value};
  const stopSpeech=()=>{speechStopped=true;try{speech?.stop()}catch{}};
@@ -180,12 +182,13 @@ async function recordIdeaVideo(){
     const stable=[...spokenParts.entries()].sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ');
     transcript.value=(speechFinal+' '+stable+' '+interim).trim();
    };
+   speech.onerror=e=>{if(['not-allowed','service-not-allowed','audio-capture','network'].includes(e.error)){speechStopped=true;status.textContent='Запись продолжается. Автоматическая расшифровка недоступна; текст можно ввести вручную.'}};
    speech.onend=()=>{
     if(speechStopped||closed)return;
     const next=updateWords();
     if(next&&!speechFinal.endsWith(next))speechFinal=(speechFinal+' '+next).trim();
     spokenParts.clear();
-    try{launch()}catch{}
+    setTimeout(()=>{if(!speechStopped&&!closed)try{launch()}catch{}},300)
    };
    try{speech.start()}catch{status.textContent='Расшифровка временно недоступна. Видео продолжает записываться.'}
   };
@@ -202,15 +205,15 @@ async function recordIdeaVideo(){
  let stream=null,recorder=null,chunks=[],blob=null,url=null,closed=false;
  const cleanup=()=>{stream?.getTracks().forEach(t=>t.stop());stream=null};
  const release=()=>{closed=true;stopSpeech();cleanup();if(recorder?.state==='recording')recorder.stop();if(url)URL.revokeObjectURL(url)};
- dialog.addEventListener('close',release,{once:true});
+ dialog.addEventListener('close',()=>{if(!dialog.open)release()},{once:true});dialog.addEventListener('ideafix-modal-replace',release,{once:true});
  const begin=async()=>{
   cleanup();if(url){URL.revokeObjectURL(url);url=null}
-  blob=null;chunks=[];speechFinal='';spokenParts.clear();transcript.value='';share.hidden=true;download.hidden=true;retake.hidden=true;stop.disabled=true;
-  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status.textContent='Запись видео не поддерживается этим браузером.';return}
+  start.disabled=true;use.hidden=true;blob=null;chunks=[];speechFinal='';spokenParts.clear();transcript.value='';share.hidden=true;download.hidden=true;retake.hidden=true;stop.disabled=true;
+  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status.textContent='Запись не поддерживается этим браузером. Откройте сайт в Chrome.';start.disabled=false;return}
   try{
-   status.textContent='Запрашиваем разрешение на камеру и микрофон…';
+   status.textContent=audioOnly?'Запрашиваем разрешение на микрофон…':'Запрашиваем разрешение на камеру и микрофон…';
    let cameraTimedOut=false;
-   const cameraRequest=navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
+   const cameraRequest=navigator.mediaDevices.getUserMedia({video:audioOnly?false:{facingMode:'user',width:{ideal:640},height:{ideal:360}},audio:true});
    cameraRequest.then(lateStream=>{if(cameraTimedOut||closed)lateStream.getTracks().forEach(t=>t.stop())}).catch(()=>{});
    let cameraTimer;
    try{
@@ -220,24 +223,23 @@ async function recordIdeaVideo(){
     ]);
    }finally{clearTimeout(cameraTimer)}
    if(closed){cleanup();return}
-   video.srcObject=stream;video.muted=true;video.controls=false;
-   const type=['video/webm;codecs=vp8,opus','video/webm','video/mp4'].find(t=>MediaRecorder.isTypeSupported(t));
+   video.srcObject=stream;video.muted=true;video.controls=false;if(!audioOnly)video.play().catch(()=>{});
+   const type=(audioOnly?['audio/webm;codecs=opus','audio/webm','audio/mp4']:['video/webm;codecs=vp8,opus','video/webm','video/mp4']).find(t=>MediaRecorder.isTypeSupported(t));
    recorder=new MediaRecorder(stream,type?{mimeType:type}:undefined);
    recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
    recorder.onstop=async()=>{
     stopSpeech();cleanup();if(closed)return;
-    await finalizeText();
-    blob=new Blob(chunks,{type:recorder.mimeType||'video/webm'});
+    blob=new Blob(chunks,{type:recorder.mimeType||(audioOnly?'audio/webm':'video/webm')});
     if(!blob.size){status.textContent='Видео не записалось. Попробуйте ещё раз.';retake.hidden=false;return}
     url=URL.createObjectURL(blob);video.srcObject=null;video.src=url;video.muted=false;video.controls=true;video.play().catch(()=>{});
-    status.textContent='Видео готово. Выберите, кому отправить его через меню «Поделиться», либо сохраните файл.';
-    share.hidden=false;download.hidden=false;retake.hidden=false;stop.disabled=true;
+    status.textContent='Запись готова. Прослушайте или просмотрите её перед отправкой.';
+    share.hidden=false;download.hidden=false;retake.hidden=false;use.hidden=false;stop.disabled=true;start.disabled=false;start.hidden=true;finalizeText();
    };
-   recorder.start(1000);startSpeech();stop.disabled=false;status.textContent='Идёт запись видео и звука. Нажмите «Остановить запись», когда закончите.';
-  }catch(e){cleanup();status.textContent=e.message==='CAMERA_TIMEOUT'?'Камера не ответила за 12 секунд. Проверьте разрешения камеры и микрофона в браузере и нажмите «Повторить».':e.name==='NotAllowedError'?'Доступ к камере или микрофону запрещён. Разрешите его в настройках браузера и нажмите «Повторить».':'Не удалось включить камеру: '+e.message;retake.textContent='Повторить';retake.hidden=false}
+   recorder.start(1000);startSpeech();stop.disabled=false;status.textContent=audioOnly?'Идёт запись аудио. Нажмите «Остановить запись».':'Идёт запись видео и звука. Нажмите «Остановить запись».';
+  }catch(e){cleanup();start.disabled=false;status.textContent=e.message==='CAMERA_TIMEOUT'?'Камера не ответила за 12 секунд. Проверьте разрешения камеры и микрофона в браузере и нажмите «Повторить».':e.name==='NotAllowedError'?'Доступ к камере или микрофону запрещён. Разрешите его в настройках браузера и нажмите «Повторить».':'Не удалось включить камеру: '+e.message;retake.textContent='Повторить';retake.hidden=false}
  };
  stop.onclick=()=>{if(recorder?.state==='recording'){stopSpeech();recorder.stop();stop.disabled=true;status.textContent='Подготовка видео…'}};
- const file=()=>new File([blob],blob.type.includes('mp4')?'ideafix-idea.mp4':'ideafix-idea.webm',{type:blob.type});
+ const file=()=>new File([blob],'fix-idea-'+mediaType+(blob.type.includes('mp4')?(audioOnly?'.m4a':'.mp4'):'.webm'),{type:blob.type});
  share.onclick=async()=>{
   if(!blob)return;
   try{
@@ -247,8 +249,9 @@ async function recordIdeaVideo(){
   }catch(e){if(e.name!=='AbortError')status.textContent='Не удалось поделиться видео. Сохраните файл и отправьте вручную.'}
  };
  download.onclick=()=>{if(!blob)return;const a=document.createElement('a');a.href=url;a.download=file().name;a.click();if(transcript.value.trim()){const textBlob=new Blob([transcript.value],{type:'text/plain;charset=utf-8'});const textUrl=URL.createObjectURL(textBlob);const b=document.createElement('a');b.href=textUrl;b.download='ideafix-idea-transcript.txt';b.click();setTimeout(()=>URL.revokeObjectURL(textUrl),2000)}};
- retake.onclick=()=>{video.pause();begin()};
- await begin();
+ start.onclick=begin;
+ use.onclick=()=>{const text=transcript.value.trim(),recorded=file();newTicket();const form=$('#create');form.elements.kind.value='idea';form.elements.body.value=text||'Аудио- или видеообращение: '+recorded.name;if(recorded.size<=2097152){const transfer=new DataTransfer();transfer.items.add(recorded);$('#ticket-file-input').files=transfer.files;$('#ticket-file-input').dispatchEvent(new Event('change'))}else toast('Запись больше 2 МБ. Сохраните её отдельно; текст перенесён в идею.');form.elements.body.dispatchEvent(new Event('input',{bubbles:true}))};
+ retake.onclick=()=>{video.pause();start.hidden=false;start.disabled=false;retake.hidden=true;share.hidden=true;download.hidden=true;use.hidden=true;status.textContent='Нажмите «Начать запись», когда будете готовы.'};
 }
 function wireNew(){if($('#new'))$('#new').onclick=chooseIdeaMode;if($('#record-idea'))$('#record-idea').onclick=chooseIdeaMode}
 const late=t=>!t.first_response&&!['done','reject'].includes(t.status)&&new Date(t.due)<new Date();
