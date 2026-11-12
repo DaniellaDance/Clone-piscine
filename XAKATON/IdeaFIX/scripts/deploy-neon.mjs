@@ -39,9 +39,10 @@ while (Date.now() < deadline) {
 if (!active) throw new Error('Timed out waiting for active Neon deployment');
 for (const route of ['/', '/mobile.html', '/desktop.html', '/assets/voice.js']) {
   let verified = false;
-  for (let attempt = 1; attempt <= 12; attempt++) {
+  for (let attempt = 1; attempt <= 40; attempt++) {
     const response = await fetch(url + route + '?ci=' + encodeURIComponent(GITHUB_SHA || Date.now()) + '&attempt=' + attempt, {
       headers: { 'cache-control': 'no-cache' },
+      cache: 'no-store',
       signal: AbortSignal.timeout(20000)
     });
     if (response.ok) {
@@ -49,6 +50,7 @@ for (const route of ['/', '/mobile.html', '/desktop.html', '/assets/voice.js']) 
       else {
         const source = await response.text();
         verified = source.includes('ideafix-commit:' + GITHUB_SHA);
+        if (!verified) console.log('Revision check:', response.status, source.match(/ideafix-commit:([a-f0-9]+)/g)?.slice(-1) || 'no revision marker');
       }
     }
     if (verified) { console.log('OK', route, response.status); break; }
