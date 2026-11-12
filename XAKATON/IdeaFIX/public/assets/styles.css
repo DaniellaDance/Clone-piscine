@@ -535,3 +535,19 @@ body.partner-map-active #view:has(#partner-world-map) .atlas-directory{padding:2
 
 .header .brand{flex-shrink:0;gap:10px}.header .brand strong{display:block;font-size:23px;letter-spacing:-.6px;line-height:1.1}.brand .brand-slogan{display:block;text-transform:none;font-size:11px;font-weight:600;letter-spacing:0;line-height:1.4;margin-top:5px;color:#6d7d70}.auth-story .brand .brand-slogan{color:#e3eed9}.stage-journey{grid-template-columns:repeat(5,minmax(0,1fr))!important}
 @media(max-width:600px){.header .brand strong{font-size:19px}.header .brand .brand-slogan{font-size:10px}.header .brand-mark{width:37px;height:37px}.header{gap:8px}.header .username{max-width:130px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}}
+
+
+/* Fix Idea: visible journey, light blue atlas and illuminated glass shelves. */
+.stage-journey{grid-template-columns:repeat(7,minmax(0,1fr))!important}
+.stage-title{overflow-wrap:anywhere}.secretary-financial-summary{padding:14px;border:1px solid #c9dafa;border-radius:14px;background:white}
+.partner-atlas .native-partner-map{background:radial-gradient(ellipse at 35% 25%,#f4fbff,#cce9fa)!important}
+.atlas-land{filter:sepia(.15) saturate(.65) hue-rotate(130deg)}
+.atlas-heading>button,.atlas-basemap,.atlas-country-list button{background:#edf7ff}.atlas-country-list button:hover{background:#dcefff}
+.home-showcase,.showcase-heading{background:radial-gradient(ellipse at 22% 0%,#fff6dcaa,transparent 35%),linear-gradient(135deg,#f6fbffee,#cee8f5cc 55%,#ffffffb8)!important;border-color:#a5bdce!important;box-shadow:inset 0 0 0 2px #fff,0 18px 38px #17406c2b,0 0 18px #aee4ff80!important;backdrop-filter:blur(14px)}
+.home-showcase-shelves{grid-auto-rows:minmax(190px,auto);gap:28px 18px!important;padding:24px 16px!important;background:linear-gradient(112deg,#ffffff70,transparent 35%,#ffffff66 36%,transparent 48%,#ffffff55 80%)!important}
+.home-showcase-product,.showcase-glass-card{position:relative;background:linear-gradient(125deg,#ffffffd9,#e1f2ff9c 55%,#ffffffc9)!important;border:1px solid #ffffff!important;box-shadow:inset 0 0 0 1px #c4e5f9,0 10px 24px #20588625!important;backdrop-filter:blur(10px)}
+.home-showcase-product:after,.showcase-glass-card:after{content:'';position:absolute;pointer-events:none;left:-7px;right:-7px;bottom:-10px;height:7px;border:1px solid #f3fdff;border-radius:3px;background:linear-gradient(#fff,#bcecff 55%,#71a6bd);box-shadow:0 3px 5px #315c7644,0 0 14px #9ae8ff}
+.home-showcase-product:before{content:'';position:absolute;top:-13px;left:20%;right:20%;height:16px;border-radius:50%;background:#ffeab0;filter:blur(9px);pointer-events:none}
+.home-showcase-product{overflow:visible!important}.showcase-glass-card{overflow:visible!important}.showcase-card-state{background:#e2f3ff;color:#194878}
+@media(max-width:800px){.stage-journey{grid-template-columns:repeat(4,minmax(0,1fr))!important}.stage-title{font-size:11px}.home-showcase-shelves{grid-auto-rows:minmax(180px,auto)}}
+@media(max-width:380px){.stage-journey{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
