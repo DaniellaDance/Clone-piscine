@@ -40,7 +40,6 @@ jobs:
             -x '*.test.mjs' 'test.mjs' 'scripts/*' '.env*' '*.zip' '*.log'
           unzip -t "$RUNNER_TEMP/ideafix-neon.zip" | tail -1
       - name: Publish to Neon Functions and verify live revision
-        if: ${{ env.NEON_API_KEY != '' }}
         env:
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -49,10 +48,3 @@ jobs:
           FREEBUFF_MODEL: ${{ vars.FREEBUFF_MODEL }}
           AI_PROVIDER: ${{ vars.AI_PROVIDER }}
         run: node scripts/deploy-neon.mjs "$RUNNER_TEMP/ideafix-neon.zip"
-      - name: Explain missing deployment credentials
-        if: ${{ env.NEON_API_KEY == '' }}
-        env:
-          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
-        run: |
-          echo 'NEON_API_KEY is missing in GitHub Actions secrets'
-          exit 1
