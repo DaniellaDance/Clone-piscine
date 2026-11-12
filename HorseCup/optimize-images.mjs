@@ -15,9 +15,10 @@ for (const name of await readdir(join(root, 'images'))) {
   before += source.size;
   const existing = await stat(output).catch(() => null);
   if (!existing || existing.mtimeMs < source.mtimeMs) {
-    await sharp(input).rotate().resize({ width: 1440, height: 1200, fit: 'inside', withoutEnlargement: true })
-      .webp({ quality: 76, effort: 4 }).toFile(output);
+    await sharp(input).rotate().resize({ width: 1280, height: 900, fit: 'inside', withoutEnlargement: true })
+      .webp({ quality: 64, effort: 4 }).toFile(output);
   }
   after += (await stat(output)).size;
 }
 console.log(`HorseCup backgrounds: ${before} -> ${after} bytes`);
+

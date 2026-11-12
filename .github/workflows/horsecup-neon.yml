@@ -48,13 +48,13 @@ jobs:
           cp index.mjs server.mjs accounts.mjs race-engine.mjs question-bank.mjs exam-bank.mjs index.html styles.css sw.js manifest.webmanifest package.json "$bundle/"
           cp -R js icons optimized node_modules "$bundle/"
           cp images/*.webp "$bundle/images/"
-          cp images/animations/*.gif "$bundle/images/animations/"
+          cp images/animations/black.gif images/animations/bay_kostanay.gif images/animations/white_arabian.gif images/animations/palomino.gif "$bundle/images/animations/"
           node -e 'const fs=require("fs"),p=process.argv[1]+"/package.json",j=JSON.parse(fs.readFileSync(p));delete j.dependencies.sharp;j.scripts={start:"node server.mjs"};fs.writeFileSync(p,JSON.stringify(j))' "$bundle"
           printf '{"commit":"%s"}\n' "$GITHUB_SHA" > "$bundle/deployment.json"
           cd "$bundle"
           zip -q -r -9 "$RUNNER_TEMP/horsecup-neon.zip" .
           test "$(stat -c%s "$RUNNER_TEMP/horsecup-neon.zip")" -lt 33554432
-          python3 -c 'import zipfile,os; z=zipfile.ZipFile(os.environ["RUNNER_TEMP"]+"/horsecup-neon.zip"); n=sum(i.file_size for i in z.infolist()); print("Uncompressed:",round(n/1048576,2),"MiB"); assert n<50*1048576; names=z.namelist(); assert "index.mjs" in names; assert "images/voronaya.webp" in names; assert "images/animations/black.gif" in names'
+          python3 -c 'import zipfile,os; z=zipfile.ZipFile(os.environ["RUNNER_TEMP"]+"/horsecup-neon.zip"); n=sum(i.file_size for i in z.infolist()); print("Uncompressed:",round(n/1048576,2),"MiB"); assert n<8*1048576; names=z.namelist(); assert "index.mjs" in names; assert "images/voronaya.webp" in names; assert "images/animations/black.gif" in names'
       - name: Save build
         uses: actions/upload-artifact@v4
         with:
