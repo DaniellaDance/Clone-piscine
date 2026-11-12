@@ -45,7 +45,7 @@ export async function handleFathom({url,req,u,body,query,pool,send,fail}){
  }
  if(url.pathname==='/api/fathom/recordings'&&req.method==='GET'){send((await query('SELECT id,title,created,summary<>\'\' AS has_summary FROM ideafix.fathom_recordings WHERE owner=$1 ORDER BY created DESC LIMIT 100',[u.id])).rows);return true}
  const match=url.pathname.match(/^\/api\/fathom\/recordings\/(\d+)(?:\/(transcript|save))?$/);if(!match)fail(404,'Запись не найдена');
- const r=(await query('SELECT id,recording_id,title,source_url,summary,action_items FROM ideafix.fathom_recordings WHERE id=$1 AND owner=$2',[match[1],u.id])).rows[0];if(!r)fail(404,'Запись не найдена');
+ const r=(await query(`SELECT id,recording_id,title,source_url,summary,action_items,(summary<>'' AND jsonb_array_length(transcript)>0) AS ready FROM ideafix.fathom_recordings WHERE id=$1 AND owner=$2`,[match[1],u.id])).rows[0];if(!r)fail(404,'Запись не найдена');
  if(req.method==='GET'&&!match[2]){send(r);return true}
  if(req.method==='GET'&&match[2]==='transcript'){send({transcript:(await query('SELECT transcript FROM ideafix.fathom_recordings WHERE id=$1 AND owner=$2',[r.id,u.id])).rows[0].transcript});return true}
  if(req.method!=='POST'||match[2]!=='save')fail(405,'Метод недоступен');
