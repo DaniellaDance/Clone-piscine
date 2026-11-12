@@ -1,10 +1,16 @@
 import { readFile } from 'node:fs/promises';
 import { createNeonClient } from '@neon/sdk';
 
-const { NEON_API_KEY, GITHUB_SHA, GEMINI_API_KEY, GEMINI_MODEL } = process.env;
-if (!GEMINI_API_KEY?.trim()) throw new Error('Missing GitHub Actions secret GEMINI_API_KEY; refusing to deploy without AI credentials');
-if (!GEMINI_MODEL?.trim()) throw new Error('Gemini model preflight did not select a model');
+const { NEON_API_KEY, GITHUB_SHA, GEMINI_API_KEY, GEMINI_MODEL, OPENAI_API_KEY, FREEBUFF_MODEL, AI_PROVIDER } = process.env;
 if (!NEON_API_KEY) throw new Error('Missing GitHub Actions secret NEON_API_KEY');
+// AI keys are optional: the free rule-based assistant works without any provider.
+const environment = {};
+if (GEMINI_API_KEY?.trim()) environment.GEMINI_API_KEY = GEMINI_API_KEY.trim();
+if (GEMINI_MODEL?.trim()) environment.GEMINI_MODEL = GEMINI_MODEL.trim();
+if (OPENAI_API_KEY?.trim()) environment.OPENAI_API_KEY = OPENAI_API_KEY.trim();
+if (FREEBUFF_MODEL?.trim()) environment.FREEBUFF_MODEL = FREEBUFF_MODEL.trim();
+if (AI_PROVIDER?.trim()) environment.AI_PROVIDER = AI_PROVIDER.trim();
+console.log('AI providers configured:', ['rules (free)', OPENAI_API_KEY?.trim() && 'freebuff', GEMINI_API_KEY?.trim() && 'gemini'].filter(Boolean).join(', '));
 const projectId = 'aged-wildflower-12030818';
 const branchId = 'br-wandering-hat-b9hqnoxc';
 const slug = 'ideafixapp';
@@ -19,7 +25,7 @@ const deployment = await neon.functions.deploy({
   zip: new File([archive], 'ideafix-neon.zip', { type: 'application/zip' }),
   runtime: 'nodejs24',
   // Neon merges supplied keys with existing deployment environment; omitted keys remain unchanged.
-  environment: { GEMINI_API_KEY: GEMINI_API_KEY.trim(), GEMINI_MODEL: GEMINI_MODEL.trim() }
+  environment
 });
 console.log('Neon accepted deployment:', deployment?.id ?? 'pending');
 const deadline = Date.now() + 240000;

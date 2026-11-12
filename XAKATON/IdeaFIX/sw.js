@@ -5,7 +5,7 @@
    - ресурсы (стили, скрипты, иконки): сначала кэш, в фоне обновляем.
    Данные пользователя лежат в localStorage, его service worker не трогает. */
 
-const CACHE = 'ideafix-v1';
+const CACHE = 'ideafix-v2';
 const ASSETS = [
   './',
   './index.html',

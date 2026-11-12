@@ -100,5 +100,9 @@ CREATE TABLE IF NOT EXISTS ideafix.discussion_exports (
 );
 
 CREATE TABLE IF NOT EXISTS ideafix.regular_clients (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, company text NOT NULL, contact_name text NOT NULL DEFAULT '', contact_email text NOT NULL DEFAULT '', notes text NOT NULL DEFAULT '', created_at timestamptz NOT NULL DEFAULT now());
+ALTER TABLE ideafix.regular_clients ADD COLUMN IF NOT EXISTS city text NOT NULL DEFAULT '';
+ALTER TABLE ideafix.regular_clients ADD COLUMN IF NOT EXISTS latitude double precision;
+ALTER TABLE ideafix.regular_clients ADD COLUMN IF NOT EXISTS longitude double precision;
+ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS published_at timestamptz;
 
 CREATE TABLE IF NOT EXISTS ideafix.completed_kz_projects (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, name text NOT NULL UNIQUE, city text NOT NULL, vendor_name text NOT NULL DEFAULT '', description text NOT NULL DEFAULT '', latitude double precision NOT NULL CHECK(latitude BETWEEN 40 AND 56), longitude double precision NOT NULL CHECK(longitude BETWEEN 46 AND 88), completed_on date, created_at timestamptz NOT NULL DEFAULT now());

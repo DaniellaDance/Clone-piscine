@@ -33,7 +33,8 @@ jobs:
         run: |
           node --check public/assets/app.js
           node --check public/assets/catalog-ui.js
-          node --input-type=module -e "import fs from 'node:fs';const s=fs.readFileSync('public/assets/catalog-ui.js','utf8');if(!s.includes('tile.openstreetmap.org')||s.includes('L.tileLayer(')||s.includes('L.map('))throw Error('Native OSM map validation failed');"
+          node --input-type=module -e "import fs from 'node:fs';const s=fs.readFileSync('public/assets/catalog-ui.js','utf8');if(!s.includes('tile.openstreetmap.org')||s.includes('L.tileLayer(')||s.includes('L.map('))throw Error('Native OSM map validation failed');if(!s.includes('openstreetmap.org/copyright'))throw Error('OSM attribution is missing');if(!s.includes('data-map-project-add'))throw Error('Project add control is missing');"
+          node --input-type=module -e "import fs from 'node:fs';const s=fs.readFileSync('ai-assistant.mjs','utf8');if(!s.includes('free_mode:true'))throw Error('Free rule-based AI mode is missing');if(!s.includes('/api/ai/status'))throw Error('AI status route is missing');"
           node --check server.mjs
           node --input-type=module -e "import fs from 'node:fs';const s=fs.readFileSync('server.mjs','utf8');for(const host of ['tile.openstreetmap.org'])if(!s.includes(host))throw Error('Map CSP missing: '+host);"
           node --check public/assets/discussions.js
@@ -71,6 +72,7 @@ jobs:
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ env.GEMINI_MODEL || 'gemini-2.5-flash' }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           npm install --no-save --package-lock=false --ignore-scripts @neon/sdk
           node scripts/deploy-neon.mjs "$RUNNER_TEMP/ideafix-neon.zip"
