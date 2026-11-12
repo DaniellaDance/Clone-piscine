@@ -1,6 +1,7 @@
+import {canSeeTicket} from './access.mjs';
 // Closed leadership discussions: one topic per meeting thread, durable in Postgres.
 // Only director/department leads can select, chat, finalize and download protocols.
-const leaders = u => u && ['director', 'lead'].includes(u.role);
+const leaders = u => u && ['director', 'admin', 'lead'].includes(u.role);
 const asId = (value, fail) => {
   const n = Number(value);
   if (!Number.isSafeInteger(n) || n <= 0) fail(400, 'Неверный номер обсуждения');
@@ -41,28 +42,28 @@ export async function handleDiscussions({url, req, u, body, query, pool, send, f
   if (url.pathname === '/api/discussions/candidates') {
     if (req.method !== 'GET') fail(405, 'Метод недоступен');
     const rows = (await query(
-      "SELECT id,title,kind,department,stage FROM ideafix.tickets WHERE NOT anonymous AND (published OR $1 OR department=$2) ORDER BY created DESC LIMIT 200",
-      [u.role === 'director', u.department]
+      "SELECT id,title,kind,department,stage,author,anonymous,idea_audience FROM ideafix.tickets WHERE NOT anonymous AND ($1 OR department=$2) ORDER BY created DESC LIMIT 200",
+      [['director','admin'].includes(u.role), u.department]
     )).rows;
-    send(rows.filter(t => ['idea', 'problem'].includes(t.kind)));
+    send(rows.filter(t => ['idea', 'problem'].includes(t.kind)&&canSeeTicket(u,t)));
     return true;
   }
 
   if (url.pathname === '/api/discussions/topics') {
     if (req.method === 'GET') {
       const rows = (await query(
-        "SELECT d.id,d.ticket_id,d.created,d.closed_at,t.title,t.kind,t.department,u.name AS created_by_name FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id JOIN ideafix.users u ON u.id=d.created_by ORDER BY d.created DESC LIMIT 100"
+        "SELECT d.id,d.ticket_id,d.created,d.closed_at,t.title,t.kind,t.department,t.author,t.anonymous,t.idea_audience,u.name AS created_by_name FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id JOIN ideafix.users u ON u.id=d.created_by WHERE ($1 OR t.department=$2) ORDER BY d.created DESC LIMIT 100",[u.role==='director',u.department]
       )).rows;
-      send(rows); return true;
+      send(rows.filter(t=>canSeeTicket(u,t))); return true;
     }
     if (req.method !== 'POST') fail(405, 'Метод недоступен');
     const data = await body(req);
     const ticketId = asId(data.ticket_id, fail);
-    const t = (await query('SELECT id,title,kind,department,anonymous,published FROM ideafix.tickets WHERE id=$1', [ticketId])).rows[0];
-    if (!t) fail(404, 'Идея или проблема не найдена');
+    const t = (await query('SELECT id,title,kind,department,anonymous,published,author,idea_audience FROM ideafix.tickets WHERE id=$1', [ticketId])).rows[0];
+    if (!t||!canSeeTicket(u,t)) fail(404, 'Идея или проблема не найдена');
     if (t.anonymous || !['idea','problem'].includes(t.kind)) fail(403, 'Для общего обсуждения можно выбирать только неанонимные идеи и проблемы');
-    if (!t.published && u.role !== 'director' && t.department !== u.department)
-      fail(403, 'Можно выбирать опубликованные идеи и проблемы своего отдела');
+    if (!['director','admin'].includes(u.role) && t.department !== u.department)
+      fail(403, 'Можно выбирать только идеи и проблемы своего отдела');
     const record = (await query(
       'INSERT INTO ideafix.discussion_topics(ticket_id,created_by) VALUES($1,$2) RETURNING id,ticket_id,created,closed_at',
       [ticketId, u.id]
@@ -75,10 +76,10 @@ export async function handleDiscussions({url, req, u, body, query, pool, send, f
   if (!m) fail(404, 'Обсуждение не найдено');
   const topicId = asId(m[1], fail), action = m[2] || '';
   const topic = (await query(
-    'SELECT d.id,d.ticket_id,d.created,d.closed_at,t.title,t.kind,t.department FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id WHERE d.id=$1',
+    'SELECT d.id,d.ticket_id,d.created,d.closed_at,t.title,t.kind,t.department,t.author,t.anonymous,t.idea_audience FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id WHERE d.id=$1',
     [topicId]
   )).rows[0];
-  if (!topic) fail(404, 'Обсуждение не найдено');
+  if (!topic || !canSeeTicket(u,topic) || (!['director','admin'].includes(u.role) && topic.department!==u.department)) fail(404, 'Обсуждение не найдено');
 
   if (!action && req.method === 'GET') {send(topic); return true;}
   if (action === 'messages' && req.method === 'GET') {

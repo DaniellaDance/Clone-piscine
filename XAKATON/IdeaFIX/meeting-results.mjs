@@ -1,3 +1,4 @@
+import {canReadMeetingResult} from './access.mjs';
 const canManageMeeting=(u,m)=>['director','admin'].includes(u.role)||(u.role==='lead'&&m.department===u.department);
 export const normalizeTitle=s=>String(s||'').toLowerCase().replace(/\s+/g,' ').trim();
 export function matchMeeting(recording,meetings){
@@ -35,11 +36,11 @@ export async function handleMeetingResults({url,req,res,u,query,body,send,fail})
   const own=(await query('SELECT id,owner,title,meeting_id,scheduled_start,meeting_url FROM ideafix.fathom_recordings WHERE owner=$1 AND meeting_id IS NULL ORDER BY created DESC LIMIT 100',[u.id])).rows;
   for(const r of own)if(r.scheduled_start)await autoAttach(query,r);
   const meeting=url.searchParams.get('meeting');if(meeting&&!/^\d+$/.test(meeting))fail(400,'Неверный номер встречи');
-  send((await query(`SELECT r.id,r.title,r.created,r.meeting_id,m.title AS calendar_title,m.starts_at,m.department,r.summary<>'' AND jsonb_array_length(r.transcript)>0 AS ready FROM ideafix.fathom_recordings r LEFT JOIN ideafix.meetings m ON m.id=r.meeting_id WHERE (r.owner=$1 OR (m.id IS NOT NULL AND ($2 OR ($3 AND m.department=$4)))) AND ($5::integer IS NULL OR r.meeting_id=$5) ORDER BY coalesce(m.starts_at,r.created) DESC LIMIT 200`,[u.id,['director','admin'].includes(u.role),u.role==='lead',u.department,meeting||null])).rows);return true;
+  send((await query(`SELECT r.id,r.title,r.created,r.meeting_id,m.title AS calendar_title,m.starts_at,m.department,r.summary<>'' AND jsonb_array_length(r.transcript)>0 AS ready FROM ideafix.fathom_recordings r LEFT JOIN ideafix.meetings m ON m.id=r.meeting_id WHERE ($2 OR (m.id IS NULL AND r.owner=$1) OR (m.id IS NOT NULL AND $3 AND m.department=$4)) AND ($5::integer IS NULL OR r.meeting_id=$5) ORDER BY coalesce(m.starts_at,r.created) DESC LIMIT 200`,[u.id,['director','admin'].includes(u.role),u.role==='lead',u.department,meeting||null])).rows);return true;
  }
  const match=url.pathname.match(/^\/api\/meeting-results\/(\d+)(?:\/(transcript|summary|ideas|link))?$/);if(!match)fail(404,'Итоги не найдены');
  const r=(await query('SELECT r.*,m.department AS meeting_department FROM ideafix.fathom_recordings r LEFT JOIN ideafix.meetings m ON m.id=r.meeting_id WHERE r.id=$1',[match[1]])).rows[0];
- if(!r||(r.owner!==u.id&&(!r.meeting_id||!canManageMeeting(u,{department:r.meeting_department}))))fail(404,'Итоги не найдены');
+ if(!r||!canReadMeetingResult(u,r))fail(404,'Итоги не найдены');
  if(match[2]==='link'&&req.method==='POST'){
   if(r.owner!==u.id)fail(403,'Привязку меняет владелец записи');const b=await body(req);
   if(!Number.isSafeInteger(b.meeting_id)||b.meeting_id<1)fail(400,'Выберите встречу');
@@ -48,5 +49,5 @@ export async function handleMeetingResults({url,req,res,u,query,body,send,fail})
  }
  if(req.method!=='GET')fail(405,'Метод недоступен');
  if(match[2]){const content=[r.title,'',resultFile(r,match[2])].join('\n');res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','Content-Disposition':`attachment; filename="meeting-${r.id}-${match[2]}.txt"`,'Cache-Control':'private, no-store'});res.end('\uFEFF'+content);return true}
- send({id:r.id,title:r.title,summary:r.summary,ideas:meetingIdeas(r),action_items:r.action_items,meeting_id:r.meeting_id,canLink:r.owner===u.id,canSave:r.owner===u.id,ready:!!r.summary&&r.transcript.length>0,source_url:r.source_url});return true;
+ send({id:r.id,title:r.title,summary:r.summary,ideas:meetingIdeas(r),action_items:r.action_items,meeting_id:r.meeting_id,canLink:r.owner===u.id,canSave:canReadMeetingResult(u,r),ready:!!r.summary&&r.transcript.length>0,source_url:r.source_url});return true;
 }

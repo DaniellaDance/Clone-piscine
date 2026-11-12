@@ -1,5 +1,5 @@
 import {bitrixCall,BITRIX_PORTAL} from './bitrix.mjs';
-const permitted=u=>['director','admin','lead'].includes(u.role);
+const permitted=u=>['director','admin'].includes(u.role);
 const normalize=s=>String(s).replace(/_/g,'').toLowerCase();
 const field=(row,name)=>{const key=Object.keys(row).find(k=>normalize(k)===normalize(name));return key?row[key]:undefined};
 export function financialAmount(value){if(value===null||value===undefined||String(value).trim()===''||Array.isArray(value))return null;const n=Number(String(value).replace(',','.'));return Number.isFinite(n)&&n>=0&&n<=1e12?n:null}

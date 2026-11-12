@@ -31,7 +31,7 @@ test('ordinary employee cannot access leadership discussions',async()=>{
 test('only allowed ideas/problems returned to leader',async()=>{
  const args=makeArgs('/discussions/candidates','GET',me,async(sql,params)=>{
   assert.match(sql,/NOT anonymous/);assert.deepEqual(params,[false,'ИТ']);
-  return {rows:[{id:114,kind:'idea',title:'Идея'},{id:115,kind:'problem',title:'Проблема'},{id:116,kind:'praise',title:'Благодарность'}]};
+  return {rows:[{id:114,kind:'idea',title:'Идея',department:'ИТ'},{id:115,kind:'problem',title:'Проблема',department:'ИТ'},{id:116,kind:'praise',title:'Благодарность'}]};
  });
  await handleDiscussions(args);
  assert.deepEqual(makeArgs.last.data.map(v=>v.id),[114,115]);

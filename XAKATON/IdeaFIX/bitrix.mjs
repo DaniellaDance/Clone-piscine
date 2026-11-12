@@ -1,3 +1,4 @@
+import {isTop,canSeeTicket,canMessageRecipient} from './access.mjs';
 // Bitrix24 task delivery. Webhook credentials never leave the server after saving.
 export const BITRIX_PORTAL='https://b24-hdamjr.bitrix24.kz';
 const APP_URL='https://br-wandering-hat-b9hqnoxc-ideafixapp.compute.c-7.eu-central-1.aws.neon.tech/';
@@ -18,8 +19,9 @@ export async function handleBitrix(ctx){const {url,req,u,body,send,fail,query,po
  }
  if(url.pathname==='/api/bitrix/users'){
   if(req.method!=='GET')fail(405,'Метод недоступен');const base=await config();if(!base)fail(503,'Сначала подключите Битрикс24 в разделе «Управление»');const start=Number(url.searchParams.get('start')||0);if(!Number.isInteger(start)||start<0||start>100000)fail(400,'Неверная страница');const search=(url.searchParams.get('search')||'').trim().slice(0,100);
+  const mapped=isTop(u)?null:(await query('SELECT u.id,u.role,u.department,l.bitrix_user FROM ideafix.users u JOIN ideafix.planner_bitrix_links l ON l.app_user=u.id')).rows.filter(p=>canMessageRecipient(u,p)).map(p=>String(p.bitrix_user));
   const data=await bitrixCall(base,'user.get',{FILTER:{ACTIVE:true,USER_TYPE:'employee',...(search?{NAME_SEARCH:search}:{})},sort:'LAST_NAME',order:'ASC',start});
-  return send({users:(Array.isArray(data.result)?data.result:[]).filter(v=>/^[1-9]\d*$/.test(String(v.ID))).map(v=>({id:String(v.ID),name:[v.LAST_NAME,v.NAME,v.SECOND_NAME].filter(Boolean).join(' ')||'ID '+v.ID,position:v.WORK_POSITION||''})),next:Number.isInteger(data.next)?data.next:null}),true;
+  return send({users:(Array.isArray(data.result)?data.result:[]).filter(v=>/^[1-9]\d*$/.test(String(v.ID))&&(!mapped||mapped.includes(String(v.ID)))).map(v=>({id:String(v.ID),name:[v.LAST_NAME,v.NAME,v.SECOND_NAME].filter(Boolean).join(' ')||'ID '+v.ID,position:v.WORK_POSITION||''})),next:Number.isInteger(data.next)?data.next:null}),true;
  }
  const match=url.pathname.match(/^\/api\/tickets\/(\d+)\/bitrix$/);if(!match)return false;if(req.method!=='POST')fail(405,'Метод недоступен');
  const b=await body(req);let recipient;
@@ -27,7 +29,8 @@ export async function handleBitrix(ctx){const {url,req,u,body,send,fail,query,po
  // A row lock serializes a sender's concurrent requests. The committed pending record
  // prevents duplicates even when the remote service accepts a request but times out.
  const client=await pool.connect();let t,existing;
- try{await client.query('BEGIN');t=(await client.query('SELECT * FROM ideafix.tickets WHERE id=$1 FOR UPDATE',[Number(match[1])])).rows[0];if(!t)fail(404,'Инсайт не найден');if(!manage(u,t)&&(t.anonymous||t.author!==u.id))fail(403,'Отправка доступна автору и руководителю');if(t.stage!=='proposal')fail(409,'Отправить предложение в Битрикс можно только на стадии «Предложение»');const own=(await query('SELECT webhook FROM ideafix.bitrix_accounts WHERE app_user=$1',[u.id])).rows[0];if(!own?.webhook)fail(409,'Сначала подключите «Мой Битрикс»'); if(!/^[1-9]\d*$/.test(String(b.recipient_id||'')))fail(400,'Выберите сотрудника Битрикс24');recipient=Number(b.recipient_id);if(!Number.isSafeInteger(recipient))fail(400,'Выберите сотрудника Битрикс24');
+ try{await client.query('BEGIN');t=(await client.query('SELECT * FROM ideafix.tickets WHERE id=$1 FOR UPDATE',[Number(match[1])])).rows[0];if(!t)fail(404,'Инсайт не найден');if(!canSeeTicket(u,t))fail(403,'Нет доступа к отделу обращения');if(!manage(u,t)&&(t.anonymous||t.author!==u.id))fail(403,'Отправка доступна автору и руководителю');if(t.stage!=='proposal')fail(409,'Отправить предложение в Битрикс можно только на стадии «Предложение»');const own=(await query('SELECT webhook FROM ideafix.bitrix_accounts WHERE app_user=$1',[u.id])).rows[0];if(!own?.webhook)fail(409,'Сначала подключите «Мой Битрикс»'); if(!/^[1-9]\d*$/.test(String(b.recipient_id||'')))fail(400,'Выберите сотрудника Битрикс24');recipient=Number(b.recipient_id);if(!Number.isSafeInteger(recipient))fail(400,'Выберите сотрудника Битрикс24');
+ if(!isTop(u)){const local=(await query('SELECT u.id,u.role,u.department FROM ideafix.users u JOIN ideafix.planner_bitrix_links l ON l.app_user=u.id WHERE l.bitrix_user=$1',[recipient])).rows[0];if(!canMessageRecipient(u,local))fail(403,'Получатель Битрикс не сопоставлен с разрешённым сотрудником');}
  existing=(await client.query('SELECT * FROM ideafix.bitrix_deliveries WHERE ticket=$1 AND recipient=$2',[t.id,recipient])).rows[0];
  if(existing?.status==='sent'){await client.query('COMMIT');return send({ok:true,already_sent:true,task_id:existing.task_id,task_url:`${BITRIX_PORTAL}/company/personal/user/${recipient}/tasks/task/view/${existing.task_id}/`}),true}
  if(existing&&existing.status!=='failed')fail(409,'Отправка уже выполняется или ожидает проверки. Проверьте задачу в Битрикс24; повтор не создаётся.');

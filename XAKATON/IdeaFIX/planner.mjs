@@ -1,3 +1,4 @@
+import {canSeeTicket} from './access.mjs';
 import {calendarDay} from './day-calendar.mjs';
 import {syncDayTask} from './planner-bitrix.mjs';
 import {bitrixCall,BITRIX_PORTAL} from './bitrix.mjs';
@@ -17,7 +18,7 @@ export async function handlePlanner({url,req,u,body,send,fail,query,pool}){
  if(!url.pathname.startsWith('/api/planner/'))return false;const window=dayWindow(new Date(),url.searchParams.get('date')||undefined);
  if(url.pathname==='/api/planner/today'&&req.method==='GET'){
   const tasks=(await query('SELECT id,title,description,due_at,status,is_demo,source,work_task,sync_status,bitrix_task,duration_minutes FROM ideafix.planner_tasks WHERE owner=$1 AND planned_for=$2 ORDER BY due_at NULLS LAST,id',[u.id,window.day])).rows.map(t=>({...t,id:'local-'+t.id,local_id:t.id,source:t.is_demo?'demo':t.source||'local'}));
-  const tickets=(await query(`SELECT id,title,status,stage,due,workflow FROM ideafix.tickets WHERE recipient=$1 AND ((due >= $2 AND due < $3) OR workflow->>'deadline'=$4) ORDER BY due,id`,[u.id,window.from,window.to,window.day])).rows;
+  const tickets=(await query(`SELECT id,title,status,stage,due,workflow,department,author,anonymous,recipient,published,kind,idea_audience FROM ideafix.tickets WHERE recipient=$1 AND ($5 OR department=$6) AND ((due >= $2 AND due < $3) OR workflow->>'deadline'=$4) ORDER BY due,id`,[u.id,window.from,window.to,window.day,['director','admin'].includes(u.role),u.department])).rows.filter(t=>canSeeTicket(u,t));
   tasks.push(...tickets.map(t=>({id:'ticket-'+t.id,ticket_id:t.id,title:(t.stage==='pilot'?'Пилот: ':'Обращение: ')+t.title,status:['done','reject'].includes(t.status)?'done':t.status==='new'?'new':'work',due_at:t.workflow?.deadline===window.day?null:t.due,source:'ideafix'})));
   const link=(await query('SELECT bitrix_user,bitrix_name FROM ideafix.planner_bitrix_links WHERE app_user=$1',[u.id])).rows[0];const config=(await query('SELECT webhook FROM ideafix.bitrix_config WHERE id=1')).rows[0];
   const personal=(await query('SELECT app_user FROM ideafix.bitrix_accounts WHERE app_user=$1',[u.id])).rows.length;

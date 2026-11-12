@@ -1,3 +1,4 @@
+import {canReadMeetingResult,departments} from './access.mjs';
 import {createHmac,createHash,randomBytes,timingSafeEqual} from 'node:crypto';
 import {autoAttach} from './meeting-results.mjs';
 const leader=u=>u&&['director','admin','lead'].includes(u.role);
@@ -43,22 +44,22 @@ export async function handleFathom({url,req,u,body,query,pool,send,fail}){
   await query('INSERT INTO ideafix.fathom_connections(owner,route) VALUES($1,$2) ON CONFLICT DO NOTHING',[u.id,randomBytes(24).toString('hex')]);
   const c=(await query('SELECT route,enabled,secret IS NOT NULL AS configured FROM ideafix.fathom_connections WHERE owner=$1',[u.id])).rows[0];send({path:'/api/fathom/webhook/'+c.route,enabled:c.enabled,configured:c.configured});return true;
  }
- if(url.pathname==='/api/fathom/recordings'&&req.method==='GET'){send((await query('SELECT id,title,created,summary<>\'\' AS has_summary FROM ideafix.fathom_recordings WHERE owner=$1 ORDER BY created DESC LIMIT 100',[u.id])).rows);return true}
+ if(url.pathname==='/api/fathom/recordings'&&req.method==='GET'){send((await query('SELECT r.id,r.title,r.created,r.summary<>\'\' AS has_summary FROM ideafix.fathom_recordings r LEFT JOIN ideafix.meetings m ON m.id=r.meeting_id WHERE r.owner=$1 AND ($2 OR m.id IS NULL OR m.department=$3) ORDER BY r.created DESC LIMIT 100',[u.id,['director','admin'].includes(u.role),u.department])).rows);return true}
  const match=url.pathname.match(/^\/api\/fathom\/recordings\/(\d+)(?:\/(transcript|save))?$/);if(!match)fail(404,'Запись не найдена');
- const r=(await query(`SELECT id,recording_id,title,source_url,summary,action_items,(summary<>'' AND jsonb_array_length(transcript)>0) AS ready FROM ideafix.fathom_recordings WHERE id=$1 AND owner=$2`,[match[1],u.id])).rows[0];if(!r)fail(404,'Запись не найдена');
+ const r=(await query(`SELECT r.id,r.owner,r.recording_id,r.title,r.source_url,r.summary,r.action_items,r.meeting_id,m.department AS meeting_department,(r.summary<>'' AND jsonb_array_length(r.transcript)>0) AS ready FROM ideafix.fathom_recordings r LEFT JOIN ideafix.meetings m ON m.id=r.meeting_id WHERE r.id=$1 AND (r.owner=$2 OR $3 OR ($4 AND m.department=$5))`,[match[1],u.id,['director','admin'].includes(u.role),u.role==='lead',u.department])).rows[0];if(!r||!canReadMeetingResult(u,r))fail(404,'Запись не найдена');
  if(req.method==='GET'&&!match[2]){send(r);return true}
- if(req.method==='GET'&&match[2]==='transcript'){send({transcript:(await query('SELECT transcript FROM ideafix.fathom_recordings WHERE id=$1 AND owner=$2',[r.id,u.id])).rows[0].transcript});return true}
+ if(req.method==='GET'&&match[2]==='transcript'){send({transcript:(await query('SELECT transcript FROM ideafix.fathom_recordings WHERE id=$1',[r.id])).rows[0].transcript});return true}
  if(req.method!=='POST'||match[2]!=='save')fail(405,'Метод недоступен');
  const b=await body(req);if(!['task','idea'].includes(b.kind)||typeof b.title!=='string'||b.title.trim().length<3||b.title.length>150||typeof b.description!=='string'||b.description.length>5000)fail(400,'Проверьте заголовок и описание');
  if(b.kind==='task'&&(!/^\d{4}-\d{2}-\d{2}$/.test(b.planned_for||'')||!Number.isFinite(Date.parse(b.planned_for))||new Date(b.planned_for).toISOString().slice(0,10)!==b.planned_for))fail(400,'Выберите дату плана');
- const key=createHash('sha256').update(JSON.stringify([b.kind,b.title.trim(),b.description,b.kind==='task'?b.planned_for:null,b.kind==='idea'&&b.publish===true])).digest('hex');
+ const key=createHash('sha256').update(JSON.stringify([u.id,b.kind,b.title.trim(),b.description,b.kind==='task'?b.planned_for:null,b.kind==='idea'&&b.publish===true])).digest('hex');
  const client=await pool.connect();try{
-  await client.query('BEGIN');await client.query('SELECT id FROM ideafix.fathom_recordings WHERE id=$1 AND owner=$2 FOR UPDATE',[r.id,u.id]);
+  await client.query('BEGIN');await client.query('SELECT id FROM ideafix.fathom_recordings WHERE id=$1 FOR UPDATE',[r.id]);
   const old=(await client.query('SELECT target_id FROM ideafix.fathom_outputs WHERE recording=$1 AND output_key=$2',[r.id,key])).rows[0];
   if(old){await client.query('COMMIT');send({id:old.target_id,already_saved:true});return true}
-  const description=(b.description+'\n\nИсточник: '+r.title+'\n'+r.source_url).slice(0,5500);let saved;
+  const description=(b.description+'\n\nИсточник: совещание «'+r.title+'», запись №'+r.id).slice(0,5500);let saved;
   if(b.kind==='task')saved=(await client.query(`INSERT INTO ideafix.planner_tasks(owner,title,description,planned_for,source) VALUES($1,$2,$3,$4,'fathom') RETURNING id`,[u.id,b.title.trim(),description,b.planned_for])).rows[0];
-  else saved=(await client.query(`INSERT INTO ideafix.tickets(author,title,body,kind,department,priority,due,entry_type,published,published_at,workflow) VALUES($1,$2,$3,'idea',$4,'medium',now()+interval '72 hours','insight',$5,CASE WHEN $5 THEN now() ELSE NULL END,$6) RETURNING id`,[u.id,b.title.trim(),description,u.department,b.publish===true,JSON.stringify({insight:description,proposal:description})])).rows[0];
+  else saved=(await client.query(`INSERT INTO ideafix.tickets(author,title,body,kind,department,priority,due,entry_type,published,published_at,workflow,idea_audience) VALUES($1,$2,$3,'idea',$4,'medium',now()+interval '72 hours','insight',$5,CASE WHEN $5 THEN now() ELSE NULL END,$6,$7) RETURNING id`,[u.id,b.title.trim(),description,(r.meeting_department&&departments.includes(r.meeting_department)?r.meeting_department:u.department),b.publish===true&&(!['director','admin'].includes(u.role)||(u.idea_audience||'private')!=='private'),JSON.stringify({insight:description,proposal:description}),['director','admin'].includes(u.role)?(u.idea_audience||'private'):'department'])).rows[0];
   await client.query('INSERT INTO ideafix.fathom_outputs(recording,output_key,target_id,kind) VALUES($1,$2,$3,$4)',[r.id,key,saved.id,b.kind]);await client.query('COMMIT');send({id:saved.id},201);return true;
  }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
 }

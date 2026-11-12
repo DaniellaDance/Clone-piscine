@@ -2,7 +2,7 @@ import {mirrorIdea} from './bitrix-events.mjs';
 const managers=u=>['director','admin','lead'].includes(u.role);
 const top=u=>['director','admin'].includes(u.role);
 export const canManageMeeting=(u,m)=>top(u)||(u.role==='lead'&&m.department===u.department);
-export const canSeeMeeting=(u,m)=>top(u)||!m.department||m.department===u.department;
+export const canSeeMeeting=(u,m)=>top(u)||m.department===u.department;
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function buildSpeech(meeting,tickets){
  const date=new Intl.DateTimeFormat('ru-RU',{timeZone:'Asia/Almaty',dateStyle:'long',timeStyle:'short'}).format(new Date(meeting.starts_at));
@@ -22,8 +22,8 @@ export async function handleMeetings({url,req,res,u,body,send,fail,query,manage,
   if(req.method!=='GET')fail(405,'Метод недоступен');
   const month=url.searchParams.get('month');let from,to;
   if(month){if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))fail(400,'Месяц: ГГГГ-ММ');from=new Date(month+'-01T00:00:00+05:00');const [year,number]=month.split('-').map(Number);to=new Date(Date.UTC(year,number,1)-5*3600000)}else{from=new Date(Date.now()-3600000);to=new Date(Date.now()+366*86400000)}
-  const rows=(await query(`SELECT m.*, (SELECT count(*)::int FROM ideafix.fathom_recordings f WHERE f.meeting_id=m.id) AS result_count, (SELECT count(*)::int FROM ideafix.meeting_agenda a JOIN ideafix.tickets t ON t.id=a.ticket_id WHERE a.meeting_id=m.id AND ($4 OR (t.department=$3 AND $5))) agenda_count FROM ideafix.meetings m WHERE starts_at >= $1 AND starts_at < $2 AND ($4 OR department='' OR department=$3) ORDER BY starts_at LIMIT 500`,[from,to,u.department,top(u),u.role==='lead'])).rows;
-  send(rows.map(m=>({...m,owner:undefined,canManage:canManageMeeting(u,m),canAddAgenda:managers(u)&&canSeeMeeting(u,m)})));return true;
+  const rows=(await query(`SELECT m.*, (SELECT count(*)::int FROM ideafix.fathom_recordings f WHERE f.meeting_id=m.id) AS result_count, (SELECT count(*)::int FROM ideafix.meeting_agenda a JOIN ideafix.tickets t ON t.id=a.ticket_id WHERE a.meeting_id=m.id AND ($4 OR (t.department=$3 AND $5))) agenda_count FROM ideafix.meetings m WHERE starts_at >= $1 AND starts_at < $2 AND ($4 OR department=$3) ORDER BY starts_at LIMIT 500`,[from,to,u.department,top(u),u.role==='lead'])).rows;
+  send(rows.map(m=>({...m,result_count:managers(u)?m.result_count:0,owner:undefined,canManage:canManageMeeting(u,m),canAddAgenda:managers(u)&&canSeeMeeting(u,m)})));return true;
  }
  const match=url.pathname.match(/^\/api\/meetings\/(\d+)(?:\/(agenda|speech|print))?$/);if(!match)fail(404,'Встреча не найдена');
  const m=(await query('SELECT * FROM ideafix.meetings WHERE id=$1',[Number(match[1])])).rows[0];if(!m)fail(404,'Встреча не найдена');if(!canSeeMeeting(u,m))fail(403,'Нет доступа к встрече');
@@ -36,7 +36,7 @@ export async function handleMeetings({url,req,res,u,body,send,fail,query,manage,
  if(req.method!=='GET')fail(405,'Метод недоступен');
  if(!managers(u))fail(403,'Материалы доступны руководителям');
  const includeNew=url.searchParams.get('include_new')==='1';
- const rows=(await query(`SELECT t.* FROM ideafix.tickets t WHERE ($2 OR (t.department=$3 AND $4)) AND (EXISTS(SELECT 1 FROM ideafix.meeting_agenda a WHERE a.meeting_id=$1 AND a.ticket_id=t.id) OR ($5 AND t.status='new' AND ($6='' OR t.department=$6))) ORDER BY t.created,t.id`,[m.id,top(u),u.department,u.role==='lead',includeNew,m.department])).rows;
+ const rows=(await query(`SELECT t.* FROM ideafix.tickets t WHERE ($2 OR (t.department=$3 AND $4)) AND (EXISTS(SELECT 1 FROM ideafix.meeting_agenda a WHERE a.meeting_id=$1 AND a.ticket_id=t.id) OR ($5 AND t.status='new' AND ($6='' OR t.department=$6))) ORDER BY t.created,t.id`,[m.id,top(u),u.department,u.role==='lead',includeNew,m.department])).rows.filter(t=>manage(u,t));
  if(match[2]==='speech'||match[2]==='print'){
   const text=buildSpeech(m,rows);
   if(match[2]==='speech'){send({meeting:{...m,owner:undefined,canManage:canManageMeeting(u,m),canAddAgenda:managers(u)&&canSeeMeeting(u,m)},text,ticket_ids:rows.map(t=>t.id),include_new:includeNew});return true}

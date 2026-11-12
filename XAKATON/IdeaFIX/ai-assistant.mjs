@@ -1,3 +1,4 @@
+import {canSeeTicket} from './access.mjs';
 // Server-side AI for IdeaFIX.
 // Free mode: rule-based analysis always works without any key, credits or internet.
 // Optional paid LLM providers: Freebuff (OpenAI-compatible) and Gemini.
@@ -123,7 +124,7 @@ export async function handleAI({url,req,u,body,query,send,fail}){
  if(!url.pathname.startsWith('/api/ai/'))return false;
  if(!leader(u))fail(403,'ИИ-анализ доступен руководителям');
  if(url.pathname==='/api/ai/status'&&req.method==='GET'){
-  return send({free_mode:true,preferred:preference(),default_provider:'rules',providers:{rules:true,freebuff:hasFreebuff(),gemini:hasGemini()},note:'Бесплатный режим по правилам работает без ключей и кредитов. Freebuff и Gemini подключаются как необязательные.'});
+  send({free_mode:true,preferred:preference(),default_provider:'rules',providers:{rules:true,freebuff:hasFreebuff(),gemini:hasGemini()},note:'Бесплатный режим по правилам работает без ключей и кредитов. Freebuff и Gemini подключаются как необязательные.'});return true;
  }
  if(req.method!=='POST')fail(405,'Метод недоступен');
  const input=await body(req),ticketId=id(input.ticket_id);
@@ -139,23 +140,23 @@ export async function handleAI({url,req,u,body,query,send,fail}){
   if(source.length<80)fail(400,'Добавьте текст реальной новости (не менее 80 символов). ИИ не должен придумывать публикации.');
   const sourceUrl=String(input.source_url||'').trim();
   if(sourceUrl&&!/^https:\/\/[^\s]+$/i.test(sourceUrl))fail(400,'Ссылка должна начинаться с https://');
-  const pilots=(await query("SELECT id,title,department,stage FROM ideafix.tickets WHERE lower(stage) LIKE '%pilot%' OR lower(stage) LIKE '%пилот%' ORDER BY id DESC LIMIT 30")).rows;
+  const pilots=(await query("SELECT id,title,department,stage,author,anonymous,recipient,published,kind,idea_audience FROM ideafix.tickets WHERE (lower(stage) LIKE '%pilot%' OR lower(stage) LIKE '%пилот%') AND ($1 OR department=$2) ORDER BY id DESC LIMIT 30",[u.role!=='lead',u.department])).rows.filter(t=>canSeeTicket(u,t));
   const payload={topic:name,kind,source_text:source,source_url:sourceUrl,pilots};
   const result=await generate('Ты аналитик по технологиям и корпоративным инновациям. Работай ТОЛЬКО с предоставленным текстом новости. Верни JSON: summary (строка, 2-4 предложения), relevance (строка), opportunities (массив строк), risks (массив строк), pilot_impacts (массив объектов {pilot_id,impact,action,confidence}), improvement_ideas (массив объектов {title,description,benefit,first_step}), verification_needed (массив строк). Сопоставляй пилоты только из списка; если связи нет, оставь pilot_impacts пустым. Не придумывай цифры, факты, ссылки и экономический эффект. Новые идеи только как черновики, без публикации и отправки в Bitrix24. Отмечай, что факты из источника не проверены.',payload,()=>localNewsBrief(payload));
   send({topic:name,source_url:sourceUrl,analysis:result,draft:true,ai_generated:result.provider!=='rules',requires_human_approval:true,provider:result.provider,free_mode:result.free_mode,provider_notes:result.provider_notes});return true;
  }
  if(url.pathname==='/api/ai/idea-analysis'){
   if(!ticketId)fail(400,'Выберите идею');
-  const t=(await query('SELECT id,title,body,department,stage,workflow,published FROM ideafix.tickets WHERE id=$1',[ticketId])).rows[0];
-  if(!t)fail(404,'Идея не найдена');
-  if(u.role==='lead'&&!t.published&&t.department!==u.department)fail(403,'Нет доступа к этой идее');
+  const t=(await query('SELECT id,title,body,department,stage,workflow,published,author,anonymous,recipient,kind,idea_audience FROM ideafix.tickets WHERE id=$1',[ticketId])).rows[0];
+  if(!t||!canSeeTicket(u,t))fail(404,'Идея не найдена');
+  
   const payload={title:t.title,description:t.body,department:t.department,stage:t.stage,workflow:t.workflow};
   const result=await generate('Ты корпоративный аналитик. На русском языке составь объективную оценку предложения. Не придумывай цифры и факты. Формат JSON: summary (строка), benefits (массив строк), risks (массив объектов {risk,probability,impact,mitigation}), missing_data (массив строк), next_step (строка), confidence (строка). Укажи неопределённость. Не принимай решения за директора.',payload,()=>localIdeaAnalysis(payload));
   send({ticket_id:ticketId,analysis:result,ai_generated:result.provider!=='rules',requires_human_approval:true,provider:result.provider,free_mode:result.free_mode,provider_notes:result.provider_notes});return true;
  }
  if(url.pathname==='/api/ai/discussion-protocol'){
   const topicId=id(input.topic_id);if(!topicId)fail(400,'Выберите обсуждение');
-  const topic=(await query('SELECT d.id,d.ticket_id,t.title,t.department FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id WHERE d.id=$1',[topicId])).rows[0];if(!topic)fail(404,'Обсуждение не найдено');
+  const topic=(await query('SELECT d.id,d.ticket_id,t.title,t.department,t.author,t.anonymous,t.kind,t.idea_audience FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id WHERE d.id=$1',[topicId])).rows[0];if(!topic||!canSeeTicket(u,topic))fail(404,'Обсуждение не найдено');
   if(u.role==='lead'&&topic.department!==u.department)fail(403,'Нет доступа');
   const rows=(await query('SELECT m.text,m.created,u.name FROM ideafix.discussion_messages m JOIN ideafix.users u ON u.id=m.author WHERE m.topic_id=$1 ORDER BY m.id LIMIT 200',[topicId])).rows;
   if(!rows.length)fail(400,'В обсуждении пока нет сообщений');

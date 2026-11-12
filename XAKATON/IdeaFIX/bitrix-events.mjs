@@ -1,3 +1,4 @@
+import {canMessageRecipient} from './access.mjs';
 import {syncDayTask} from './planner-bitrix.mjs';
 export async function mirrorIdea({query,ticket,u,kind,meeting,call,explicit=false}){
  if(!explicit)return {status:'manual_required',message:'Идея сохранена только на сайте. Для отправки подключите «Мой Битрикс» и нажмите «Отправить идею в Битрикс — задачу».'};
@@ -7,6 +8,7 @@ export async function mirrorIdea({query,ticket,u,kind,meeting,call,explicit=fals
  // Never distribute an idea to a department or infer a person from a free-text name.
  if(ticket.anonymous)return {status:'skipped',message:'Анонимное обращение не передаётся в личный Битрикс'};
  const owner=ticket.recipient||u.id;
+ if(owner!==u.id){const recipient=(await query('SELECT id,role,department FROM ideafix.users WHERE id=$1',[owner])).rows[0];if(!canMessageRecipient(u,recipient))throw Object.assign(new Error('Получатель недоступен для вашей роли и отдела'),{status:403});}
  const key=`idea:${ticket.id}:${kind}:${meeting?.id||0}:${owner}`;
  const title=({pilot:'Пилот',discussion:'Обсуждение идеи',idea:'Новая идея'})[kind]||'Идея';
  const now=new Date(),day=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Almaty',year:'numeric',month:'2-digit',day:'2-digit'}).format(meeting?new Date(meeting.starts_at):now);

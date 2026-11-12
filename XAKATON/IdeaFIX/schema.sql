@@ -124,3 +124,30 @@ ALTER TABLE ideafix.fathom_recordings ADD COLUMN IF NOT EXISTS meeting_id intege
 ALTER TABLE ideafix.fathom_recordings ADD COLUMN IF NOT EXISTS scheduled_start timestamptz;
 ALTER TABLE ideafix.fathom_recordings ADD COLUMN IF NOT EXISTS meeting_url text NOT NULL DEFAULT '';
 CREATE INDEX IF NOT EXISTS fathom_recordings_meeting ON ideafix.fathom_recordings(meeting_id);
+
+-- Unclassified legacy chat stays director-only; never infer recipients from author.
+ALTER TABLE ideafix.leadership_chat ADD COLUMN IF NOT EXISTS department text NOT NULL DEFAULT '';
+CREATE INDEX IF NOT EXISTS leadership_chat_department_id ON ideafix.leadership_chat(department,id);
+ALTER TABLE ideafix.completed_kz_projects ADD COLUMN IF NOT EXISTS department text NOT NULL DEFAULT '';
+
+-- Deliberately separate from real Bitrix finance records.
+CREATE TABLE IF NOT EXISTS ideafix.demo_project_finances (
+ demo_key text PRIMARY KEY,title text NOT NULL,phase text NOT NULL CHECK(phase IN ('pilot','project')),
+ department text NOT NULL,income numeric(16,2) NOT NULL CHECK(income>=0),expense numeric(16,2) NOT NULL CHECK(expense>=0)
+);
+INSERT INTO ideafix.demo_project_finances(demo_key,title,phase,department,income,expense) VALUES
+ ('demo-project-1','ДЕМО · Автоматизация обработки заявок','project','ИТ',4200000,2800000),
+ ('demo-project-2','ДЕМО · Система контроля доступа','project','Продажи',7800000,6100000),
+ ('demo-project-3','ДЕМО · Учёт складских остатков','project','Склад',2500000,1700000),
+ ('demo-project-4','ДЕМО · Оптимизация маршрутов доставки','project','Логистика',1800000,2100000),
+ ('demo-pilot-1','ДЕМО · ИИ-помощник совещаний','pilot','ИТ',350000,220000),
+ ('demo-pilot-2','ДЕМО · Тестирование пожарных датчиков','pilot','Продажи',600000,480000),
+ ('demo-pilot-3','ДЕМО · RFID на складе','pilot','Склад',0,180000),
+ ('demo-pilot-4','ДЕМО · Электронный путевой лист','pilot','Логистика',300000,300000)
+ON CONFLICT(demo_key) DO NOTHING;
+
+ALTER TABLE ideafix.users ADD COLUMN IF NOT EXISTS idea_audience text NOT NULL DEFAULT 'private' CHECK(idea_audience IN ('private','leaders','all'));
+ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS idea_audience text NOT NULL DEFAULT 'department' CHECK(idea_audience IN ('department','private','leaders','all'));
+-- Apply the director's saved policy to existing own nonanonymous ideas as well.
+UPDATE ideafix.tickets t SET idea_audience=u.idea_audience FROM ideafix.users u
+WHERE t.author=u.id AND u.role IN ('director','admin') AND t.kind='idea' AND NOT t.anonymous AND t.idea_audience='department';

@@ -1,8 +1,9 @@
+import {canSeeTicket} from './access.mjs';
 import {bitrixCall,BITRIX_PORTAL} from './bitrix.mjs';
 import {mirrorIdea} from './bitrix-events.mjs';
 export function actionPayload(action,t,person){const plain=s=>String(s||'').replaceAll('[','(').replaceAll(']',')');const text=[t.offering_name?'Продукт / услуга: '+t.offering_name:'',t.body,'IdeaFix · обращение №'+t.id].filter(Boolean).map(plain).join('\n\n');if(action==='discussion')return {method:'log.blogpost.add',payload:{POST_TITLE:'Обсуждение IdeaFix #'+t.id+': '+plain(t.title).slice(0,150),POST_MESSAGE:text,DEST:['U'+person],PARSE_PREVIEW:'N'}};return {method:'sonet_group.create',payload:{NAME:'IdeaFix #'+t.id+': '+plain(t.title).slice(0,150),DESCRIPTION:text,PROJECT:'Y',VISIBLE:'N',OPENED:'N',INITIATE_PERMS:'A'}}}
 export async function handleBitrixActions({url,req,u,body,send,fail,query,manage},call=bitrixCall){const match=url.pathname.match(/^\/api\/tickets\/(\d+)\/bitrix-actions$/);if(!match)return false;
- const t=(await query('SELECT * FROM ideafix.tickets WHERE id=$1',[+match[1]])).rows[0];if(!t)fail(404,'Обращение не найдено');if(t.anonymous||!(manage(u,t)||t.author===u.id||t.recipient===u.id))fail(403,'Нет доступа к отправке');
+ const t=(await query('SELECT * FROM ideafix.tickets WHERE id=$1',[+match[1]])).rows[0];if(!t)fail(404,'Обращение не найдено');if(!canSeeTicket(u,t)||t.anonymous||!(manage(u,t)||t.author===u.id||t.recipient===u.id))fail(403,'Нет доступа к отправке');
  if(req.method!=='POST')fail(405,'Метод недоступен');const b=await body(req);if(!['task','discussion','project'].includes(b.action))fail(400,'Выберите действие');
  const account=(await query('SELECT a.webhook,l.bitrix_user FROM ideafix.bitrix_accounts a JOIN ideafix.planner_bitrix_links l ON l.app_user=a.app_user WHERE a.app_user=$1',[u.id])).rows[0];if(!account)fail(409,'Сначала подключите «Мой Битрикс» вверху кабинета');
  if(b.action==='task'){const r=await mirrorIdea({query,ticket:t,u,kind:'idea',call,explicit:true});send(r);return true}

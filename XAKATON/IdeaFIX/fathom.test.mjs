@@ -40,11 +40,11 @@ test('saving an idea requires explicit publication and keeps transaction atomic'
  const log=[];let released=false;
  const client={query:async(sql,p)=>{log.push([sql,p]);return {rows:sql.includes('INSERT INTO ideafix.tickets')?[{id:8}]:[]}},release(){released=true}};
  let sent;
- await handleFathom({url:new URL('http://x/api/fathom/recordings/3/save'),req:{method:'POST'},u:{role:'lead',id:'a',department:'ИТ'},body:async()=>({kind:'idea',title:'Новая идея',description:'Цитата с совещания'}),query:async()=>({rows:[{id:3,title:'Meeting',source_url:'https://fathom.video/x'}]}),pool:{connect:async()=>client},send:v=>sent=v,fail});
+ await handleFathom({url:new URL('http://x/api/fathom/recordings/3/save'),req:{method:'POST'},u:{role:'lead',id:'a',department:'ИТ'},body:async()=>({kind:'idea',title:'Новая идея',description:'Цитата с совещания'}),query:async()=>({rows:[{id:3,owner:'a',title:'Meeting',source_url:'https://fathom.video/x'}]}),pool:{connect:async()=>client},send:v=>sent=v,fail});
  const insert=log.find(([sql])=>sql.includes('INSERT INTO ideafix.tickets'));assert.equal(insert[1][4],false);assert.equal(log[0][0],'BEGIN');assert.match(log[1][0],/FOR UPDATE/);assert.equal(log.at(-1)[0],'COMMIT');assert.equal(sent.id,8);assert.equal(released,true);
 });
 test('repeat save returns original result without another task',async()=>{
  const log=[];const client={query:async(sql)=>{log.push(sql);return {rows:sql.includes('SELECT target_id')?[{target_id:9}]:[]}},release(){}};
- let sent;await handleFathom({url:new URL('http://x/api/fathom/recordings/3/save'),req:{method:'POST'},u:{role:'lead',id:'a'},body:async()=>({kind:'task',title:'Follow up',description:'Source',planned_for:'2026-11-13'}),query:async()=>({rows:[{id:3,title:'Meeting',source_url:''}]}),pool:{connect:async()=>client},send:v=>sent=v,fail});
+ let sent;await handleFathom({url:new URL('http://x/api/fathom/recordings/3/save'),req:{method:'POST'},u:{role:'lead',id:'a'},body:async()=>({kind:'task',title:'Follow up',description:'Source',planned_for:'2026-11-13'}),query:async()=>({rows:[{id:3,owner:'a',title:'Meeting',source_url:''}]}),pool:{connect:async()=>client},send:v=>sent=v,fail});
  assert.equal(sent.already_saved,true);assert.equal(sent.id,9);assert.equal(log.some(s=>s.includes('INSERT INTO ideafix.planner_tasks')),false);
 });
