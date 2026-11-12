@@ -31,7 +31,9 @@ jobs:
       - name: Generate installable icons
         run: npm run build
       - name: Mark client revision
-        run: printf '\n/* ideafix-commit:%s */\n' "$GITHUB_SHA" >> public/assets/voice.js
+        run: |
+          printf '\n/* ideafix-commit:%s */\n' "$GITHUB_SHA" >> public/assets/voice.js
+          printf '\n/* ideafix-map-commit:%s */\n' "$GITHUB_SHA" >> public/assets/catalog-ui.js
       - name: Install Neon SDK for deploy command
         run: npm install --no-save --package-lock=false @neon/sdk
       - name: Build Neon function ZIP
