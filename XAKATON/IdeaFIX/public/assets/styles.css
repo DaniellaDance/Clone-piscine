@@ -642,3 +642,14 @@ body.partner-map-active #view:has(#partner-world-map) .atlas-directory{min-heigh
 .layout:has(.home-hero-wrap) #view{padding-top:0!important}
 .home-hero-wrap{margin-top:0!important}
 .home-hero-wrap .quote-head{border-top-left-radius:0!important;border-top-right-radius:0!important;border-top:0!important}
+/* A single language control, with names shown only in its dropdown. */
+#language.language-picker{position:relative;display:block!important;flex:none;margin-left:8px}
+#language.language-picker>summary{display:flex;align-items:center;justify-content:center;gap:5px;list-style:none;cursor:pointer;min-height:34px;padding:5px 9px;border:1px solid #b8cee0;border-radius:12px;background:#f5fbff;color:#174a79;font-size:12px;font-weight:750;white-space:nowrap}
+#language.language-picker>summary::-webkit-details-marker{display:none}
+.header #language.language-picker>summary{color:#fff;border-color:#ffffff66;background:#ffffff20}
+#language .language-menu{position:absolute;top:calc(100% + 7px);right:0;min-width:165px;padding:6px;border:1px solid #c6d9e8;border-radius:14px;background:#fff;box-shadow:0 10px 30px #15396933;z-index:200;display:grid;gap:3px}
+.header #language .language-menu button,#language .language-menu button{display:block;text-align:left;padding:9px 11px!important;border:0!important;border-radius:9px;background:#fff!important;color:#173d65!important;font-size:13px!important;white-space:nowrap}
+.header #language .language-menu button.active,#language .language-menu button.active{background:#e4f2ff!important;color:#1053a0!important}
+#language.language-picker:not([open])>.language-menu{display:none!important}
+body>#language.language-picker{position:fixed;top:12px;right:14px}
+@media(max-width:650px){#language.language-picker{margin-left:3px}.header #language.language-picker>summary{min-height:32px;padding:5px 7px;font-size:11px;gap:4px}}
