@@ -658,3 +658,63 @@ body>#language.language-picker{position:fixed;top:12px;right:14px}
 .atlas-layers{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.atlas-layers button[aria-pressed="true"]{background:#ed7b24;color:#fff}.atlas-layers button,.atlas-layers select{font-size:12px;padding:7px 9px}.atlas-layers{max-width:100%}@media(max-width:650px){.atlas-toolbar{flex-wrap:wrap}.atlas-layers{flex-basis:100%}.atlas-layers button{flex:1 1 auto}.atlas-layers select{max-width:100%}}
 
 .native-map-pin.map-status-blue{background:#1672d4!important;border-color:#0c57ac!important;color:#fff!important}.native-map-pin.map-status-red{background:#d92b35!important;border-color:#a41822!important;color:#fff!important}[data-map-future][aria-pressed="true"]{background:#273c86;color:white}
+
+/* IdeaFIX 2026-11-13: mobile showcase reset. No overlapping glass shelves. */
+#view.list-screen:has(.showcase-heading) #results.showcase-grid{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ grid-template-rows:none!important;grid-auto-flow:row!important;grid-auto-rows:minmax(0,1fr)!important;
+ gap:10px!important;padding:10px!important;overflow-y:auto!important;overflow-x:hidden!important;
+ min-height:0!important;align-content:stretch!important;
+ background:linear-gradient(145deg,#eff8ff,#e6f2ff)!important;border:2px solid #bdd4e7!important;
+ border-radius:16px!important;box-shadow:none!important;
+}
+#view.list-screen:has(.showcase-heading) #results.showcase-grid::before,
+#view.list-screen:has(.showcase-heading) #results.showcase-grid::after,
+#view.list-screen:has(.showcase-heading) #results .showcase-item::after,
+#view.list-screen:has(.showcase-heading) #results .showcase-glass-card::before,
+#view.list-screen:has(.showcase-heading) #results .showcase-glass-card::after{content:none!important;display:none!important}
+#view.list-screen:has(.showcase-heading) #results .showcase-item{
+ position:relative!important;display:block!important;min-height:0!important;height:auto!important;
+ max-width:100%!important;overflow:hidden!important;transform:none!important;margin:0!important
+}
+#view.list-screen:has(.showcase-heading) #results .showcase-glass-card{
+ position:relative!important;display:flex!important;flex-direction:column!important;
+ min-height:145px!important;height:100%!important;max-height:none!important;overflow:hidden!important;
+ margin:0!important;padding:15px 7px 8px!important;gap:5px!important;
+ transform:none!important;border:1px solid #c6dceb!important;border-radius:14px!important;
+ background:linear-gradient(145deg,#fff,#edf7ff)!important;box-shadow:0 2px 7px #1d497414!important;
+ justify-content:space-between!important;backdrop-filter:none!important;
+}
+#view:has(.showcase-heading) #results .showcase-card-open{display:flex!important;flex-direction:column!important;gap:5px!important;flex:1 1 auto!important;min-height:0!important}
+#view:has(.showcase-heading) #results .showcase-card-open strong{
+ display:-webkit-box!important;-webkit-line-clamp:3!important;-webkit-box-orient:vertical!important;
+ overflow:hidden!important;font-size:clamp(11px,2.6vw,14px)!important;line-height:1.22!important;
+ text-align:center!important;overflow-wrap:anywhere
+}
+#view:has(.showcase-heading) #results .showcase-card-symbol{font-size:22px!important;display:block!important}
+#view:has(.showcase-heading) #results .showcase-card-state{font-size:10px!important;max-width:100%!important}
+#view:has(.showcase-heading) #results .showcase-card-bottom{display:flex!important;flex:none!important;gap:5px!important;margin:0!important;justify-content:center!important}
+#view:has(.showcase-heading) #results .showcase-vote{white-space:normal!important;min-height:26px!important;line-height:1.1!important;font-size:10px!important}
+#view.list-screen:has(.showcase-heading)>.showcase-heading{border:1px solid #c5d9ea!important;border-radius:14px!important;padding:9px 11px!important;box-shadow:none!important}
+#view.list-screen:has(.showcase-heading) .showcase-heading::before,
+#view.list-screen:has(.showcase-heading) .showcase-heading::after{display:none!important}
+#view:has(.showcase-heading) #showcase-periods{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:4px!important;min-width:0!important}
+#view:has(.showcase-heading) #showcase-periods button{min-width:0!important;padding:7px 1px!important;font-size:clamp(9px,2.2vw,12px)!important;white-space:nowrap!important;border-radius:9px!important;min-height:30px!important}
+#view:has(.showcase-heading) .showcase-count{display:block!important;font-size:11px!important;white-space:normal!important}
+#view.list-screen:has(.showcase-heading) #list-pager.showcase-pager{
+ flex:none!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ gap:12px!important;min-height:0!important;padding:2px!important;font-size:12px!important;
+}
+#list-pager.showcase-pager:empty{display:none!important}
+#list-pager.showcase-pager button{font-size:12px!important;padding:5px 10px!important;min-height:29px!important}
+@media(max-width:600px){
+ #view.list-screen:has(.showcase-heading){gap:6px!important;padding:7px!important}
+ #view.list-screen:has(.showcase-heading) #results.showcase-grid{gap:8px!important;padding:8px!important}
+ #view.list-screen:has(.showcase-heading) #results .showcase-glass-card{min-height:150px!important}
+ #view:has(.showcase-heading)>.filters{grid-template-columns:minmax(0,1fr) minmax(85px,110px)!important}
+ #view:has(.showcase-heading)>.filters .showcase-count{grid-column:1/-1!important;text-align:center!important}
+}
+@media(max-height:680px) and (max-width:600px){
+ #view.list-screen:has(.showcase-heading) #results .showcase-glass-card{min-height:128px!important}
+ #view:has(.showcase-heading) #results .showcase-card-symbol{display:none!important}
+}
