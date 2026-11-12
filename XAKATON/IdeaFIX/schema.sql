@@ -154,3 +154,9 @@ WHERE t.author=u.id AND u.role IN ('director','admin') AND t.kind='idea' AND NOT
 
 
 CREATE TABLE IF NOT EXISTS ideafix.map_entities (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, category text NOT NULL CHECK(category IN ('vendors','partners','clients','projects')), name text NOT NULL, country text NOT NULL, city text NOT NULL DEFAULT '', latitude double precision CHECK(latitude BETWEEN -90 AND 90), longitude double precision CHECK(longitude BETWEEN -180 AND 180), status text NOT NULL DEFAULT 'active' CHECK(status IN ('active','completed')), department text NOT NULL, created_by text NOT NULL REFERENCES ideafix.users(id), created_at timestamptz NOT NULL DEFAULT now());
+
+ALTER TABLE ideafix.map_entities ADD COLUMN IF NOT EXISTS horizon text NOT NULL DEFAULT 'current' CHECK(horizon IN ('current','planned','negotiation'));
+ALTER TABLE ideafix.map_entities ADD COLUMN IF NOT EXISTS object_kind text NOT NULL DEFAULT 'company' CHECK(object_kind IN ('country','city','company','building','object'));
+ALTER TABLE ideafix.map_entities ADD COLUMN IF NOT EXISTS address text NOT NULL DEFAULT '';
+ALTER TABLE ideafix.planner_tasks ADD COLUMN IF NOT EXISTS context_id text;
+CREATE INDEX IF NOT EXISTS planner_map_context ON ideafix.planner_tasks(context_id) WHERE context_id IS NOT NULL;

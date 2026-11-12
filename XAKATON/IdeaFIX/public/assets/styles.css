@@ -656,3 +656,5 @@ body>#language.language-picker{position:fixed;top:12px;right:14px}
 
 
 .atlas-layers{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.atlas-layers button[aria-pressed="true"]{background:#ed7b24;color:#fff}.atlas-layers button,.atlas-layers select{font-size:12px;padding:7px 9px}.atlas-layers{max-width:100%}@media(max-width:650px){.atlas-toolbar{flex-wrap:wrap}.atlas-layers{flex-basis:100%}.atlas-layers button{flex:1 1 auto}.atlas-layers select{max-width:100%}}
+
+.native-map-pin.map-status-blue{background:#1672d4!important;border-color:#0c57ac!important;color:#fff!important}.native-map-pin.map-status-red{background:#d92b35!important;border-color:#a41822!important;color:#fff!important}[data-map-future][aria-pressed="true"]{background:#273c86;color:white}
