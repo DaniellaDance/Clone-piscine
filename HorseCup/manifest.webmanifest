@@ -3,7 +3,7 @@
   "name": "HorseCup — кубок Tomorrow School",
   "short_name": "HorseCup",
   "lang": "ru",
-  "description": "Сетевые учебные скачки: создайте поле и соревнуйтесь с друзьями три минуты.",
+  "description": "Сетевые учебные скачки: создайте поле и соревнуйтесь с друзьями 1, 3 или 5 минут.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -30,3 +30,4 @@
     }
   ]
 }
+

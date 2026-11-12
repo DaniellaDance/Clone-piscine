@@ -24,8 +24,8 @@ import android.widget.Toast;
 
 /** Standalone Android launcher: only the HTTPS HorseCup origin is loaded inside it. */
 public final class MainActivity extends Activity {
-    private static final String HOME = "https://horsecup-daniella.onrender.com/";
-    private static final String HOST = "horsecup-daniella.onrender.com";
+    private static final String HOME = "https://br-patient-wildflower-baqlr622-horsecup.compute.c-8.eu-central-1.aws.neon.tech/";
+    private static final String HOST = "br-patient-wildflower-baqlr622-horsecup.compute.c-8.eu-central-1.aws.neon.tech";
     private WebView web;
     private ProgressBar progress;
     private boolean errorShown;
@@ -116,3 +116,4 @@ public final class MainActivity extends Activity {
     }
     @Override protected void onDestroy(){if(web!=null){web.stopLoading();web.destroy();}super.onDestroy();}
 }
+

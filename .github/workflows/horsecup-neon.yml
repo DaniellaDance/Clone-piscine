@@ -33,21 +33,28 @@ jobs:
           node --check js/game.js
       - name: Unit tests
         run: npm test
+      - name: Integration tests on isolated Neon branch
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+        run: node scripts/verify-neon.mjs
       - name: Prepare optimized images
         run: npm run assets
       - name: Package HorseCup
         run: |
           npm prune --omit=dev
           rm -rf node_modules/sharp node_modules/@img node_modules/.cache
-          echo 'Largest directories before packaging:'
-          du -h -d 2 . | sort -h | tail -20
-          zip -q -r -9 "$RUNNER_TEMP/horsecup-neon.zip" . -x '*.test.mjs' 'downloads/*' 'images/*' 'node_modules/sharp/*' 'node_modules/@img/*' 'node_modules/.cache/*' 'README.md' 'scripts/*' 'optimize-images.mjs' 'package-lock.json' '*.apk' '*.mp4' '*.wav' '*.ogg' '*.zip' '*.map'
-          test -f "$RUNNER_TEMP/horsecup-neon.zip" || { echo 'Archive missing'; exit 1; }
-          ls -lh "$RUNNER_TEMP/horsecup-neon.zip"
-          test "$(stat -c%s "$RUNNER_TEMP/horsecup-neon.zip")" -lt 33554432 || { echo 'Neon ZIP exceeds 32 MiB'; exit 1; }
-          unzip -t "$RUNNER_TEMP/horsecup-neon.zip" | tail -1
-          unzip -l "$RUNNER_TEMP/horsecup-neon.zip" | tail -2
-          python3 -c 'import zipfile,os; z=zipfile.ZipFile(os.environ["RUNNER_TEMP"]+"/horsecup-neon.zip"); n=sum(i.file_size for i in z.infolist()); print("Uncompressed size:",round(n/1048576,2),"MiB"); assert n < 50*1048576, "Uncompressed bundle exceeds 50 MiB"'
+          bundle="$RUNNER_TEMP/horsecup-bundle"
+          mkdir -p "$bundle/images/animations"
+          cp index.mjs server.mjs accounts.mjs race-engine.mjs question-bank.mjs exam-bank.mjs index.html styles.css sw.js manifest.webmanifest package.json "$bundle/"
+          cp -R js icons optimized node_modules "$bundle/"
+          cp images/*.webp "$bundle/images/"
+          cp images/animations/*.gif "$bundle/images/animations/"
+          node -e 'const fs=require("fs"),p=process.argv[1]+"/package.json",j=JSON.parse(fs.readFileSync(p));delete j.dependencies.sharp;j.scripts={start:"node server.mjs"};fs.writeFileSync(p,JSON.stringify(j))' "$bundle"
+          printf '{"commit":"%s"}\n' "$GITHUB_SHA" > "$bundle/deployment.json"
+          cd "$bundle"
+          zip -q -r -9 "$RUNNER_TEMP/horsecup-neon.zip" .
+          test "$(stat -c%s "$RUNNER_TEMP/horsecup-neon.zip")" -lt 33554432
+          python3 -c 'import zipfile,os; z=zipfile.ZipFile(os.environ["RUNNER_TEMP"]+"/horsecup-neon.zip"); n=sum(i.file_size for i in z.infolist()); print("Uncompressed:",round(n/1048576,2),"MiB"); assert n<50*1048576; names=z.namelist(); assert "index.mjs" in names; assert "images/voronaya.webp" in names; assert "images/animations/black.gif" in names'
       - name: Save build
         uses: actions/upload-artifact@v4
         with:
@@ -61,3 +68,4 @@ jobs:
         run: |
           npm install --no-save --package-lock=false --ignore-scripts @neon/sdk
           node scripts/deploy-neon.mjs "$RUNNER_TEMP/horsecup-neon.zip"
+

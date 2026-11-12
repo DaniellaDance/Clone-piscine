@@ -1,6 +1,7 @@
 import pg from 'pg';
 import {randomUUID,randomBytes,scryptSync,timingSafeEqual,createHash} from 'node:crypto';
 const pool=new pg.Pool({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false},max:5});
+pool.on('error',e=>console.error('HorseCup idle account connection',e.code));
 const digest=t=>createHash('sha256').update(t).digest('hex');
 const hashPassword=(password,salt=randomBytes(16).toString('hex'))=>salt+':'+scryptSync(password,salt,64).toString('hex');
 const verify=(password,stored)=>{const [salt,hex]=stored.split(':');return !!salt&&!!hex&&timingSafeEqual(Buffer.from(hex,'hex'),scryptSync(password,salt,64))};
@@ -24,3 +25,4 @@ export const history={
  async recent(playerId){const {rows}=await pool.query('SELECT room_code,coins,horseshoes,mode,finished_at FROM race_rewards WHERE player_id=$1 ORDER BY finished_at DESC LIMIT 20',[playerId]);return rows}
 
 };
+
