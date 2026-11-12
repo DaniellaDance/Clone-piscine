@@ -151,3 +151,6 @@ ALTER TABLE ideafix.tickets ADD COLUMN IF NOT EXISTS idea_audience text NOT NULL
 -- Apply the director's saved policy to existing own nonanonymous ideas as well.
 UPDATE ideafix.tickets t SET idea_audience=u.idea_audience FROM ideafix.users u
 WHERE t.author=u.id AND u.role IN ('director','admin') AND t.kind='idea' AND NOT t.anonymous AND t.idea_audience='department';
+
+
+CREATE TABLE IF NOT EXISTS ideafix.map_entities (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, category text NOT NULL CHECK(category IN ('vendors','partners','clients','projects')), name text NOT NULL, country text NOT NULL, city text NOT NULL DEFAULT '', latitude double precision CHECK(latitude BETWEEN -90 AND 90), longitude double precision CHECK(longitude BETWEEN -180 AND 180), status text NOT NULL DEFAULT 'active' CHECK(status IN ('active','completed')), department text NOT NULL, created_by text NOT NULL REFERENCES ideafix.users(id), created_at timestamptz NOT NULL DEFAULT now());

@@ -1,0 +1,13 @@
+import {isTop,isLeader} from './access.mjs';
+export async function mapDirectory({u,query,catalog}){
+ const rows=(await query('SELECT * FROM ideafix.map_entities WHERE ($1 OR department=$2) ORDER BY category,name',[isTop(u),u.department])).rows;
+ const projects=(await query('SELECT id,name,city,latitude,longitude,description,department FROM ideafix.completed_kz_projects WHERE ($1 OR department=$2)',[isTop(u),u.department])).rows.map(p=>({...p,id:'project:'+p.id,category:'projects',country:'KZ',status:'completed'}));
+ const clients=isTop(u)?(await query('SELECT id,company AS name,city,latitude,longitude FROM ideafix.regular_clients')).rows.map(c=>({...c,id:'client:'+c.id,category:'clients',country:['астана','алматы','павлодар','караганда','шымкент','туркестан'].includes(String(c.city||'').toLowerCase())?'KZ':''})):[];
+ const partners=isTop(u)?(await query('SELECT id,company AS name FROM ideafix.partners')).rows.map(c=>({...c,id:'partner:'+c.id,category:'partners',country:'',city:''})):[];
+ return [...catalog.vendors.map(v=>({id:'vendor:'+v.id,vendor_id:v.id,name:v.name,category:'vendors',country:v.country,...(v.location||{})})),...rows.map(r=>({...r,id:'map:'+r.id})),...projects,...clients,...partners];
+}
+export async function handleMapDirectory(ctx){const {url,req,u,body,query,send,fail}=ctx;if(url.pathname!=='/api/map-directory')return false;
+ if(req.method==='GET'){send(await mapDirectory(ctx));return true}if(req.method!=='POST')fail(405,'Метод недоступен');
+ const b=await body(req);if(!['vendors','partners','clients','projects'].includes(b.category))fail(400,'Выберите категорию');const name=String(b.name||'').trim();if(name.length<2||name.length>160)fail(400,'Укажите название');const country=String(b.country||'').toUpperCase();if(!/^[A-Z]{2}$/.test(country))fail(400,'Выберите страну');const city=String(b.city||'').trim().slice(0,120);const coords=[b.latitude,b.longitude].map(v=>v==null||v===''?null:Number(v));if(coords.some((v,i)=>v!==null&&(!Number.isFinite(v)||Math.abs(v)>(i?180:90)))||(coords[0]===null)!==(coords[1]===null))fail(400,'Укажите обе координаты или оставьте пустыми');const status=b.status||'active';if(!['active','completed'].includes(status))fail(400,'Выберите статус проекта');const department=isTop(u)?String(b.department||u.department):u.department;
+ const row=(await query('INSERT INTO ideafix.map_entities(category,name,country,city,latitude,longitude,status,department,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id',[b.category,name,country,city,...coords,status,department,u.id])).rows[0];send({id:'map:'+row.id},201);return true;
+}

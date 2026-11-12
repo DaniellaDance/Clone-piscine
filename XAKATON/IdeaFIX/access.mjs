@@ -4,7 +4,7 @@ export const isLeader=u=>!!u&&['director','admin','lead'].includes(u.role);
 export const sameDepartment=(u,r)=>!!u&&!!u.department&&u.department===r.department;
 export const canManageRecord=(u,r)=>canSeeTicket(u,r)&&(isTop(u)||(u?.role==='lead'&&sameDepartment(u,r)&&(!r.idea_audience||r.idea_audience==='department')));
 export function canSeeTicket(u,t){
- if(privateInsight(t))return ownerOf(u,t);if(t.workflow?.visibility==='leaders'&&u?.role==='employee'&&!ownerOf(u,t))return false;
+ if(privateInsight(t))return ownerOf(u,t);if(t.workflow?.visibility==='leaders')return ownerOf(u,t)||isTop(u)||(u?.role==='lead'&&sameDepartment(u,t));
  if(t.workflow?.visibility==='department'&&!ownerOf(u,t))return isTop(u)||sameDepartment(u,t);
  if(t.workflow?.visibility==='leaders'&&ownerOf(u,t))return true;
  if(t.kind==='idea'&&!t.anonymous&&t.idea_audience&&t.idea_audience!=='department'){
@@ -17,7 +17,7 @@ export function canSeeTicket(u,t){
 export function ticketVisibilitySql(alias,{viewer,top,department,lead}){
  const a=alias?alias+'.':'';
  const ordinary=`(${top} OR (${a}department=${department} AND (${lead} OR ${a}recipient=${viewer} OR (NOT ${a}anonymous AND ${a}author=${viewer}) OR (NOT ${a}anonymous AND (${a}published OR ${a}kind='idea' OR ${a}stage IN ('pilot','implementation','result'))))))`;
- const gate=`(${a}author=${viewer} OR (coalesce(${a}workflow->>'visibility','')<>'private' AND NOT (coalesce(${a}workflow->>'visibility','')='' AND NOT ${a}anonymous AND (${a}stage='insight' OR (${a}entry_type='insight' AND ${a}stage='registration'))) AND (coalesce(${a}workflow->>'visibility','')<>'leaders' OR ${top} OR ${lead})))`;
+ const gate=`(${a}author=${viewer} OR (coalesce(${a}workflow->>'visibility','')<>'private' AND NOT (coalesce(${a}workflow->>'visibility','')='' AND NOT ${a}anonymous AND (${a}stage='insight' OR (${a}entry_type='insight' AND ${a}stage='registration'))) AND (coalesce(${a}workflow->>'visibility','')<>'leaders' OR ${top} OR (${lead} AND ${a}department=${department}))))`;
  return `(${gate} AND (CASE WHEN ${a}kind='idea' AND NOT ${a}anonymous AND ${a}idea_audience<>'department' THEN (${a}author=${viewer} OR ${a}idea_audience='all' OR (${a}idea_audience='leaders' AND (${top} OR ${lead}))) ELSE ${ordinary} END))`;
 }
 export function canReadMeetingResult(u,r){
