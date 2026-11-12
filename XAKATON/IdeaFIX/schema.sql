@@ -119,3 +119,8 @@ CREATE TABLE IF NOT EXISTS ideafix.bitrix_project_finances (
  imported_at timestamptz NOT NULL DEFAULT now(),PRIMARY KEY(owner,remote_key)
 );
 
+
+ALTER TABLE ideafix.fathom_recordings ADD COLUMN IF NOT EXISTS meeting_id integer REFERENCES ideafix.meetings(id);
+ALTER TABLE ideafix.fathom_recordings ADD COLUMN IF NOT EXISTS scheduled_start timestamptz;
+ALTER TABLE ideafix.fathom_recordings ADD COLUMN IF NOT EXISTS meeting_url text NOT NULL DEFAULT '';
+CREATE INDEX IF NOT EXISTS fathom_recordings_meeting ON ideafix.fathom_recordings(meeting_id);

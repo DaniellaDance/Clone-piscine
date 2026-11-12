@@ -22,7 +22,7 @@ export async function handleMeetings({url,req,res,u,body,send,fail,query,manage,
   if(req.method!=='GET')fail(405,'Метод недоступен');
   const month=url.searchParams.get('month');let from,to;
   if(month){if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))fail(400,'Месяц: ГГГГ-ММ');from=new Date(month+'-01T00:00:00+05:00');const [year,number]=month.split('-').map(Number);to=new Date(Date.UTC(year,number,1)-5*3600000)}else{from=new Date(Date.now()-3600000);to=new Date(Date.now()+366*86400000)}
-  const rows=(await query(`SELECT m.*, (SELECT count(*)::int FROM ideafix.meeting_agenda a JOIN ideafix.tickets t ON t.id=a.ticket_id WHERE a.meeting_id=m.id AND ($4 OR (t.department=$3 AND $5))) agenda_count FROM ideafix.meetings m WHERE starts_at >= $1 AND starts_at < $2 AND ($4 OR department='' OR department=$3) ORDER BY starts_at LIMIT 500`,[from,to,u.department,top(u),u.role==='lead'])).rows;
+  const rows=(await query(`SELECT m.*, (SELECT count(*)::int FROM ideafix.fathom_recordings f WHERE f.meeting_id=m.id) AS result_count, (SELECT count(*)::int FROM ideafix.meeting_agenda a JOIN ideafix.tickets t ON t.id=a.ticket_id WHERE a.meeting_id=m.id AND ($4 OR (t.department=$3 AND $5))) agenda_count FROM ideafix.meetings m WHERE starts_at >= $1 AND starts_at < $2 AND ($4 OR department='' OR department=$3) ORDER BY starts_at LIMIT 500`,[from,to,u.department,top(u),u.role==='lead'])).rows;
   send(rows.map(m=>({...m,owner:undefined,canManage:canManageMeeting(u,m),canAddAgenda:managers(u)&&canSeeMeeting(u,m)})));return true;
  }
  const match=url.pathname.match(/^\/api\/meetings\/(\d+)(?:\/(agenda|speech|print))?$/);if(!match)fail(404,'Встреча не найдена');

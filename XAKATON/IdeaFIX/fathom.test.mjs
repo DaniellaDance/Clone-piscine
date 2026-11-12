@@ -31,7 +31,7 @@ test('signature is checked before database insert',async()=>{
 test('signed receipt upserts by owner and recording, without creating tasks or ideas',async()=>{
  const writes=[];const query=async(sql,p)=>{writes.push([sql,p]);return {rows:[{owner:'a',secret}]}};
  let sent;await receiveFathom({url:new URL('http://x/api/fathom/webhook/'+'a'.repeat(48)),req:{method:'POST',headers,async *[Symbol.asyncIterator](){yield raw}},query,fail,send:v=>sent=v});
- assert.equal(sent.ok,true);assert.match(writes[1][0],/ON CONFLICT\(owner,recording_id\)/);assert.equal(writes[1][1][0],'a');assert.equal(writes.length,2);
+ assert.equal(sent.ok,true);assert.match(writes[1][0],/ON CONFLICT\(owner,recording_id\)/);assert.equal(writes[1][1][0],'a');assert.equal(writes.length,3);
 });
 test('recordings owned by other users are not returned',async()=>{
  await assert.rejects(handleFathom({url:new URL('http://x/api/fathom/recordings/3'),req:{method:'GET'},u:{role:'lead',id:'b'},query:async(sql,p)=>{assert.equal(p[1],'b');return {rows:[]}},fail}),{status:404});

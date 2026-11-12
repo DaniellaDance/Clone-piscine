@@ -1,4 +1,5 @@
 import {handleFathom,receiveFathom} from './fathom.mjs';
+import {handleMeetingResults} from './meeting-results.mjs';
 import {handleProjectImport} from './bitrix-project-import.mjs';
 import {handleAI} from './ai-assistant.mjs';
 import {handleMediaMessages} from './media-messages.mjs';
@@ -60,6 +61,7 @@ const token=randomBytes(32).toString('hex');await query("INSERT INTO ideafix.ses
 if(url.pathname==='/api/track'&&req.method==='POST'){const b=await body(req),t=await ticket(Number(b.id));if(!t.access_hash||hash(String(b.code))!==t.access_hash)fail(403,'Неверный код доступа');return send(await detail(null,t,true))}
 const u=await session(req);if(!u)fail(401,'Войдите в аккаунт');
 if(await handleFathom({url,req,u,body,query,pool,send,fail}))return;
+if(await handleMeetingResults({url,req,res,u,body,query,send,fail}))return;
 if(url.pathname==='/api/me')return send({...publicUser(u),departments});
 if(url.pathname==='/api/completed-kz-projects'){
  if(req.method==='GET')return send((await query('SELECT id,name,city,vendor_name,description,latitude,longitude FROM ideafix.completed_kz_projects ORDER BY city,name')).rows);

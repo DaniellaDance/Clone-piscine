@@ -1,4 +1,5 @@
 import {createHmac,createHash,randomBytes,timingSafeEqual} from 'node:crypto';
+import {autoAttach} from './meeting-results.mjs';
 const leader=u=>u&&['director','admin','lead'].includes(u.role);
 const text=(v,n=100000)=>typeof v==='string'?v.slice(0,n):'';
 export function verifyFathom(secret,headers,raw,now=Date.now()){
@@ -22,7 +23,12 @@ export async function receiveFathom({url,req,query,send,fail}){
  const raw=Buffer.concat(chunks).toString('utf8');if(!verifyFathom(config.secret,req.headers,raw))fail(401,'Неверная подпись Fathom');
  let payload;try{payload=JSON.parse(raw)}catch{fail(400,'Некорректный JSON')}
  const b=normalizeFathom(payload);
+ const start=Date.parse(payload.scheduled_start_time||payload.recording_start_time);
+ const scheduled=Number.isFinite(start)?new Date(start).toISOString():null;
+ const meetingUrl=typeof payload.meeting_url==='string'?payload.meeting_url.slice(0,1000):'';
  await query(`INSERT INTO ideafix.fathom_recordings(owner,recording_id,title,source_url,summary,transcript,action_items) VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT(owner,recording_id) DO UPDATE SET title=excluded.title,summary=CASE WHEN excluded.summary='' THEN ideafix.fathom_recordings.summary ELSE excluded.summary END,transcript=CASE WHEN excluded.transcript='[]'::jsonb THEN ideafix.fathom_recordings.transcript ELSE excluded.transcript END,action_items=CASE WHEN excluded.action_items='[]'::jsonb THEN ideafix.fathom_recordings.action_items ELSE excluded.action_items END`,[config.owner,b.recording_id,b.title,b.source_url,b.summary,JSON.stringify(b.transcript),JSON.stringify(b.action_items)]);
+ const saved=(await query('UPDATE ideafix.fathom_recordings SET scheduled_start=$1,meeting_url=$2 WHERE owner=$3 AND recording_id=$4 RETURNING id,owner,title,meeting_id,scheduled_start,meeting_url',[scheduled,meetingUrl,config.owner,b.recording_id])).rows[0];
+ if(saved?.id&&saved.scheduled_start)await autoAttach(query,saved);
  send({ok:true});return true;
 }
 export async function handleFathom({url,req,u,body,query,pool,send,fail}){
