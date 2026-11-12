@@ -15,6 +15,6 @@ if(!active)throw Error('Neon deployment activation timeout');
 const fn=await neon.functions.get({projectId,branchId,slug});const url=fn.invocation_url||'https://br-patient-wildflower-baqlr622-horsecup.compute.c-8.eu-central-1.aws.neon.tech';
 console.log('Neon function URL:',url);
 for(const route of ['/healthz','/','/manifest.webmanifest','/js/game.js','/images/voronaya.webp','/images/animations/black.gif']){const resp=await fetch(url.replace(/\/$/,'')+route,{signal:AbortSignal.timeout(20000),headers:{'Cache-Control':'no-cache'}});if(!resp.ok)throw Error('Smoke test '+route+' failed: '+resp.status);console.log('OK',route,resp.status)}
-const revision=await fetch(url.replace(/\/$/,'')+'/deployment.json',{signal:AbortSignal.timeout(20000),cache:'no-store'}).then(r=>r.json());if(revision.commit!==GITHUB_SHA)throw Error('Published revision mismatch');
+let verified=false;for(let attempt=0;attempt<30;attempt++){const revision=await fetch(url.replace(/\/$/,'')+'/deployment.json?revision='+GITHUB_SHA+'&attempt='+attempt,{signal:AbortSignal.timeout(20000),cache:'no-store',headers:{'Cache-Control':'no-cache'}}).then(r=>r.json());if(revision.commit===GITHUB_SHA){verified=true;break}await new Promise(r=>setTimeout(r,2000))}if(!verified)throw Error('Published revision mismatch after propagation wait');
 console.log('HorseCup Neon verified:',url,'commit:',GITHUB_SHA);
 
