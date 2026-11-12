@@ -632,3 +632,13 @@ body.partner-map-active #view:has(#partner-world-map) .atlas-directory{min-heigh
 #view:has(.showcase-heading) .showcase-card-open .showcase-card-symbol{flex:none}
 #view:has(.showcase-heading) .showcase-vote{min-height:26px!important}
 @media(max-height:650px){#view:has(.showcase-heading) .showcase-card-symbol{display:none!important}#view.list-screen:has(.showcase-heading) #results .showcase-glass-card strong{font-size:11px!important;line-height:1.1!important}}
+/* Sky header continues the mountain artwork without a white divider. */
+.header{background:linear-gradient(105deg,#0d74ce 0%,#148de1 60%,#4aa9e6 100%)!important;border-bottom:0!important;box-shadow:none!important;color:#fff!important}
+.header .brand,.header .brand strong,.header .brand .brand-slogan,.header .username,.header #connection{color:#fff!important}
+.header .brand-mark{background:#e4f5ffdc;border-radius:50%;padding:3px}
+.header #language button,.header #language [role=radio],.header .account-more>summary{background:#ffffff20!important;border:1px solid #ffffff66!important;color:#fff!important;box-shadow:none!important}
+.header #language button.active,.header #language [aria-checked=true]{background:#fff!important;color:#1257a6!important;border-color:#fff!important}
+.header .account-popup{color:#183b34}
+.layout:has(.home-hero-wrap) #view{padding-top:0!important}
+.home-hero-wrap{margin-top:0!important}
+.home-hero-wrap .quote-head{border-top-left-radius:0!important;border-top-right-radius:0!important;border-top:0!important}
