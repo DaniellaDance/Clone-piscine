@@ -2,7 +2,7 @@ import {privateInsight,ownerOf} from './ticket-access.mjs';
 export const isTop=u=>!!u&&['director','admin'].includes(u.role);
 export const isLeader=u=>!!u&&['director','admin','lead'].includes(u.role);
 export const sameDepartment=(u,r)=>!!u&&!!u.department&&u.department===r.department;
-export const canManageRecord=(u,r)=>canSeeTicket(u,r)&&(isTop(u)||(u?.role==='lead'&&sameDepartment(u,r)&&(!r.idea_audience||r.idea_audience==='department')));
+export const canManageRecord=(u,r)=>canSeeTicket(u,r)&&(isTop(u)||(u?.role==='lead'&&sameDepartment(u,r)&&(r.author===u.id||!r.idea_audience||r.idea_audience==='department')));
 export function canSeeTicket(u,t){
  if(privateInsight(t))return ownerOf(u,t);if(t.workflow?.visibility==='leaders')return ownerOf(u,t)||isTop(u)||(u?.role==='lead'&&sameDepartment(u,t));
  if(t.workflow?.visibility==='department'&&!ownerOf(u,t))return isTop(u)||sameDepartment(u,t);
