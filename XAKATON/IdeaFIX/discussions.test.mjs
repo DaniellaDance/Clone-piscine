@@ -61,3 +61,4 @@ test('topic closure stores every message as a persistent downloadable file',asyn
  assert.match(savedFile.toString('utf8'),/Второе сообщение/);
  assert.ok(statements.indexOf('COMMIT')>statements.findIndex(x=>x.includes('INSERT INTO ideafix.discussion_exports')));
 });
+

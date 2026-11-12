@@ -42,7 +42,7 @@ export async function handleDiscussions({url, req, u, body, query, pool, send, f
   if (url.pathname === '/api/discussions/candidates') {
     if (req.method !== 'GET') fail(405, 'Метод недоступен');
     const rows = (await query(
-      "SELECT id,title,kind,department,stage,author,anonymous,idea_audience FROM ideafix.tickets WHERE NOT anonymous AND ($1 OR department=$2) ORDER BY created DESC LIMIT 200",
+      "SELECT id,title,kind,department,stage,author,anonymous,idea_audience,workflow,entry_type FROM ideafix.tickets WHERE NOT anonymous AND ($1 OR department=$2) ORDER BY created DESC LIMIT 200",
       [['director','admin'].includes(u.role), u.department]
     )).rows;
     send(rows.filter(t => ['idea', 'problem'].includes(t.kind)&&canSeeTicket(u,t)));
@@ -52,14 +52,14 @@ export async function handleDiscussions({url, req, u, body, query, pool, send, f
   if (url.pathname === '/api/discussions/topics') {
     if (req.method === 'GET') {
       const rows = (await query(
-        "SELECT d.id,d.ticket_id,d.created,d.closed_at,t.title,t.kind,t.department,t.author,t.anonymous,t.idea_audience,u.name AS created_by_name FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id JOIN ideafix.users u ON u.id=d.created_by WHERE ($1 OR t.department=$2) ORDER BY d.created DESC LIMIT 100",[u.role==='director',u.department]
+        "SELECT d.id,d.ticket_id,d.created,d.closed_at,t.title,t.kind,t.department,t.author,t.anonymous,t.idea_audience,t.workflow,t.entry_type,t.stage,u.name AS created_by_name FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id JOIN ideafix.users u ON u.id=d.created_by WHERE ($1 OR t.department=$2) ORDER BY d.created DESC LIMIT 100",[u.role==='director',u.department]
       )).rows;
       send(rows.filter(t=>canSeeTicket(u,t))); return true;
     }
     if (req.method !== 'POST') fail(405, 'Метод недоступен');
     const data = await body(req);
     const ticketId = asId(data.ticket_id, fail);
-    const t = (await query('SELECT id,title,kind,department,anonymous,published,author,idea_audience FROM ideafix.tickets WHERE id=$1', [ticketId])).rows[0];
+    const t = (await query('SELECT id,title,kind,department,anonymous,published,author,idea_audience,workflow,entry_type,stage FROM ideafix.tickets WHERE id=$1', [ticketId])).rows[0];
     if (!t||!canSeeTicket(u,t)) fail(404, 'Идея или проблема не найдена');
     if (t.anonymous || !['idea','problem'].includes(t.kind)) fail(403, 'Для общего обсуждения можно выбирать только неанонимные идеи и проблемы');
     if (!['director','admin'].includes(u.role) && t.department !== u.department)
@@ -76,7 +76,7 @@ export async function handleDiscussions({url, req, u, body, query, pool, send, f
   if (!m) fail(404, 'Обсуждение не найдено');
   const topicId = asId(m[1], fail), action = m[2] || '';
   const topic = (await query(
-    'SELECT d.id,d.ticket_id,d.created,d.closed_at,t.title,t.kind,t.department,t.author,t.anonymous,t.idea_audience FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id WHERE d.id=$1',
+    'SELECT d.id,d.ticket_id,d.created,d.closed_at,t.title,t.kind,t.department,t.author,t.anonymous,t.idea_audience,t.workflow,t.entry_type,t.stage FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id WHERE d.id=$1',
     [topicId]
   )).rows[0];
   if (!topic || !canSeeTicket(u,topic) || (!['director','admin'].includes(u.role) && topic.department!==u.department)) fail(404, 'Обсуждение не найдено');
@@ -151,3 +151,4 @@ export async function handleDiscussions({url, req, u, body, query, pool, send, f
 
   fail(405, 'Метод недоступен');
 }
+

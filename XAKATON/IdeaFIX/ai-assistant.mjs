@@ -140,14 +140,14 @@ export async function handleAI({url,req,u,body,query,send,fail}){
   if(source.length<80)fail(400,'Добавьте текст реальной новости (не менее 80 символов). ИИ не должен придумывать публикации.');
   const sourceUrl=String(input.source_url||'').trim();
   if(sourceUrl&&!/^https:\/\/[^\s]+$/i.test(sourceUrl))fail(400,'Ссылка должна начинаться с https://');
-  const pilots=(await query("SELECT id,title,department,stage,author,anonymous,recipient,published,kind,idea_audience FROM ideafix.tickets WHERE (lower(stage) LIKE '%pilot%' OR lower(stage) LIKE '%пилот%') AND ($1 OR department=$2) ORDER BY id DESC LIMIT 30",[u.role!=='lead',u.department])).rows.filter(t=>canSeeTicket(u,t));
+  const pilots=(await query("SELECT id,title,department,stage,author,anonymous,recipient,published,kind,idea_audience,workflow,entry_type FROM ideafix.tickets WHERE (lower(stage) LIKE '%pilot%' OR lower(stage) LIKE '%пилот%') AND ($1 OR department=$2) ORDER BY id DESC LIMIT 30",[u.role!=='lead',u.department])).rows.filter(t=>canSeeTicket(u,t));
   const payload={topic:name,kind,source_text:source,source_url:sourceUrl,pilots};
   const result=await generate('Ты аналитик по технологиям и корпоративным инновациям. Работай ТОЛЬКО с предоставленным текстом новости. Верни JSON: summary (строка, 2-4 предложения), relevance (строка), opportunities (массив строк), risks (массив строк), pilot_impacts (массив объектов {pilot_id,impact,action,confidence}), improvement_ideas (массив объектов {title,description,benefit,first_step}), verification_needed (массив строк). Сопоставляй пилоты только из списка; если связи нет, оставь pilot_impacts пустым. Не придумывай цифры, факты, ссылки и экономический эффект. Новые идеи только как черновики, без публикации и отправки в Bitrix24. Отмечай, что факты из источника не проверены.',payload,()=>localNewsBrief(payload));
   send({topic:name,source_url:sourceUrl,analysis:result,draft:true,ai_generated:result.provider!=='rules',requires_human_approval:true,provider:result.provider,free_mode:result.free_mode,provider_notes:result.provider_notes});return true;
  }
  if(url.pathname==='/api/ai/idea-analysis'){
   if(!ticketId)fail(400,'Выберите идею');
-  const t=(await query('SELECT id,title,body,department,stage,workflow,published,author,anonymous,recipient,kind,idea_audience FROM ideafix.tickets WHERE id=$1',[ticketId])).rows[0];
+  const t=(await query('SELECT id,title,body,department,stage,workflow,published,author,anonymous,recipient,kind,idea_audience,entry_type FROM ideafix.tickets WHERE id=$1',[ticketId])).rows[0];
   if(!t||!canSeeTicket(u,t))fail(404,'Идея не найдена');
   
   const payload={title:t.title,description:t.body,department:t.department,stage:t.stage,workflow:t.workflow};
@@ -156,7 +156,7 @@ export async function handleAI({url,req,u,body,query,send,fail}){
  }
  if(url.pathname==='/api/ai/discussion-protocol'){
   const topicId=id(input.topic_id);if(!topicId)fail(400,'Выберите обсуждение');
-  const topic=(await query('SELECT d.id,d.ticket_id,t.title,t.department,t.author,t.anonymous,t.kind,t.idea_audience FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id WHERE d.id=$1',[topicId])).rows[0];if(!topic||!canSeeTicket(u,topic))fail(404,'Обсуждение не найдено');
+  const topic=(await query('SELECT d.id,d.ticket_id,t.title,t.department,t.author,t.anonymous,t.kind,t.idea_audience,t.workflow,t.entry_type FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id WHERE d.id=$1',[topicId])).rows[0];if(!topic||!canSeeTicket(u,topic))fail(404,'Обсуждение не найдено');
   if(u.role==='lead'&&topic.department!==u.department)fail(403,'Нет доступа');
   const rows=(await query('SELECT m.text,m.created,u.name FROM ideafix.discussion_messages m JOIN ideafix.users u ON u.id=m.author WHERE m.topic_id=$1 ORDER BY m.id LIMIT 200',[topicId])).rows;
   if(!rows.length)fail(400,'В обсуждении пока нет сообщений');
@@ -166,4 +166,5 @@ export async function handleAI({url,req,u,body,query,send,fail}){
  }
  fail(404,'Неизвестный ИИ-маршрут');
 }
+
 

@@ -1,3 +1,4 @@
+import {privateInsight} from './ticket-access.mjs';
 import {mirrorIdea} from './bitrix-events.mjs';
 const managers=u=>['director','admin','lead'].includes(u.role);
 const top=u=>['director','admin'].includes(u.role);
@@ -30,7 +31,7 @@ export async function handleMeetings({url,req,res,u,body,send,fail,query,manage,
  if(!match[2]&&req.method==='PUT'){if(!canManageMeeting(u,m))fail(403,'Нет доступа к планированию');const b=validate(await body(req));const updated=(await query('UPDATE ideafix.meetings SET title=$1,kind=$2,starts_at=$3,department=$4,location=$5,vendor_id=$7 WHERE id=$6 RETURNING *',[b.title,b.kind,b.starts_at,b.department,b.location,m.id,b.vendor_id])).rows[0];send({...updated,owner:undefined,canManage:true});return true}
  if(match[2]==='agenda'&&req.method==='POST'){
   if(!managers(u)||!canSeeMeeting(u,m))fail(403,'План совещания доступен директору и руководителям');
-  const b=await body(req);if(!Number.isSafeInteger(b.ticket_id)||b.ticket_id<1)fail(400,'Укажите номер обращения');const t=(await query('SELECT * FROM ideafix.tickets WHERE id=$1',[b.ticket_id])).rows[0];if(!t)fail(404,'Обращение не найдено');if(!manage(u,t))fail(403,'Нет доступа к обращению');
+  const b=await body(req);if(!Number.isSafeInteger(b.ticket_id)||b.ticket_id<1)fail(400,'Укажите номер обращения');const t=(await query('SELECT * FROM ideafix.tickets WHERE id=$1',[b.ticket_id])).rows[0];if(!t)fail(404,'Обращение не найдено');if(privateInsight(t))fail(409,'Сначала переведите личный инсайт в предложение');if(!manage(u,t))fail(403,'Нет доступа к обращению');
   const added=await query('INSERT INTO ideafix.meeting_agenda(meeting_id,ticket_id,added_by) VALUES($1,$2,$3) ON CONFLICT DO NOTHING RETURNING ticket_id',[m.id,t.id,u.id]);if(added.rowCount)await event(t.id,u,`Включено в повестку: ${m.title}`);const bitrix_sync=await mirrorIdea({query,ticket:t,u,kind:'discussion',meeting:m});send({ok:true,alreadyAdded:!added.rowCount,bitrix_sync});return true;
  }
  if(req.method!=='GET')fail(405,'Метод недоступен');
@@ -44,3 +45,4 @@ export async function handleMeetings({url,req,res,u,body,send,fail,query,manage,
  }
  send({meeting:{...m,owner:undefined,canManage:canManageMeeting(u,m),canAddAgenda:managers(u)&&canSeeMeeting(u,m)},tickets:rows.map(({id,title,body,department,status})=>({id,title,body,department,status}))});return true;
 }
+
