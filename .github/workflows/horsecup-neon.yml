@@ -41,12 +41,13 @@ jobs:
           rm -rf node_modules/sharp node_modules/@img node_modules/.cache
           echo 'Largest directories before packaging:'
           du -h -d 2 . | sort -h | tail -20
-          zip -q -r -9 "$RUNNER_TEMP/horsecup-neon.zip" . -x '*.test.mjs' 'downloads/*' 'images/*.png' 'node_modules/sharp/*' 'node_modules/@img/*' 'node_modules/.cache/*' 'README.md' 'scripts/*' 'optimize-images.mjs' 'package-lock.json'
+          zip -q -r -9 "$RUNNER_TEMP/horsecup-neon.zip" . -x '*.test.mjs' 'downloads/*' 'images/*' 'node_modules/sharp/*' 'node_modules/@img/*' 'node_modules/.cache/*' 'README.md' 'scripts/*' 'optimize-images.mjs' 'package-lock.json' '*.apk' '*.mp4' '*.wav' '*.ogg' '*.zip' '*.map'
           test -f "$RUNNER_TEMP/horsecup-neon.zip" || { echo 'Archive missing'; exit 1; }
           ls -lh "$RUNNER_TEMP/horsecup-neon.zip"
           test "$(stat -c%s "$RUNNER_TEMP/horsecup-neon.zip")" -lt 33554432 || { echo 'Neon ZIP exceeds 32 MiB'; exit 1; }
           unzip -t "$RUNNER_TEMP/horsecup-neon.zip" | tail -1
           unzip -l "$RUNNER_TEMP/horsecup-neon.zip" | tail -2
+          python3 -c 'import zipfile,os; z=zipfile.ZipFile(os.environ["RUNNER_TEMP"]+"/horsecup-neon.zip"); n=sum(i.file_size for i in z.infolist()); print("Uncompressed size:",round(n/1048576,2),"MiB"); assert n < 50*1048576, "Uncompressed bundle exceeds 50 MiB"'
       - name: Save build
         uses: actions/upload-artifact@v4
         with:
