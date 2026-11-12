@@ -551,3 +551,34 @@ body.partner-map-active #view:has(#partner-world-map) .atlas-directory{padding:2
 .home-showcase-product{overflow:visible!important}.showcase-glass-card{overflow:visible!important}.showcase-card-state{background:#e2f3ff;color:#194878}
 @media(max-width:800px){.stage-journey{grid-template-columns:repeat(4,minmax(0,1fr))!important}.stage-title{font-size:11px}.home-showcase-shelves{grid-auto-rows:minmax(180px,auto)}}
 @media(max-width:380px){.stage-journey{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+
+/* Keep the map centered in the available screen, with one compact toolbar. */
+body.partner-map-active #view:has(#partner-world-map){position:fixed!important;inset:58px 0 calc(76px + env(safe-area-inset-bottom,0px))!important;height:auto!important;width:100%!important;max-width:none!important;overflow:hidden!important;z-index:30!important;padding:5px 10px!important;display:flex!important;flex-direction:column!important;gap:5px!important;background:#eef7fc!important}
+body.partner-map-active #view>.page-head,body.partner-map-active #view>.catalog-toolbar,body.partner-map-active #view>.catalog-note,body.partner-map-active #view>#vendor-groups-note,body.partner-map-active #view>#catalog-pager{display:none!important}
+body.partner-map-active #view:has(#partner-world-map)>.partner-tabs{flex:0 0 auto!important;margin:0!important;display:flex;gap:5px}
+body.partner-map-active .partner-tabs button{min-height:34px!important;padding:6px 9px!important;font-size:12px!important;flex:1}
+body.partner-map-active #view:has(#partner-world-map)>#catalog-results{flex:1!important;min-height:0!important;display:flex!important;overflow:hidden!important}
+body.partner-map-active #view:has(#partner-world-map) .partner-map-panel{display:flex!important;flex-direction:column!important;flex:1!important;min-height:0!important;overflow:hidden!important;border-radius:16px!important}
+body.partner-map-active .atlas-heading{flex:none;padding:8px 12px!important;gap:8px;align-items:center}
+body.partner-map-active .atlas-heading h2{font-size:18px!important;margin:0!important;white-space:nowrap}
+body.partner-map-active .atlas-heading p,body.partner-map-active .atlas-eyebrow,body.partner-map-active .map-note{display:none!important}
+body.partner-map-active .atlas-heading>button{padding:5px 9px;max-width:none!important;font-size:11px;white-space:nowrap!important;min-height:30px}
+body.partner-map-active .atlas-toolbar{flex:none;gap:5px;padding:0 8px 7px!important;flex-wrap:nowrap}
+body.partner-map-active .atlas-toolbar>label{min-width:0;flex:1;font-size:0;gap:0}
+body.partner-map-active .atlas-toolbar select{min-height:32px;padding:5px;font-size:12px;width:100%}
+body.partner-map-active .atlas-basemap button{font-size:10px;padding:6px;min-height:30px}
+body.partner-map-active .atlas-options{font-size:10px;padding:6px;margin:0;align-self:center}
+body.partner-map-active .atlas-options[open]{position:absolute;right:12px;top:120px;z-index:8;background:white;box-shadow:0 8px 25px #26476c33;padding:12px;max-width:220px}
+body.partner-map-active .atlas-workspace{flex:1;min-height:0;grid-template-columns:minmax(0,1fr) 260px;position:relative}
+body.partner-map-active .atlas-canvas-wrap{min-height:0!important;min-width:0;display:flex;border-radius:0!important}
+body.partner-map-active .partner-atlas .native-partner-map,body.partner-map-active #partner-world-map{flex:1!important;height:100%!important;min-height:0!important;width:100%!important}
+body.partner-map-active #view:has(#partner-world-map) .atlas-directory{min-height:0!important;max-height:none!important;height:100%;padding:12px!important;overflow:auto;box-sizing:border-box}
+.atlas-details-close{display:none}
+@media(max-width:800px){body.partner-map-active #view:has(#partner-world-map){inset:52px 0 calc(72px + env(safe-area-inset-bottom,0px))!important;padding:4px!important}body.partner-map-active .atlas-heading h2{font-size:16px!important}body.partner-map-active .atlas-workspace{display:block}body.partner-map-active .atlas-canvas-wrap{height:100%}body.partner-map-active #view:has(#partner-world-map) .atlas-directory{display:none!important;position:absolute;left:6px;right:6px;bottom:25px;height:auto;max-height:45%!important;background:#ffffffef;border:1px solid #bfd6e8;box-shadow:0 5px 24px #26476c33;border-radius:14px;z-index:6}body.partner-map-active #view:has(#partner-world-map) .atlas-directory.is-open{display:block!important}.atlas-details-close{display:block;float:right;position:sticky;top:0;padding:0;width:30px;height:30px;min-height:30px;font-size:23px;background:white;z-index:1}.atlas-directory h3{padding-right:30px}}
+@media(max-height:500px){body.partner-map-active #view:has(#partner-world-map){inset:43px 0 52px!important}body.partner-map-active .atlas-heading{display:none!important}.atlas-legend{display:none}}
+/* Quote belongs on the open snow at the right, leaving the skier clear. */
+.home-hero-wrap .quote-head{display:flex;align-items:flex-end;justify-content:flex-end;padding:12px!important;background-position:center!important}
+.home-hero-wrap .quote-head .daily-quote{width:52%!important;margin:0!important;padding:9px 11px;border-radius:12px;background:#f7fcffe8;box-shadow:0 2px 12px #14355218;color:#173b5e;box-sizing:border-box}
+.home-hero-wrap .quote-head .daily-quote blockquote{font-size:clamp(11px,1.3vw,18px)!important;line-height:1.25;margin:0 0 5px!important}
+.home-hero-wrap .quote-head .quote-credit{font-size:9px!important;gap:3px}
+@media(max-width:650px){.home-hero-wrap .quote-head{padding:7px!important;background-size:100% auto!important;background-repeat:no-repeat;background-color:#d8ecff;min-height:190px}.home-hero-wrap .quote-head .daily-quote{width:53%!important;padding:7px}.home-hero-wrap .quote-head .daily-quote blockquote{font-size:11px!important}.home-hero-wrap .quote-head .quote-credit{font-size:8px!important}}
