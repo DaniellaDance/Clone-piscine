@@ -36,6 +36,7 @@ export async function handleFathom({url,req,u,body,query,pool,send,fail}){
  if(!url.pathname.startsWith('/api/fathom/'))return false;
  if(!leader(u))fail(403,'Материалы Fathom доступны руководителям');
  if(url.pathname==='/api/fathom/connection'){
+  if(!['director','admin'].includes(u.role))fail(403,'Подключение настраивает директор или назначенный им администратор');
   if(req.method==='PUT'){
    const b=await body(req);if(b.enabled===false){await query('UPDATE ideafix.fathom_connections SET enabled=false WHERE owner=$1',[u.id]);send({enabled:false});return true}
    if(typeof b.secret!=='string'||!/^whsec_[A-Za-z0-9+/=_-]{20,200}$/.test(b.secret))fail(400,'Введите секрет подписи вебхука whsec_…');
@@ -63,3 +64,4 @@ export async function handleFathom({url,req,u,body,query,pool,send,fail}){
   await client.query('INSERT INTO ideafix.fathom_outputs(recording,output_key,target_id,kind) VALUES($1,$2,$3,$4)',[r.id,key,saved.id,b.kind]);await client.query('COMMIT');send({id:saved.id},201);return true;
  }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
 }
+

@@ -13,7 +13,7 @@ export async function handleBitrix(ctx){const {url,req,u,body,send,fail,query,po
  const config=async(db=query)=>{const row=(await db('SELECT webhook FROM ideafix.bitrix_config WHERE id=1')).rows[0];return row?.webhook||process.env.BITRIX_WEBHOOK_URL||''};
  if(url.pathname==='/api/bitrix/status'){if(req.method!=='GET')fail(405,'Метод недоступен');return send({configured:!!await config(),portal:BITRIX_PORTAL}),true}
  if(url.pathname==='/api/bitrix/config'){
-  if(u.role!=='director')fail(403,'Подключение настраивает директор');if(req.method!=='PUT')fail(405,'Метод недоступен');const b=await body(req),base=webhookBase(b.webhook);
+  if(!isTop(u))fail(403,'Подключение настраивает директор или назначенный им администратор');if(req.method!=='PUT')fail(405,'Метод недоступен');const b=await body(req),base=webhookBase(b.webhook);
   await bitrixCall(base,'user.get',{FILTER:{ACTIVE:true},start:0});await bitrixCall(base,'tasks.task.getFields');
   await query('INSERT INTO ideafix.bitrix_config(id,webhook) VALUES(1,$1) ON CONFLICT(id) DO UPDATE SET webhook=excluded.webhook',[base]);return send({ok:true,configured:true,portal:BITRIX_PORTAL}),true;
  }
@@ -42,4 +42,5 @@ export async function handleBitrix(ctx){const {url,req,u,body,send,fail,query,po
  await client.query('BEGIN');await client.query("UPDATE ideafix.bitrix_deliveries SET status='sent',task_id=$1 WHERE ticket=$2 AND recipient=$3",[taskId,t.id,recipient]);await event(t.id,u,`Предложение отправлено в Битрикс24. Исполнитель: ${name} (ID ${recipient}). Задача #${taskId}`,false,client);await client.query('COMMIT');return send({ok:true,task_id:taskId,task_url:`${BITRIX_PORTAL}/company/personal/user/${recipient}/tasks/task/view/${taskId}/`}),true;
  }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
 }
+
 
