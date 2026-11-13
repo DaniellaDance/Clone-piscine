@@ -811,3 +811,8 @@ body>#language.language-picker{position:fixed;top:12px;right:14px}
 
 /* Mountain caption replaces the homepage quotation and logo subtitle. */
 .auth-story>.mountain-slogan,.quote-head>.mountain-slogan{position:absolute;right:16px;bottom:14px;z-index:3;max-width:calc(100% - 32px);margin:0;padding:5px 10px;border-radius:7px;background:rgba(255,255,255,.88);color:#102d76;font-size:13px;font-weight:700;line-height:1.35;letter-spacing:0;text-align:right;pointer-events:none}.quote-head{min-height:220px}.auth-story>.mountain-slogan{bottom:16px}@media(max-width:650px){.auth-story>.mountain-slogan,.quote-head>.mountain-slogan{right:10px;bottom:10px;font-size:11px;padding:4px 7px}}@media(max-height:500px){.quote-head{min-height:142px}}
+
+/* Align the mountain image exactly with the full-width header. */
+main#view:has(>.home-hero-wrap){--home-side-gap:clamp(10px,2vw,20px);padding-inline:var(--home-side-gap)!important}
+main#view>.home-hero-wrap{margin-inline:calc(-1 * var(--home-side-gap))!important;max-width:none;width:auto;flex-shrink:0}
+main#view>.home-hero-wrap>.quote-head{width:100%;border-radius:0!important;background-size:cover!important;box-sizing:border-box}
