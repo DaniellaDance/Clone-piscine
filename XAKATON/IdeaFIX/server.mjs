@@ -30,7 +30,7 @@ import {handlePlanner} from './planner.mjs';
 import {proofread} from './proofread.mjs';
 import {handleMeetings} from './meetings.mjs';
 const catalog=JSON.parse(await readFile(new URL('./catalog.json',import.meta.url),'utf8'));
-const pool=new pg.Pool({connectionString:process.env.DATABASE_URL,max:5});
+const pool=new pg.Pool({connectionString:process.env.DATABASE_URL,max:5,connectionTimeoutMillis:15000,query_timeout:30000});
 pool.on('error',e=>console.error('Idle connection closed',e.code));
 const query=(s,p=[])=>pool.query(s,p);
 const hash=s=>createHash('sha256').update(s).digest('hex');

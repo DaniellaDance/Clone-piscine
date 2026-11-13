@@ -7,5 +7,5 @@ const response=await fetch(`https://console.neon.tech/api/v2/projects/${project}
 if(!response.ok)throw Error('Cannot retrieve isolated branch connection: '+response.status);
 const data=await response.json();if(!data.uri)throw Error('No isolated URI');
 console.log('::add-mask::'+data.uri);
-const result=spawnSync(process.execPath,['--test','upgrade.integration.test.mjs'],{stdio:'inherit',env:{...process.env,DATABASE_URL:data.uri,TEST_DATABASE_URL:data.uri,NEON_FUNCTION:'1',DIRECTOR_PASSWORD:''},timeout:180000});
+const result=spawnSync(process.execPath,['--test','upgrade.integration.test.mjs'],{stdio:'inherit',env:{...process.env,DATABASE_URL:data.uri,TEST_DATABASE_URL:data.uri,NEON_FUNCTION:'1',DIRECTOR_PASSWORD:''},timeout:180000,killSignal:'SIGKILL'});
 if(result.status!==0)process.exit(result.status||1);

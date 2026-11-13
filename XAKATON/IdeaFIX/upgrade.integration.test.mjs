@@ -5,10 +5,11 @@ import pg from 'pg';
 import {addBusinessMinutes,sweepOverdue,processOutbox} from './upgrade.mjs';
 test('complete upgrade workflow on isolated Neon branch',{skip:!process.env.TEST_DATABASE_URL},async()=>{
  process.env.NEON_FUNCTION='1';process.env.DATABASE_URL=process.env.TEST_DATABASE_URL;
- const {init,closeUpgrade}=await import('./server.mjs');await init();
+ const {init,closeUpgrade}=await import('./server.mjs');console.log('Upgrade test: initializing isolated schema');try{await init()}catch(e){await closeUpgrade();throw e}console.log('Upgrade test: schema ready');
  const adapter=(await import('./function-adapter.mjs')).default;
- const db=new pg.Pool({connectionString:process.env.TEST_DATABASE_URL});const users={};const prefix='upgrade-test-'+randomUUID();
+ const db=new pg.Pool({connectionString:process.env.TEST_DATABASE_URL,connectionTimeoutMillis:15000,query_timeout:30000});const users={};const prefix='upgrade-test-'+randomUUID();
  try{
+  const exact=(await db.query("SELECT ideafix.business_due('2026-11-13T18:58:00.123456Z',14400) AS due")).rows[0].due;assert.equal(exact.toISOString(),'2026-11-27T18:58:00.123Z');
   for(const [name,role,department] of [['director','director','Руководство'],['lead','lead','ИТ'],['backup','lead','ИТ'],['author','employee','ИТ'],['peer','employee','ИТ'],['outsider','employee','HR']]){
    const id=prefix+name,token=randomBytes(32).toString('hex');await db.query('INSERT INTO ideafix.users(id,login,name,password,role,department) VALUES($1,$1,$2,$3,$4,$5)',[id,'UPGRADE TEST '+name,'disabled-test-password',role,department]);await db.query("INSERT INTO ideafix.sessions VALUES($1,$2,now()+interval '1 hour')",[createHash('sha256').update(token).digest('hex'),id]);users[name]={id,token};
   }

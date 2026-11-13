@@ -17,13 +17,14 @@ CREATE INDEX IF NOT EXISTS ticket_department_status ON ideafix.tickets(departmen
 CREATE INDEX IF NOT EXISTS ticket_kind_created ON ideafix.tickets(kind,created DESC);
 CREATE INDEX IF NOT EXISTS ticket_due_open ON ideafix.tickets(due) WHERE status NOT IN ('done','reject');
 CREATE OR REPLACE FUNCTION ideafix.business_due(start_at timestamptz,minutes integer) RETURNS timestamptz LANGUAGE plpgsql IMMUTABLE AS $$
-DECLARE local_at timestamp:=start_at AT TIME ZONE 'Asia/Almaty';remain bigint:=minutes::bigint*60;part bigint;
+DECLARE local_at timestamp:=start_at AT TIME ZONE 'Asia/Almaty';remain numeric:=minutes::numeric*60;part numeric;next_day timestamp;
 BEGIN
  IF minutes<0 OR minutes>527040 THEN RAISE EXCEPTION 'Invalid business minutes';END IF;
  WHILE remain>0 LOOP
   IF extract(isodow FROM local_at)>=6 THEN local_at:=date_trunc('day',local_at)+(8-extract(isodow FROM local_at))::integer*interval '1 day';CONTINUE;END IF;
-  part:=least(remain,extract(epoch FROM date_trunc('day',local_at)+interval '1 day'-local_at)::bigint);
-  local_at:=local_at+part*interval '1 second';remain:=remain-part;
+  next_day:=date_trunc('day',local_at)+interval '1 day';part:=extract(epoch FROM next_day-local_at);
+  IF remain<part THEN local_at:=local_at+remain*interval '1 second';remain:=0;
+  ELSE local_at:=next_day;remain:=remain-part;END IF;
  END LOOP;
  IF minutes>0 AND extract(isodow FROM local_at)>=6 THEN local_at:=date_trunc('day',local_at)+(8-extract(isodow FROM local_at))::integer*interval '1 day';END IF;
  RETURN local_at AT TIME ZONE 'Asia/Almaty';
