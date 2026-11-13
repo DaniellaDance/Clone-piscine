@@ -10,7 +10,7 @@ test('complete upgrade workflow on isolated Neon branch',{skip:!process.env.TEST
  const db=new pg.Pool({connectionString:process.env.TEST_DATABASE_URL,connectionTimeoutMillis:15000,query_timeout:30000});const users={};const prefix='upgrade-test-'+randomUUID();
  try{
   const exact=(await db.query("SELECT ideafix.business_due('2026-11-13T18:58:00.123456Z',14400) AS due")).rows[0].due;assert.equal(exact.toISOString(),'2026-11-27T18:58:00.123Z');
-  for(const [name,role,department] of [['director','director','Руководство'],['lead','lead','ИТ'],['backup','lead','ИТ'],['author','employee','ИТ'],['peer','employee','ИТ'],['outsider','employee','HR']]){
+  for(const [name,role,department] of [['director','director','Руководство'],['admin','admin','Руководство'],['lead','lead','ИТ'],['backup','lead','ИТ'],['author','employee','ИТ'],['peer','employee','ИТ'],['outsider','employee','HR']]){
    const id=prefix+name,token=randomBytes(32).toString('hex');await db.query('INSERT INTO ideafix.users(id,login,name,password,role,department) VALUES($1,$1,$2,$3,$4,$5)',[id,'UPGRADE TEST '+name,'disabled-test-password',role,department]);await db.query("INSERT INTO ideafix.sessions VALUES($1,$2,now()+interval '1 hour')",[createHash('sha256').update(token).digest('hex'),id]);users[name]={id,token};
   }
   const call=async(name,path,data,method=data?'POST':'GET')=>{const r=await adapter.fetch(new Request('https://test.invalid/api'+path,{method,headers:{cookie:'if_session='+users[name].token,...(data?{'content-type':'application/json'}:{})},...(data?{body:JSON.stringify(data)}:{})}));return {status:r.status,data:await r.json()}};
@@ -36,7 +36,8 @@ test('complete upgrade workflow on isolated Neon branch',{skip:!process.env.TEST
   const n=(await db.query("SELECT count(*)::int AS n FROM ideafix.ticket_audit WHERE ticket=$1 AND event='overdue'",[overdue.data.id])).rows[0].n;assert.equal(n,1);
   const analytics=await call('director','/upgrade/analytics');assert.equal(analytics.status,200);assert.equal(analytics.data.timeZone,'Asia/Almaty');assert.equal((await call('author','/upgrade/analytics')).status,403);
   const badFile=await call('author','/tickets/'+ticket.id+'/files',{filename:'payload.html',mime:'text/html',base64:'aGVsbG8='});assert.equal(badFile.status,400);
-  await processOutbox((s,p)=>db.query(s,p));const outbox=await call('director','/upgrade/integration-log');assert.equal(outbox.status,200);assert.equal(outbox.data.mode,'simulation');assert.ok(outbox.data.items.some(x=>x.status==='simulated'));
+  await processOutbox((s,p)=>db.query(s,p));assert.equal((await call('director','/upgrade/integration-log')).status,403);const outbox=await call('admin','/upgrade/integration-log');assert.equal(outbox.status,200);assert.equal(outbox.data.mode,'simulation');assert.ok(outbox.data.items.some(x=>x.status==='simulated'));
+  for(const user of ['author','lead','admin'])assert.equal((await call(user,'/meeting-results')).status,403);assert.equal((await call('director','/meeting-results')).status,200);
   const thread=await call('backup','/discussions/topics',{ticket_id:shared.data.id});assert.equal(thread.status,201);
   const uploaded=await call('backup','/discussions/topics/'+thread.data.id+'/files',{filename:'test-report.txt',mime:'text/plain',base64:Buffer.from('Discussion test file').toString('base64')});assert.equal(uploaded.status,201);
   const messages=await call('backup','/discussions/topics/'+thread.data.id+'/messages');assert.ok(messages.data.some(m=>Number(m.file_id)===Number(uploaded.data.id)&&m.filename==='test-report.txt'));
