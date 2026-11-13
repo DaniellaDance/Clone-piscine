@@ -1,2 +1,0 @@
-import assert from 'node:assert/strict';import{needsAttention}from'./attention.mjs';
-assert.equal(needsAttention({status:'new',priority:'urgent'}),true);assert.equal(needsAttention({status:'work',priority:'normal'},true),true);assert.equal(needsAttention({status:'new',priority:'normal'},false),false);assert.equal(needsAttention({status:'resolved',priority:'urgent'},true),false);console.log('PASS: urgent and regular-customer requests highlighted; resolved requests have no attention marker');

@@ -1,5 +1,0 @@
-export function registrationRole(accounts){
- if(accounts.some(a=>!a.id.startsWith('staff-')||!['employee','manager','accountant'].includes(a.role)))return null;
- return accounts.find(a=>['manager','accountant'].includes(a.role))?.role||'employee';
-}
-export const employeeRegistrationSQL=`WITH locked AS (SELECT id FROM voice_state WHERE id=1 FOR UPDATE), created AS (INSERT INTO voice_accounts(id,login,password_hash,role,name,purchase_reference,employee_id,active) SELECT $1,$2,$3,$4,$5,NULL,$6,true FROM locked WHERE NOT EXISTS (SELECT 1 FROM voice_accounts WHERE employee_id=$6 AND active=true AND (id NOT LIKE 'staff-%' OR role NOT IN ('employee','manager','accountant'))) AND EXISTS(SELECT 1 FROM voice_state s,jsonb_array_elements(s.data->'employees') e WHERE s.id=1 AND e->>'id'=$6) ON CONFLICT(login) DO NOTHING RETURNING id), retired AS (UPDATE voice_accounts SET active=false WHERE employee_id=$6 AND id LIKE 'staff-%' AND role IN ('employee','manager','accountant') AND EXISTS(SELECT 1 FROM created) RETURNING id) SELECT id FROM created`;
