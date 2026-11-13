@@ -816,3 +816,6 @@ body>#language.language-picker{position:fixed;top:12px;right:14px}
 main#view:has(>.home-hero-wrap){--home-side-gap:clamp(10px,2vw,20px);padding-inline:var(--home-side-gap)!important}
 main#view>.home-hero-wrap{margin-inline:calc(-1 * var(--home-side-gap))!important;max-width:none;width:auto;flex-shrink:0}
 main#view>.home-hero-wrap>.quote-head{width:100%;border-radius:0!important;background-size:cover!important;box-sizing:border-box}
+
+/* Main sections live in the homepage tile menu. */
+.bottom-nav{grid-template-columns:repeat(2,minmax(0,1fr))!important}.home-section-tile .stage-icon svg{width:28px;height:28px}.home-section-tile .stage-title{line-height:1.2}
