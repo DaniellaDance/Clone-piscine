@@ -1,4 +1,5 @@
 import {createHash} from 'node:crypto';
+const selectedGemini=new Map();
 const allowed=new Set(['en','kk']);
 export function validateTranslation(input){
  if(!allowed.has(input?.language)||!Array.isArray(input.texts)||!input.texts.length||input.texts.length>32)throw Object.assign(new Error('Выберите английский или казахский язык и не более 32 фрагментов'),{status:400});
@@ -10,8 +11,16 @@ export async function translateTexts(texts,language,{fetcher=fetch,env=process.e
  const payload=JSON.stringify({texts});let last;
  const providers=[];
  if(env.GEMINI_API_KEY?.trim())providers.push(async()=>{
-  const r=await fetcher('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(env.GEMINI_MODEL||'gemini-2.5-flash-lite')+':generateContent',{method:'POST',headers:{'x-goog-api-key':env.GEMINI_API_KEY,'Content-Type':'application/json'},signal:AbortSignal.timeout(16000),body:JSON.stringify({systemInstruction:{parts:[{text:instruction}]},contents:[{role:'user',parts:[{text:payload}]}],generationConfig:{temperature:0,responseMimeType:'application/json'}})});
-  if(!r.ok)throw Error('Translation provider '+r.status);const d=await r.json();return JSON.parse(d.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'{}');
+  const tokenHash=createHash('sha256').update(env.GEMINI_API_KEY).digest('hex');
+  const models=[selectedGemini.get(tokenHash)||env.TRANSLATION_MODEL||env.GEMINI_MODEL||'gemini-flash-lite-latest'];let discovered=false;
+  for(let index=0;index<models.length&&index<7;index++){
+   const model=models[index],r=await fetcher('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent',{method:'POST',headers:{'x-goog-api-key':env.GEMINI_API_KEY,'Content-Type':'application/json'},signal:AbortSignal.timeout(16000),body:JSON.stringify({systemInstruction:{parts:[{text:instruction}]},contents:[{role:'user',parts:[{text:payload}]}],generationConfig:{responseMimeType:'application/json'}})});
+   if(r.ok){const d=await r.json();const output=JSON.parse(d.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'{}');selectedGemini.set(tokenHash,model);return output}
+   console.error('Translation model response:',model,r.status);
+   if((r.status===404||r.status===400)&&!discovered){discovered=true;const listed=await fetcher('https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000',{headers:{'x-goog-api-key':env.GEMINI_API_KEY},signal:AbortSignal.timeout(10000)});if(listed.ok){const data=await listed.json();const score=m=>(m.includes('lite')?0:m.includes('flash')?1:2);const available=(data.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>String(m.name||'').replace(/^models\//,'')).filter(m=>/^gemini-/.test(m)&&/flash|pro/.test(m)&&!/image|tts|audio|live|embedding|vision|robotics/.test(m));available.sort((a,b)=>score(a)-score(b)||(parseFloat(b.match(/[0-9]+[.][0-9]+/)?.[0])||0)-(parseFloat(a.match(/[0-9]+[.][0-9]+/)?.[0])||0));models.push(...available.filter(m=>!models.includes(m)).slice(0,6))}}
+   if(r.status===401||r.status===403||r.status===429)break;
+  }
+  throw Error('No available Gemini translation model');
  });
  if(env.OPENAI_API_KEY?.trim())providers.push(async()=>{
   const r=await fetcher('https://freebuff.com/api/v1/paid/chat/completions',{method:'POST',headers:{Authorization:'Bearer '+env.OPENAI_API_KEY,'Content-Type':'application/json'},signal:AbortSignal.timeout(16000),body:JSON.stringify({model:env.FREEBUFF_MODEL||'google/gemini-2.5-flash-lite',temperature:0,response_format:{type:'json_object'},messages:[{role:'system',content:instruction},{role:'user',content:payload}]})});if(!r.ok)throw Error('Translation provider '+r.status);const d=await r.json();return JSON.parse(d.choices?.[0]?.message?.content||'{}');
