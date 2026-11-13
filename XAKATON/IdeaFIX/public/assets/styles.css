@@ -796,3 +796,12 @@ body>#language.language-picker{position:fixed;top:12px;right:14px}
 .account-more>summary::-webkit-details-marker{display:none}
 .account-more[open]>summary{background:#ffffff38!important}
 @media(max-width:390px){.bottom-nav{gap:1px!important}.bottom-icon{width:26px;height:26px}.bottom-icon .ui-line-icon{width:23px;height:23px}.bottom-text{font-size:9px!important}}
+
+/* Scope filter inside Idea Board: compact on mobile, bottom menu stays uncluttered. */
+#view:has(.showcase-heading) .showcase-scope{display:inline-flex;align-items:center;gap:3px;margin-top:6px;padding:3px;background:#e7f0fc;border-radius:11px;border:1px solid #c4d8ef;max-width:100%;box-sizing:border-box}
+#view:has(.showcase-heading) .showcase-scope button{border:0!important;border-radius:8px!important;min-height:30px!important;padding:5px 12px!important;background:transparent!important;color:#2a527b!important;font-size:12px!important;font-weight:700!important;white-space:nowrap!important;box-shadow:none!important;cursor:pointer}
+#view:has(.showcase-heading) .showcase-scope button.active{background:#1f5bdc!important;color:white!important;box-shadow:0 2px 7px #234b8830!important}
+@media(max-width:800px){
+ #view:has(.showcase-heading) .showcase-scope{display:flex;width:100%;margin-top:5px;gap:3px;padding:2px}
+ #view:has(.showcase-heading) .showcase-scope button{flex:1 1 0;min-width:0!important;min-height:29px!important;padding:5px 3px!important;font-size:11px!important}
+}
