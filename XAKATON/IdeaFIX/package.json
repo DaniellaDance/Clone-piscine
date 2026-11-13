@@ -7,7 +7,8 @@
     "start": "node server.mjs",
     "test": "node --test test.mjs",
     "build": "node scripts/icons.mjs",
-    "test:unit": "node --test map-directory.test.mjs privacy.test.mjs bitrix.test.mjs proofread.test.mjs discussions.test.mjs ai-assistant.test.mjs bitrix-project-import.test.mjs director-dashboard.test.mjs media-recording.test.mjs fathom.test.mjs meeting-results.test.mjs access.test.mjs meetings-access.test.mjs"
+    "test:unit": "node --test map-directory.test.mjs privacy.test.mjs bitrix.test.mjs proofread.test.mjs discussions.test.mjs ai-assistant.test.mjs bitrix-project-import.test.mjs director-dashboard.test.mjs media-recording.test.mjs fathom.test.mjs meeting-results.test.mjs access.test.mjs meetings-access.test.mjs upgrade.test.mjs",
+    "test:upgrade": "node --test upgrade.test.mjs"
   },
   "dependencies": {
     "node-ical": "^0.27.6",
@@ -18,4 +19,3 @@
     "node": ">=22"
   }
 }
-

@@ -819,3 +819,7 @@ main#view>.home-hero-wrap>.quote-head{width:100%;border-radius:0!important;backg
 
 /* Main sections live in the homepage tile menu. */
 .bottom-nav{grid-template-columns:repeat(2,minmax(0,1fr))!important}.home-section-tile .stage-icon svg{width:28px;height:28px}.home-section-tile .stage-title{line-height:1.2}
+
+
+/* Upgrade panels and accessible notification controls. */
+.notification-button{min-width:34px;min-height:34px;padding:5px 8px;color:#174a9a;background:#fff;border-radius:50%;font-size:14px}.upgrade-content{overflow:auto;min-height:0}.upgrade-inbox-row{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:4px;width:100%;margin:6px 0;white-space:normal}.upgrade-inbox-row.unread{border-left:4px solid #2457f5}.upgrade-rule-list,.upgrade-improvements{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.upgrade-rule{display:grid;gap:9px}.upgrade-rule h2{margin:0}.upgrade-cluster{padding:12px 0;border-top:1px solid #dce5ef}.upgrade-assignee{margin:8px 0;line-height:1.6;flex:none}.upgrade-assignee select{max-width:100%}#view:has(.upgrade-rule-list),#view:has(.upgrade-improvements){overflow:auto!important;display:block!important}@media(max-width:650px){.upgrade-rule-list,.upgrade-improvements{grid-template-columns:1fr}.notification-button{min-width:30px;min-height:30px;font-size:12px}.upgrade-rule{padding:12px}.upgrade-rule h2{font-size:16px}} 

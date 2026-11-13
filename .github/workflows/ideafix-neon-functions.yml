@@ -36,6 +36,10 @@ jobs:
           printf '\n/* ideafix-map-commit:%s */\n' "$GITHUB_SHA" >> public/assets/catalog-ui.js
       - name: Install Neon SDK for deploy command
         run: npm install --no-save --package-lock=false @neon/sdk
+      - name: Verify upgrade on isolated Neon database
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+        run: node scripts/check-upgrade-branch.mjs
       - name: Build Neon function ZIP
         run: |
           zip -q -r "$RUNNER_TEMP/ideafix-neon.zip" . \
@@ -50,3 +54,4 @@ jobs:
           FREEBUFF_MODEL: ${{ vars.FREEBUFF_MODEL }}
           AI_PROVIDER: ${{ vars.AI_PROVIDER }}
         run: node scripts/deploy-neon.mjs "$RUNNER_TEMP/ideafix-neon.zip"
+

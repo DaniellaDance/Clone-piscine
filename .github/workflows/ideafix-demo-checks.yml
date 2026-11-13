@@ -67,12 +67,4 @@ jobs:
           path: ${{ runner.temp }}/ideafix-neon.zip
           retention-days: 7
           if-no-files-found: error
-      - name: Deploy to Neon Functions
-        env:
-          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: ${{ env.GEMINI_MODEL || 'gemini-2.5-flash' }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          npm install --no-save --package-lock=false --ignore-scripts @neon/sdk
-          node scripts/deploy-neon.mjs "$RUNNER_TEMP/ideafix-neon.zip"
+
