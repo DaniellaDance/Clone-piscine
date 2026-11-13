@@ -40,6 +40,13 @@ jobs:
         env:
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
         run: node scripts/check-upgrade-branch.mjs
+      - name: Verify content translation provider
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          FREEBUFF_MODEL: ${{ vars.FREEBUFF_MODEL }}
+        run: node scripts/check-translation.mjs
       - name: Build Neon function ZIP
         run: |
           zip -q -r "$RUNNER_TEMP/ideafix-neon.zip" . \

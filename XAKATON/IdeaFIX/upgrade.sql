@@ -103,3 +103,11 @@ ALTER TABLE ideafix.integration_outbox ADD COLUMN IF NOT EXISTS next_attempt_at 
 ALTER TABLE ideafix.integration_outbox ADD COLUMN IF NOT EXISTS locked_until timestamptz;
 ALTER TABLE ideafix.integration_outbox ADD COLUMN IF NOT EXISTS last_error text NOT NULL DEFAULT '';
 CREATE INDEX IF NOT EXISTS integration_outbox_ready ON ideafix.integration_outbox(next_attempt_at) WHERE status='prepared';
+
+-- User-scoped translation cache: originals are never overwritten.
+CREATE TABLE IF NOT EXISTS ideafix.translations(user_id text NOT NULL REFERENCES ideafix.users(id),language text NOT NULL CHECK(language IN ('en','kk')),source_hash text NOT NULL,translated text NOT NULL,created timestamptz NOT NULL DEFAULT now(),PRIMARY KEY(user_id,language,source_hash));
+CREATE TABLE IF NOT EXISTS ideafix.translation_limits(user_id text PRIMARY KEY REFERENCES ideafix.users(id),window_start timestamptz NOT NULL,n integer NOT NULL);
+
+CREATE TABLE IF NOT EXISTS ideafix.discussion_files(id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,topic_id bigint NOT NULL REFERENCES ideafix.discussion_topics(id),author text NOT NULL REFERENCES ideafix.users(id),filename text NOT NULL,mime text NOT NULL,bytes bytea NOT NULL,created timestamptz NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS discussion_files_topic ON ideafix.discussion_files(topic_id,id);
+ALTER TABLE ideafix.discussion_messages ADD COLUMN IF NOT EXISTS file_id bigint REFERENCES ideafix.discussion_files(id);

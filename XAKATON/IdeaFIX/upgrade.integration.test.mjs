@@ -14,6 +14,8 @@ test('complete upgrade workflow on isolated Neon branch',{skip:!process.env.TEST
    const id=prefix+name,token=randomBytes(32).toString('hex');await db.query('INSERT INTO ideafix.users(id,login,name,password,role,department) VALUES($1,$1,$2,$3,$4,$5)',[id,'UPGRADE TEST '+name,'disabled-test-password',role,department]);await db.query("INSERT INTO ideafix.sessions VALUES($1,$2,now()+interval '1 hour')",[createHash('sha256').update(token).digest('hex'),id]);users[name]={id,token};
   }
   const call=async(name,path,data,method=data?'POST':'GET')=>{const r=await adapter.fetch(new Request('https://test.invalid/api'+path,{method,headers:{cookie:'if_session='+users[name].token,...(data?{'content-type':'application/json'}:{})},...(data?{body:JSON.stringify(data)}:{})}));return {status:r.status,data:await r.json()}};
+  await db.query('INSERT INTO ideafix.translations(user_id,language,source_hash,translated) VALUES($1,$2,$3,$4)',[users.author.id,'en',createHash('sha256').update('v1\0Пилот склада').digest('hex'),'Warehouse pilot']);
+  const translated=await call('author','/translate',{language:'en',texts:['Пилот склада']});assert.equal(translated.status,200);assert.deepEqual(translated.data.translations,['Warehouse pilot']);
   const rule=await call('director','/upgrade/routing',{department:'ИТ',kind:'problem',owner:users.lead.id,backup:users.backup.id,response_days:2,resolution_days:10},'PUT');assert.equal(rule.status,200);
   await call('director','/upgrade/availability',{user_id:users.lead.id,until:new Date(Date.now()+86400000).toISOString()},'PUT');
   const created=await call('author','/tickets',{body:'На тестовом складе остатки не совпадают с учетом товаров',kind:'problem',department:'ИТ',visibility:'leaders',entry_type:'request'});assert.equal(created.status,201);
@@ -35,6 +37,13 @@ test('complete upgrade workflow on isolated Neon branch',{skip:!process.env.TEST
   const analytics=await call('director','/upgrade/analytics');assert.equal(analytics.status,200);assert.equal(analytics.data.timeZone,'Asia/Almaty');assert.equal((await call('author','/upgrade/analytics')).status,403);
   const badFile=await call('author','/tickets/'+ticket.id+'/files',{filename:'payload.html',mime:'text/html',base64:'aGVsbG8='});assert.equal(badFile.status,400);
   await processOutbox((s,p)=>db.query(s,p));const outbox=await call('director','/upgrade/integration-log');assert.equal(outbox.status,200);assert.equal(outbox.data.mode,'simulation');assert.ok(outbox.data.items.some(x=>x.status==='simulated'));
+  const thread=await call('backup','/discussions/topics',{ticket_id:shared.data.id});assert.equal(thread.status,201);
+  const uploaded=await call('backup','/discussions/topics/'+thread.data.id+'/files',{filename:'test-report.txt',mime:'text/plain',base64:Buffer.from('Discussion test file').toString('base64')});assert.equal(uploaded.status,201);
+  const messages=await call('backup','/discussions/topics/'+thread.data.id+'/messages');assert.ok(messages.data.some(m=>Number(m.file_id)===Number(uploaded.data.id)&&m.filename==='test-report.txt'));
+  assert.equal((await call('outsider','/discussions/topics/'+thread.data.id+'/files')).status,403);
+  assert.equal((await call('backup','/discussions/topics/'+thread.data.id+'/close',{})).status,200);
+  assert.equal((await call('backup','/discussions/topics/'+thread.data.id+'/files')).data.length,1);
+  assert.equal((await call('backup','/discussions/topics/'+thread.data.id+'/files',{filename:'late.txt',mime:'text/plain',base64:'aGVsbG8='})).status,409);
   console.log('Verified: routing backup, business SLA, full author loop, stale edit conflict, privacy, duplicate join, escalation once, notifications, analytics and safe files.');
  }finally{await db.end();await closeUpgrade()}
 });

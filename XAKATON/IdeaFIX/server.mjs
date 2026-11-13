@@ -1,3 +1,4 @@
+import {handleTranslation} from './translation.mjs';
 import {handleUpgrade,sweepOverdue,processOutbox} from './upgrade.mjs';
 import {handleMapDirectory,mapDirectory} from './map-directory.mjs';
 import {ownerOf,privateInsight} from './ticket-access.mjs';
@@ -69,6 +70,7 @@ const token=randomBytes(32).toString('hex');await query("INSERT INTO ideafix.ses
 if(url.pathname==='/api/track')fail(404,'Функция недоступна');
 if(false){const b=await body(req),t=await ticket(Number(b.id));if(!t.access_hash||hash(String(b.code))!==t.access_hash)fail(403,'Неверный код доступа');return send(await detail(null,t,true))}
 const u=await session(req);if(!u)fail(401,'Войдите в аккаунт');
+if(await handleTranslation({url,req,u,body,query,send,fail}))return;
 if(await handleUpgrade({url,req,u,query,pool,body,send:(...args)=>{send(...args);return true},fail,visible,manage,ticket,ticketVisibilitySql}))return;
 if(await handleIdeaPrivacy({url,req,u,body,query,send,fail}))return;
 if(await handleFathom({url,req,u,body,query,pool,send,fail}))return;

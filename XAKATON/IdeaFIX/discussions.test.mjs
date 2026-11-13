@@ -62,3 +62,15 @@ test('topic closure stores every message as a persistent downloadable file',asyn
  assert.ok(statements.indexOf('COMMIT')>statements.findIndex(x=>x.includes('INSERT INTO ideafix.discussion_exports')));
 });
 
+
+
+test('discussion file access rejects an unrelated department before reading bytes',async()=>{
+ let bytesRead=false;const args=makeArgs('/discussions/topics/8/files/3','GET',{...me,department:'HR'},async sql=>{if(sql.includes('discussion_topics d'))return {rows:[topic]};bytesRead=true;return {rows:[]}});
+ await assert.rejects(handleDiscussions(args),e=>e.status===404);assert.equal(bytesRead,false);
+});
+test('closed discussion files remain downloadable with attachment headers',async()=>{
+ let headers,bytes;const args=makeArgs('/discussions/topics/8/files/3','GET',me,async sql=>({rows:sql.includes('discussion_topics d')?[{...topic,closed_at:'2026-11-13'}]:[{filename:'report.txt',bytes:Buffer.from('report')}]}));args.res={writeHead:(status,h)=>{assert.equal(status,200);headers=h},end:b=>bytes=b};assert.equal(await handleDiscussions(args),true);assert.match(headers['Content-Disposition'],/attachment/);assert.equal(headers['Cache-Control'],'private, no-store');assert.equal(bytes.toString(),'report');
+});
+test('file upload rejects executable content before acquiring a transaction',async()=>{
+ let acquired=false;const args=makeArgs('/discussions/topics/8/files','POST',me,async()=>({rows:[topic]}),{connect:async()=>{acquired=true}});args.body=async()=>({filename:'attack.html',mime:'text/html',base64:'aGVsbG8='});await assert.rejects(handleDiscussions(args),e=>e.status===400);assert.equal(acquired,false);
+});
