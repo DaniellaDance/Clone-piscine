@@ -1,0 +1,33 @@
+name: Remove five archived projects
+on:
+  push:
+    paths:
+      - '.github/workflows/remove-archived-projects.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out current main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+          persist-credentials: true
+      - name: Remove only verified archived directories
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d XAKATON || { echo 'Safety stop: XAKATON not found'; exit 1; }
+          test -d 'Hackathon November' || { echo 'Safety stop: Hackathon November not found'; exit 1; }
+          git rm -r --ignore-unmatch -- Everest HorseCup Raceplay coding-monopoly mountain-game
+          test -d XAKATON
+          test -d 'Hackathon November'
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Remove five projects verified in private archive'
+            git push origin HEAD:main
+          fi
