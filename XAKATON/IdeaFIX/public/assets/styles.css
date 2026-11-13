@@ -863,3 +863,23 @@ main#view>.home-hero-wrap>.quote-head{width:100%;border-radius:0!important;backg
 #view.ecosystem-screen .vendor-group-members{gap:4px;padding:0 10px 10px}
 #view.ecosystem-screen .vendor-group-members button{padding:5px 8px;font-size:14px;min-height:38px}
 #view.ecosystem-screen #vendor-groups-note{padding:8px 12px;margin:8px 0;font-size:12px;line-height:1.35}
+
+/* Keep the next event visible before the home navigation tiles. */
+#view .home-next-meeting{padding:8px 10px;margin:8px 0;flex-shrink:0;max-height:none}
+.next-meeting-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px}
+.next-meeting-heading button{min-height:30px;padding:4px 8px;font-size:11px}
+#dashboard-upcoming .meeting-card{padding:6px 0 0;border:0;border-radius:0;gap:6px;display:block}
+#dashboard-upcoming .meeting-card strong{font-size:13px;line-height:1.3;overflow-wrap:anywhere}
+#dashboard-upcoming .meeting-card small{font-size:11px;line-height:1.3;margin:3px 0;overflow-wrap:anywhere}
+#dashboard-upcoming .meeting-actions{display:none}
+#view.meetings-screen .page-head{gap:6px;flex-wrap:wrap;margin-bottom:8px}
+#view.meetings-screen .page-head h1{font-size:22px;line-height:1.2;margin:0;width:100%}
+#view.meetings-screen .page-head button{font-size:12px;min-height:34px;padding:6px 10px}
+#view.meetings-screen .meeting-toolbar{gap:6px;margin-bottom:8px}
+#view.meetings-screen .meeting-toolbar input{padding:6px 8px;min-height:34px}
+#view.meetings-screen .meeting-card{padding:9px;gap:6px;min-width:0}
+#view.meetings-screen .meeting-card strong{font-size:14px;overflow-wrap:anywhere}
+#view.meetings-screen .meeting-card small{overflow-wrap:anywhere}
+#view.meetings-screen .meeting-actions{gap:5px}
+#view.meetings-screen .meeting-actions button{padding:5px 8px;min-height:32px;font-size:11px}
+@media(max-width:600px){#view:has(.home-next-meeting) .home-hero-wrap .quote-head{min-height:130px!important;height:clamp(130px,23dvh,190px)!important}#view .home-next-meeting{margin:6px 0}#dashboard-upcoming .meeting-card>div:first-child>small:last-child{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}}
