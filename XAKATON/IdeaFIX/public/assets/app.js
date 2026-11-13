@@ -138,7 +138,7 @@ const navSvg=(name)=>{
 };
 function shell(){
  const nav=[['feed','Главная'],['mine','Мои инсайты'],['ideas','Витрина идей'],...(['director','admin'].includes(me.role)?[['results','Результаты']]:[]),['vendors','Контакты'],['ecosystem','Вендоры'],['meetings','График совещаний'],...(['director','lead','admin'].includes(me.role)?[['meeting-results','Итоги совещаний и встреч']]:[]),['planner','План дня'],['organization','Отделы и сотрудники'],...(['director','lead'].includes(me.role)?[['chat','Чат руководителей'],['discussions','Обсуждения идей']]:[]),...(['director','lead','admin'].includes(me.role)?[['pulse','Пульс компании']]:[]),...(['director','admin'].includes(me.role)?[['settings','Управление']]:[]),...(['director','lead','admin'].includes(me.role)?[['ai-secretary','ИИ Секретарь']]:[]),['preferences','Настройки'],['apps','Приложения']];
- const leading=[['feed','Главная','home'],['ideas','Витрина','board'],['ecosystem','Мои партнёры','globe']];
+ const leading=[['feed','Главная','home'],['ideas','Витрина','board'],['ecosystem','Мир Модус Трейд','globe']];
  const other=nav.filter(([id])=>!leading.some(([key])=>key===id));
  const navGroups=[['Идеи',['discussions']],['Рабочие инструменты',['vendors','meetings','meeting-results','planner','chat','organization']],['Аналитика',['results','pulse']],['Система',['settings','preferences','apps','ai-secretary']]];
  const moreMenu=navGroups.map(([group,ids])=>{const entries=other.filter(([id])=>ids.includes(id));return entries.length?'<details class="more-group"><summary>'+group+'</summary>'+entries.map(([id,label])=>'<button type="button" data-page="'+id+'" class="'+(page===id?'active':'')+'">'+label+'</button>').join('')+'</details>':''}).join('');
