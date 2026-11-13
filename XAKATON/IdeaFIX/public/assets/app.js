@@ -125,14 +125,25 @@ function showDirectorAnalytics(){
  sel.onchange=()=>{draw();wireFinance()};const wireFinance=()=>{$('#secretary-financial-results').onclick=()=>{$('#modal').close();page='results';shell();render()}};draw();wireFinance();
 }
 
+const navSvg=(name)=>{
+ const paths={
+ home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',
+ ideas:'<rect x="5" y="4" width="14" height="17" rx="3"/><path d="M9 4.5V3h6v1.5M9 10h6M9 14h6M9 18h3"/>',
+ board:'<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 8h3v3H8zM14 8h3M14 12h3M8 16h9"/>',
+ globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
+ more:'<circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none"/>',
+ account:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-4 2.6-6 7-6s7 2 7 6"/>'
+ };
+ return '<svg class="ui-line-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(paths[name]||paths.home)+'</svg>';
+};
 function shell(){
  const nav=[['feed','Главная'],['mine','Мои инсайты'],['ideas','Витрина идей'],...(['director','admin'].includes(me.role)?[['results','Результаты']]:[]),['vendors','Контакты'],['ecosystem','Вендоры'],['meetings','График совещаний'],...(['director','lead','admin'].includes(me.role)?[['meeting-results','Итоги совещаний и встреч']]:[]),['planner','План дня'],['organization','Отделы и сотрудники'],...(['director','lead'].includes(me.role)?[['chat','Чат руководителей'],['discussions','Обсуждения идей']]:[]),...(['director','lead','admin'].includes(me.role)?[['pulse','Пульс компании']]:[]),...(['director','admin'].includes(me.role)?[['settings','Управление']]:[]),...(['director','lead','admin'].includes(me.role)?[['ai-secretary','ИИ Секретарь']]:[]),['preferences','Настройки'],['apps','Приложения']];
- const leading=[['feed','Главная','⌂'],['mine','Мои идеи','◉'],['ideas','Витрина','▣'],['ecosystem','Мои партнёры','🌐']];
+ const leading=[['feed','Главная','home'],['mine','Мои идеи','ideas'],['ideas','Витрина','board'],['ecosystem','Мои партнёры','globe']];
  const other=nav.filter(([id])=>!leading.some(([key])=>key===id));
  const navGroups=[['Идеи',['discussions']],['Рабочие инструменты',['vendors','meetings','meeting-results','planner','chat','organization']],['Аналитика',['results','pulse']],['Система',['settings','preferences','apps','ai-secretary']]];
  const moreMenu=navGroups.map(([group,ids])=>{const entries=other.filter(([id])=>ids.includes(id));return entries.length?'<details class="more-group"><summary>'+group+'</summary>'+entries.map(([id,label])=>'<button type="button" data-page="'+id+'" class="'+(page===id?'active':'')+'">'+label+'</button>').join('')+'</details>':''}).join('');
- const navButton=(id,label,glyph)=>'<button type="button" data-page="'+id+'" class="bottom-link'+(page===id?' active':'')+'" title="'+label+'"><span class="bottom-icon" aria-hidden="true">'+glyph+'</span><span class="bottom-text">'+label+'</span></button>';
- $('#app').innerHTML='<header class="header">'+brand+'<div class="account"><span class="username" data-user-text>'+esc(me.name)+' · '+role[me.role]+'</span><span id="connection">● Онлайн</span><details class="account-more"><summary aria-label="Профиль и выход" title="Профиль">●</summary><div class="account-popup"><span data-user-text>'+esc(me.name)+'</span><button type="button" id="logout">Выйти</button></div></details></div></header><div class="layout"><main id="view"></main></div><nav class="bottom-nav" aria-label="Главное меню">'+leading.map(([id,label,icon])=>navButton(id,label,icon)).join('')+'<details class="bottom-more"><summary><span class="bottom-icon" aria-hidden="true">•••</span><span class="bottom-text">Ещё</span></summary><div class="bottom-more-menu">'+moreMenu+'</div></details></nav>';
+ const navButton=(id,label,glyph)=>'<button type="button" data-page="'+id+'" class="bottom-link'+(page===id?' active':'')+'" title="'+label+'"><span class="bottom-icon" aria-hidden="true">'+navSvg(glyph)+'</span><span class="bottom-text">'+label+'</span></button>';
+ $('#app').innerHTML='<header class="header">'+brand+'<div class="account"><span class="username" data-user-text>'+esc(me.name)+' · '+role[me.role]+'</span><span id="connection">● Онлайн</span><details class="account-more"><summary aria-label="Личный кабинет" title="Личный кабинет">'+navSvg("account")+'</summary><div class="account-popup"><span data-user-text>'+esc(me.name)+'</span><button type="button" id="logout">Выйти</button></div></details></div></header><div class="layout"><main id="view"></main></div><nav class="bottom-nav" aria-label="Главное меню">'+leading.map(([id,label,icon])=>navButton(id,label,icon)).join('')+'<details class="bottom-more"><summary><span class="bottom-icon" aria-hidden="true">'+navSvg("more")+'</span><span class="bottom-text">Ещё</span></summary><div class="bottom-more-menu">'+moreMenu+'</div></details></nav>';
  $('#logout').onclick=async()=>{try{await window.IFPush?.detach();await api('/logout',{});login()}catch(e){toast(e.message)}};
  document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{if(b.dataset.page==='ai-secretary'){document.querySelector('.bottom-more')?.removeAttribute('open');openAISecretary();return}page=b.dataset.page;filter='';term='';stageFilter='';shell();render()});
 }
