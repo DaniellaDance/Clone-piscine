@@ -14,7 +14,19 @@ export const median=values=>{const a=values.filter(Number.isFinite).sort((a,b)=>
 const stop=new Set(['который','которые','будет','этого','чтобы','нужно','необходимо','предлагаю','также','очень','для','или','как','при','это','что','все','the','and','with','from','this']);
 export const tokens=s=>new Set(String(s||'').toLocaleLowerCase('ru').replace(/ё/g,'е').match(/[\p{L}\p{N}]{3,}/gu)?.filter(w=>!stop.has(w)).map(w=>w.length>5?w.replace(/(?:иями|ами|ого|ому|ение|ения|ить|ать|ов|ах|ях|ый|ий|ая|ые|ой|ом|ам|ям|ы|и|а|я|е|у)$/u,''):w)||[]);
 export function similarity(a,b){const x=tokens(a),y=tokens(b);if(!x.size||!y.size)return 0;return [...x].filter(w=>y.has(w)).length/Math.sqrt(x.size*y.size)}
-export function clusters(rows){const groups=[];for(const row of rows){const group=groups.find(g=>similarity(g[0].body,row.body)>=.42);if(group)group.push(row);else groups.push([row])}return groups.filter(g=>g.length>1).map(g=>({title:g[0].title,count:g.length,ids:g.map(x=>x.id),departments:[...new Set(g.map(x=>x.department))]})).sort((a,b)=>b.count-a.count).slice(0,10)}
+export function clusters(rows,{limit=10}={}){
+ const ignored=new Set(['добр','день','здравствуйт','пожалуйст','иде','идея','предложен','улучш','работ','компан','сотрудник','демо']);
+ const concepts=w=>/^(отчет|сводк)/.test(w)?'отчет':/^(автоматиз|автоматичес)/.test(w)?'автоматизац':/^(склад|складск)/.test(w)?'склад':/^(закуп|снабжен)/.test(w)?'закупк':w;
+ const prepared=rows.map(row=>({row,words:new Set([...tokens(row.title+' '+row.body)].map(concepts).filter(w=>!ignored.has(w)))}));
+ const groups=[],index=new Map();
+ for(const item of prepared){
+  const candidates=new Set();for(const word of item.words)for(const group of index.get(word)||[])candidates.add(group);
+  let selected=null,best=.46;
+  for(const group of candidates){if(group[0].row.kind!==item.row.kind)continue;const shared=[...item.words].filter(w=>group[0].words.has(w)).length;const score=shared/Math.sqrt(item.words.size*group[0].words.size);if(shared>=2&&score>=best){selected=group;best=score}}
+  if(selected)selected.push(item);else{const group=[item];groups.push(group);for(const word of item.words){if(!index.has(word))index.set(word,[]);index.get(word).push(group)}}
+ }
+ return groups.filter(g=>g.length>1).map(g=>({title:g[0].row.title,summary:String(g[0].row.body||'').replace(/\s+/g,' ').slice(0,240),count:g.length,ids:g.map(x=>x.row.id),items:g.map(x=>({id:x.row.id,title:x.row.title})),departments:[...new Set(g.map(x=>x.row.department))]})).sort((a,b)=>b.count-a.count).slice(0,limit);
+}
 export function analytics(rows,now=new Date()){
  const closed=rows.filter(t=>['done','reject'].includes(t.status)&&t.result?.trim()),overdue=t=>!['done','reject'].includes(t.status)&&(+new Date(t.due)<+now||(!t.first_response&&+new Date(t.first_response_due)<+now));
  const groups=key=>[...new Set(rows.map(t=>t[key]))].map(name=>{const a=rows.filter(t=>t[key]===name);return {name,total:a.length,overdue:a.filter(overdue).length,firstResponseMedian:median(a.filter(t=>t.first_response).map(t=>businessDaysBetween(t.created,t.first_response))),resolutionMedian:median(a.filter(t=>t.resolved_at).map(t=>businessDaysBetween(t.created,t.resolved_at)))}}).sort((a,b)=>b.overdue-a.overdue||b.total-a.total);
@@ -27,6 +39,7 @@ export async function sweepOverdue(query){
 export async function handleUpgrade({url,req,u,query,pool,body,send,fail,visible,manage,ticket,ticketVisibilitySql}){
  const top=['director','admin'].includes(u.role);
  const scoped=async(order='created')=>{const rows=(await query(`SELECT t.*,(SELECT name FROM ideafix.users WHERE id=t.author AND NOT t.anonymous) AS author_name FROM ideafix.tickets t WHERE ${ticketVisibilitySql('t',{viewer:'$1',top:'$2',department:'$3',lead:'$4'})} ORDER BY ${order==='completed'?'t.resolved_at DESC NULLS LAST,t.created DESC,t.id DESC':'t.created DESC,t.id DESC'} LIMIT 5000`,[u.id,top,u.department,u.role==='lead'])).rows;return rows.filter(t=>visible(u,t))};
+ if(url.pathname==='/api/upgrade/groups'){if(!['director','admin','lead'].includes(u.role))fail(403,'Группы доступны руководителям');if(req.method!=='GET')fail(405,'Используйте GET');const rows=await scoped();const groups=clusters(rows,{limit:100});return send({groups,total:rows.length,grouped:groups.reduce((n,g)=>n+g.count,0)})}
  if(url.pathname==='/api/upgrade/similar'){
   if(req.method!=='POST')fail(405,'Используйте POST');const b=await body(req);const text=String(b.text||'').slice(0,5000);if(text.length<10)return send([]);
   const rows=await scoped();return send(rows.filter(t=>t.published&&!t.anonymous).map(t=>({id:t.id,title:t.title,score:similarity(text,t.body),canJoin:true})).filter(x=>x.score>=.3).sort((a,b)=>b.score-a.score).slice(0,5));

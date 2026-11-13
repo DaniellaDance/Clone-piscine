@@ -37,3 +37,11 @@ test('improvements use completion time, with undated legacy rows last and stable
  const rows=[{id:1,created:'2026-11-13',resolved_at:null},{id:2,created:'2026-10-01',resolved_at:'2026-11-12T12:00Z'},{id:3,created:'2026-09-01',resolved_at:'2026-11-13T12:00Z'},{id:4,created:'2026-11-12',resolved_at:null}];
  assert.deepEqual(sortImprovements(rows).map(x=>x.id),[3,2,1,4]);assert.deepEqual(rows.map(x=>x.id),[1,2,3,4]);
 });
+
+test('idea groups combine related report wording and ignore a shared greeting',()=>{
+ const rows=[{id:1,kind:'idea',title:'Автоматизация отчётов склада',body:'Предлагаю автоматизировать подготовку складских отчетов',department:'ИТ'},{id:2,kind:'idea',title:'Отчёты склада автоматически',body:'Нужно автоматизировать подготовку отчетов склада',department:'Продажи'},{id:3,kind:'idea',title:'Добрый день',body:'Добрый день предлагаю обновить мебель в офисе',department:'ИТ'},{id:4,kind:'idea',title:'Добрый день',body:'Добрый день предлагаю оплатить обучение английскому языку',department:'HR'}];
+ const groups=clusters(rows);assert.equal(groups.length,1);assert.deepEqual(groups[0].ids,[1,2]);assert.equal(groups[0].items.length,2);assert.ok(groups[0].summary);
+});
+test('idea grouping rejects employees before reading any tickets',async()=>{
+ await assert.rejects(handleUpgrade({url:new URL('https://test/api/upgrade/groups'),req:{method:'GET'},u:{role:'employee'},query:()=>{throw Error('Data must not be read')},fail:(status,message)=>{throw Object.assign(new Error(message),{status})}}),{status:403});
+});

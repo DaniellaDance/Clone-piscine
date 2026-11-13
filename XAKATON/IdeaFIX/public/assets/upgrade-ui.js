@@ -11,6 +11,11 @@ window.IFUpgrade=(()=>{
  function mount(context){ctx=context;clearInterval(notificationTimer);const account=document.querySelector('.account');if(account&&!document.querySelector('#upgrade-notifications')){const button=document.createElement('button');button.type='button';button.id='upgrade-notifications';button.className='notification-button';button.textContent='🔔';button.title='Уведомления';button.setAttribute('aria-label','Уведомления');button.onclick=inbox;account.prepend(button)}count();notificationTimer=setInterval(count,60000)}
  function heading(title){return '<div class="page-head"><h1>'+esc(title)+'</h1></div>'}
  async function render(page){const target=document.querySelector('#view');if(!target)return;target.classList.remove('list-screen');target.innerHTML=heading('Загрузка…')+'<div class="panel" aria-busy="true">Подготавливаем данные…</div>';try{
+  if(page==='upgrade-groups'){
+   const result=await ctx.api('/upgrade/groups');if(!target.isConnected)return;
+   target.innerHTML=heading('Похожие идеи')+'<p class="hint">Одна карточка на общую тему. Группировка по тексту и ключевым темам; исходные обращения сохранены. Проверьте состав перед решением.</p>'+(result.groups.length?result.groups.map(g=>'<article class="panel idea-group"><h2>'+esc(g.title)+'</h2><p>'+g.count+' обращений · '+g.departments.map(esc).join(', ')+'</p><p data-user-text>'+esc(g.summary)+'</p><details><summary>Показать обращения · '+g.count+'</summary>'+g.items.map(t=>'<button type="button" data-cluster-ticket="'+t.id+'">#'+t.id+' · '+esc(t.title)+'</button>').join('')+'</details></article>').join(''):'<p class="empty">Похожие идеи пока не найдены.</p>');
+   target.querySelectorAll('[data-cluster-ticket]').forEach(b=>b.onclick=()=>ctx.openTicket(b.dataset.clusterTicket));return;
+  }
   if(page==='upgrade-analytics'||page==='pulse'){
    const a=await ctx.api('/upgrade/analytics');if(!target.isConnected)return;
    const table=(rows,key)=>'<div class="tablewrap"><table><thead><tr><th>'+key+'</th><th>Всего</th><th>Просрочено</th><th>Первый ответ, раб. дни</th><th>Решение, раб. дни</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+esc(categories[r.name]||r.name)+'</td><td>'+r.total+'</td><td>'+r.overdue+'</td><td>'+(r.firstResponseMedian??'—')+'</td><td>'+(r.resolutionMedian??'—')+'</td></tr>').join('')+'</tbody></table></div>';
