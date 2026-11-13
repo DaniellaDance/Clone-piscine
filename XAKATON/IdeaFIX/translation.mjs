@@ -12,7 +12,7 @@ export async function translateTexts(texts,language,{fetcher=fetch,env=process.e
  const providers=[];
  if(env.GEMINI_API_KEY?.trim())providers.push(async()=>{
   const tokenHash=createHash('sha256').update(env.GEMINI_API_KEY).digest('hex');
-  const models=[selectedGemini.get(tokenHash)||env.TRANSLATION_MODEL||env.GEMINI_MODEL||'gemini-flash-lite-latest'];let discovered=false;
+  const models=[selectedGemini.get(tokenHash)||env.TRANSLATION_MODEL||'gemini-flash-lite-latest'];let discovered=false;
   for(let index=0;index<models.length&&index<7;index++){
    const model=models[index],r=await fetcher('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent',{method:'POST',headers:{'x-goog-api-key':env.GEMINI_API_KEY,'Content-Type':'application/json'},signal:AbortSignal.timeout(16000),body:JSON.stringify({systemInstruction:{parts:[{text:instruction}]},contents:[{role:'user',parts:[{text:payload}]}],generationConfig:{responseMimeType:'application/json'}})});
    if(r.ok){const d=await r.json();const output=JSON.parse(d.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'{}');selectedGemini.set(tokenHash,model);return output}
