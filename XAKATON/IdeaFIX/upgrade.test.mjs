@@ -31,3 +31,9 @@ test('outbox retries failures with bounded backoff and never pretends delivery s
  const query=async(sql,p)=>{writes.push({sql,p});return {rows:sql.includes('WITH ready')?[{id:7,ticket:1,event:'status',attempts:2}]:[]}};
  await processOutbox(query,async()=>{throw Error('transport unavailable')});assert.ok(writes[1].sql.includes("THEN 'failed' ELSE 'prepared'"));assert.equal(writes[1].p[1],120);assert.ok(!writes[1].sql.includes("status='sent'"));
 });
+
+test('improvements use completion time, with undated legacy rows last and stable tie breaks',async()=>{
+ const {sortImprovements}=await import('./upgrade.mjs');
+ const rows=[{id:1,created:'2026-11-13',resolved_at:null},{id:2,created:'2026-10-01',resolved_at:'2026-11-12T12:00Z'},{id:3,created:'2026-09-01',resolved_at:'2026-11-13T12:00Z'},{id:4,created:'2026-11-12',resolved_at:null}];
+ assert.deepEqual(sortImprovements(rows).map(x=>x.id),[3,2,1,4]);assert.deepEqual(rows.map(x=>x.id),[1,2,3,4]);
+});

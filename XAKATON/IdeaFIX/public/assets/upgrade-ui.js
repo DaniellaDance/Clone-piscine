@@ -18,7 +18,10 @@ window.IFUpgrade=(()=>{
    target.querySelector('#upgrade-export').onclick=()=>download('Fix_Idea_SLA.csv',[['Отдел','Всего','Просрочено','Медиана ответа (раб.дни)','Медиана решения (раб.дни)'],...a.departments.map(r=>[r.name,r.total,r.overdue,r.firstResponseMedian,r.resolutionMedian])]);target.querySelectorAll('[data-cluster-ticket]').forEach(b=>b.onclick=()=>ctx.openTicket(b.dataset.clusterTicket));return;
   }
   if(page==='upgrade-improvements'){
-   const data=await ctx.api('/upgrade/improvements');target.innerHTML=heading('Что мы уже улучшили')+'<div class="kpis">'+box(data.quarter,'Внедрено в этом квартале')+box(data.total,'Открытых результатов')+'</div><div class="upgrade-improvements">'+(data.items.length?data.items.map(t=>`<article class="panel"><span class="badge done">Реализовано</span><h2>${esc(t.title)}</h2><p data-user-text>${esc(t.result)}</p><small>${esc(t.author||'Автор не указан')} · ${esc(t.department)} · ${t.days===null?'Дата завершения не зафиксирована':t.days+' раб. дней от подачи до результата'}</small><p><button type="button" data-improvement="${t.id}">История улучшения #${t.id}</button></p></article>`).join(''):'<section class="panel"><h2>Здесь появятся результаты</h2><p>После завершения и публикации инициативы сотрудники увидят, что изменилось и сколько времени заняло решение.</p></section>')+'</div>';target.querySelectorAll('[data-improvement]').forEach(b=>b.onclick=()=>ctx.openTicket(b.dataset.improvement));return;
+   const data=await ctx.api('/upgrade/improvements');
+   const shortTitle=t=>String(t||'Улучшение').replace(/^ДЕМО\s*[·:—-]?\s*/iu,'').slice(0,100);
+   const completedDate=t=>t.resolved_at?new Date(t.resolved_at).toLocaleDateString('ru-RU',{timeZone:'Asia/Almaty'}):'Дата не указана';
+   target.innerHTML=heading('Что мы улучшили')+'<div class="improvements-summary"><span>Всего: <b>'+data.total+'</b></span><span>За квартал: <b>'+data.quarter+'</b></span><small>Сначала последние</small></div><div class="upgrade-improvements-compact" role="list">'+(data.items.length?data.items.map(t=>`<article class="improvement-row" role="listitem"><div class="improvement-row-main"><h2 data-user-text>${esc(shortTitle(t.title))}</h2><small>${/^ДЕМО/iu.test(t.title)?'<span class="improvement-demo">Демо</span> · ':''}${esc(t.department)} · ${completedDate(t)}</small></div><button type="button" data-improvement="${t.id}" aria-label="Подробнее об улучшении #${t.id}">Подробнее</button></article>`).join(''):'<p class="hint">Завершённых опубликованных улучшений пока нет.</p>')+'</div>';target.querySelectorAll('[data-improvement]').forEach(b=>b.onclick=()=>ctx.openTicket(b.dataset.improvement));return;
   }
   if(page==='upgrade-routing'){
    const data=await ctx.api('/upgrade/routing');const opts=(department,value)=>'<option value="">Автоматический резерв</option>'+data.people.filter(p=>p.role!=='lead'||p.department===department).map(p=>'<option value="'+esc(p.id)+'" '+(p.id===value?'selected':'')+'>'+esc(p.name+' · '+p.department)+(p.unavailable_until&&new Date(p.unavailable_until)>new Date()?' (отсутствует)':'')+'</option>').join('');
@@ -40,3 +43,4 @@ window.IFUpgrade=(()=>{
  function clearDraft(){try{localStorage.removeItem('fixidea-draft:'+ctx.me.id)}catch{}}
  return {mount,render,enhanceTicket,enhanceCreate,clearDraft};
 })();
+
