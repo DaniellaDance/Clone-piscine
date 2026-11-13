@@ -912,3 +912,5 @@ main#view>.home-hero-wrap>.quote-head{width:100%;border-radius:0!important;backg
 .home-nav-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#edf4ff;color:#2869c7;flex-shrink:0}
 .home-nav-icon svg{width:19px;height:19px}
 @media(min-width:1000px){.home-sections{grid-template-columns:repeat(5,minmax(0,1fr))}.home-nav-button{font-size:12px;min-height:90px}}
+
+#view .home-next-meeting{display:block;visibility:visible;min-height:76px;flex:0 0 auto}
