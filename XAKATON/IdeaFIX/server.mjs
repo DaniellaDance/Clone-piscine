@@ -173,7 +173,8 @@ if(flow&&req.method==='PUT'){
  const w={visibility:t.workflow?.visibility||'leaders',context:t.workflow?.context||null};if(ownInsight&&b.stage==='proposal')w.visibility='leaders';for(const key of ['insight','proposal','benefit','discussion','cost','effect','feasibility','decision','reason','pilot','pilotResult','owner','deadline','implementation','before','after','result','pilotIncome','pilotExpense','implementationIncome','implementationExpense'])w[key]=typeof b[key]==='string'?b[key].trim().slice(0,2000):'';
  for(const key of ['pilotIncome','pilotExpense','implementationIncome','implementationExpense']){if(w[key]!==''&&(!/^\d+(?:[.,]\d{1,2})?$/.test(w[key])||Number(w[key].replace(',','.'))>1000000000000))fail(400,'Укажите корректную сумму в тенге: '+key)}
  if(w.deadline&&!/^\d{4}-\d{2}-\d{2}$/.test(w.deadline))fail(400,'Проверьте срок');
- if(w.insight.length<5||w.proposal.length<5)fail(400,'Опишите инсайт и предложение');
+ if(w.insight.length<5)fail(400,'Опишите инсайт (не менее 5 символов)');
+ if(b.stage!=='insight'&&w.proposal.length<5)fail(400,'Для перехода заполните предложение (не менее 5 символов)');
  const at=stages.indexOf(b.stage),prev=stages.indexOf(t.stage);
  if(at>prev+1)fail(400,'Пройдите этапы по порядку');
  if(at>=4&&w.discussion.length<5)fail(400,'Зафиксируйте итоги обсуждения');
