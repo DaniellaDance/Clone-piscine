@@ -52,7 +52,7 @@ function stageIcon(key){
  return '<svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths[key]+'</svg>';
 }
 function journey(){
- const steps=[['insight','Инсайт'],['proposal','Предложение'],['discussion','Обсуждение'],['pilot','Пилот'],['implementation','Внедрение'],['result','Результаты']];
+ const steps=[['insight','Инсайт'],['discussion','Обсуждение'],['pilot','Пилот'],['result','Результаты']];
  return '<section class="stage-journey" aria-label="Этапы пути от идеи до результата"><div class="stage-tile secretary-stage"><button type="button" id="journey-ai-secretary" class="stage-select" aria-label="Открыть ИИ Секретарь"><span class="stage-icon">✦</span><span class="stage-title">ИИ Секретарь</span></button></div>'+steps.map(([id,label])=>'<div class="stage-tile stage-'+id+'"><button type="button" class="stage-select'+(stageFilter===id?' is-active':'')+'" data-stage="'+id+'" aria-pressed="'+(stageFilter===id)+'" title="Показать этап: '+label+'"><span class="stage-icon">'+stageIcon(id)+'</span><span class="stage-title">'+label+'</span></button>'+(id==='insight'?'<button type="button" id="record-idea" aria-label="Записать идею голосом, текстом или видео">＋ Записать идею <span aria-hidden="true">🎙</span></button>':'')+'</div>').join('')+'</section>';
 }
 function openAISecretary(){
