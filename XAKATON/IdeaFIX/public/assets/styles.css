@@ -958,3 +958,6 @@ main#view.home-screen{display:flex!important;flex-direction:column!important;gap
 #view.home-screen>.home-stats small{font-size:8px}
 @media(min-width:900px){#view.home-screen>.home-all-actions{grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:minmax(58px,1fr)}}
 @media(max-height:500px) and (orientation:landscape){#view.home-screen>.home-hero-wrap{display:none}#view.home-screen>.home-all-actions{grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:minmax(42px,1fr)}}
+
+#view.home-screen #dashboard-upcoming .meeting-card>div:first-child>small:last-child{display:block}
+#view.home-screen #dashboard-upcoming [data-meeting-location]{display:none!important}
