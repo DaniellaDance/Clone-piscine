@@ -782,3 +782,17 @@ body>#language.language-picker{position:fixed;top:12px;right:14px}
  }
 }
 @media(max-width:380px){body.partner-map-active .atlas-heading h2{font-size:12px!important}body.partner-map-active .atlas-layers button{font-size:9px!important}}
+
+/* IdeaFIX unified mobile navigation and personal profile icon */
+.bottom-nav{gap:4px!important;padding-left:max(6px,env(safe-area-inset-left))!important;padding-right:max(6px,env(safe-area-inset-right))!important}
+.bottom-nav .bottom-link,.bottom-more>summary{border-radius:14px!important;padding:5px 3px!important;transition:background .18s,color .18s,transform .18s}
+.bottom-nav .bottom-link:active,.bottom-more>summary:active{transform:scale(.97)}
+.bottom-icon{width:30px;height:30px;display:grid!important;place-items:center!important;font-size:0!important;font-weight:normal!important;margin:auto}
+.bottom-icon .ui-line-icon{width:26px;height:26px;display:block;stroke:currentColor}
+.bottom-nav .bottom-link.active .bottom-icon{color:#145ce5}
+.bottom-text{font-size:clamp(9px,2.45vw,12px)!important;line-height:1.16!important;font-weight:700!important;text-align:center!important}
+.account-more>summary{display:grid!important;place-items:center!important;width:39px!important;height:39px!important;border:1px solid #ffffff88!important;border-radius:50%!important;background:#ffffff18!important;line-height:1!important;font-size:0!important;color:#fff!important;list-style:none!important}
+.account-more>summary .ui-line-icon{width:23px;height:23px;display:block;stroke:currentColor;stroke-width:1.9}
+.account-more>summary::-webkit-details-marker{display:none}
+.account-more[open]>summary{background:#ffffff38!important}
+@media(max-width:390px){.bottom-nav{gap:1px!important}.bottom-icon{width:26px;height:26px}.bottom-icon .ui-line-icon{width:23px;height:23px}.bottom-text{font-size:9px!important}}
