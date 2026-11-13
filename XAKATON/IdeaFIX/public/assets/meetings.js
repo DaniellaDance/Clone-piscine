@@ -1,4 +1,5 @@
 (()=>{
+ let calendarRequest=0;
  const manager=()=>['director','admin','lead'].includes(me?.role);
  const monthKey=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Almaty',year:'numeric',month:'2-digit'}).format(new Date()).replace(/^(\d{2})\/(\d{4})$/,'$2-$1');
  const date=d=>new Intl.DateTimeFormat('ru-RU',{timeZone:'Asia/Almaty',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(d));
@@ -7,7 +8,7 @@
  async function render(month){
   const v=$('#view');v.classList.remove('list-screen');v.classList.add('meetings-screen');if(v.querySelector('#meeting-list')&&!month){await load(v.dataset.meetingKey??$('#meeting-month').value);return}v.innerHTML=`<div class="page-head"><h1>График совещаний и форумов</h1>${manager()?'<button id="fathom-open">Fathom · итоги встреч</button><button id="add-meeting" class="primary">＋ Встреча</button>':''}</div><div class="meeting-toolbar"><label>График на месяц<input id="meeting-month" type="month" value="${esc(month||monthKey())}"></label><button id="meeting-upcoming">Ближайшие</button><span>Время Казахстана · UTC+5</span></div><div id="meeting-list" class="meeting-list"></div>`;
   if($('#fathom-open'))$('#fathom-open').onclick=()=>fathomList();if($('#add-meeting'))$('#add-meeting').onclick=()=>edit();$('#meeting-month').onchange=e=>render(e.target.value);$('#meeting-upcoming').onclick=()=>load('');await load(month||monthKey());
-  async function load(key){v.dataset.meetingKey=key;try{const rows=await api('/meetings'+(key?'?month='+encodeURIComponent(key):''));if(!$('#meeting-list'))return;$('#meeting-list').innerHTML=rows.length?rows.map(meetingCard).join(''):'<div class="empty">Встреч пока нет. Руководитель может добавить совещание или форум.</div>';wire($('#meeting-list'),rows)}catch(e){toast(e.message)}}
+  async function load(key){const request=++calendarRequest;v.dataset.meetingKey=key;try{const rows=await api('/meetings'+(key?'?month='+encodeURIComponent(key):''));if(request!==calendarRequest||!$('#meeting-list')||v.dataset.activePage!=='meetings')return;$('#meeting-list').innerHTML=rows.length?rows.map(meetingCard).join(''):'<div class="empty">Встреч пока нет. Руководитель может добавить совещание или форум.</div>';wire($('#meeting-list'),rows)}catch(e){toast(e.message)}}
  }
  function edit(m,vendorId=''){
   const local=m?new Date(new Date(m.starts_at).getTime()+5*3600000).toISOString().slice(0,16):'';

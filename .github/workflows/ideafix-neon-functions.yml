@@ -47,6 +47,8 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           FREEBUFF_MODEL: ${{ vars.FREEBUFF_MODEL }}
         run: node scripts/check-translation.mjs
+      - name: Verify live company news sources
+        run: node scripts/check-company-news.mjs
       - name: Build Neon function ZIP
         run: |
           zip -q -r "$RUNNER_TEMP/ideafix-neon.zip" . \

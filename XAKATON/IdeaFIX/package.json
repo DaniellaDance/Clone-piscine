@@ -7,10 +7,11 @@
     "start": "node server.mjs",
     "test": "node --test test.mjs",
     "build": "node scripts/icons.mjs",
-    "test:unit": "node --test meeting-home.test.mjs integration-permissions.test.mjs catalog-navigation.test.mjs map-directory.test.mjs privacy.test.mjs bitrix.test.mjs proofread.test.mjs discussions.test.mjs ai-assistant.test.mjs bitrix-project-import.test.mjs director-dashboard.test.mjs media-recording.test.mjs fathom.test.mjs meeting-results.test.mjs access.test.mjs meetings-access.test.mjs upgrade.test.mjs translation.test.mjs translation-client.test.mjs",
+    "test:unit": "node --test company-news.test.mjs meeting-home.test.mjs integration-permissions.test.mjs catalog-navigation.test.mjs map-directory.test.mjs privacy.test.mjs bitrix.test.mjs proofread.test.mjs discussions.test.mjs ai-assistant.test.mjs bitrix-project-import.test.mjs director-dashboard.test.mjs media-recording.test.mjs fathom.test.mjs meeting-results.test.mjs access.test.mjs meetings-access.test.mjs upgrade.test.mjs translation.test.mjs translation-client.test.mjs",
     "test:upgrade": "node --test upgrade.test.mjs"
   },
   "dependencies": {
+    "fast-xml-parser": "^5.12.0",
     "node-ical": "^0.27.6",
     "pg": "8.16.3",
     "web-push": "^4.0.0"
