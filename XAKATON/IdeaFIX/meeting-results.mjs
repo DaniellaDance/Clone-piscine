@@ -31,7 +31,7 @@ export function resultFile(r,kind){
 }
 export async function handleMeetingResults({url,req,res,u,query,body,send,fail}){
  if(!url.pathname.startsWith('/api/meeting-results'))return false;
- if(!['director','admin','lead'].includes(u.role))fail(403,'Итоги доступны руководителям');
+ if(u.role!=='director')fail(403,'Итоги доступны только директору');
  if(url.pathname==='/api/meeting-results'&&req.method==='GET'){
   const own=(await query('SELECT id,owner,title,meeting_id,scheduled_start,meeting_url FROM ideafix.fathom_recordings WHERE owner=$1 AND meeting_id IS NULL ORDER BY created DESC LIMIT 100',[u.id])).rows;
   for(const r of own)if(r.scheduled_start)await autoAttach(query,r);

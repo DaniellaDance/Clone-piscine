@@ -18,7 +18,7 @@ test('ideas are quoted passages with source; absent ideas are not invented',()=>
 });
 const fail=(status,message)=>{throw Object.assign(new Error(message),{status})};
 test('unrelated departments cannot download meeting files',async()=>{
- await assert.rejects(handleMeetingResults({url:new URL('http://x/api/meeting-results/1/transcript'),req:{method:'GET'},u:{id:'lead-sales',role:'lead',department:'Продажи'},query:async()=>({rows:[{owner:'director',meeting_id:3,meeting_department:'ИТ'}]}),fail}),{status:404});
+ await assert.rejects(handleMeetingResults({url:new URL('http://x/api/meeting-results/1/transcript'),req:{method:'GET'},u:{id:'lead-sales',role:'lead',department:'Продажи'},query:async()=>({rows:[{owner:'director',meeting_id:3,meeting_department:'ИТ'}]}),fail}),{status:403});
 });
 test('authorized download is generated entirely from persisted text without fetching media',async()=>{
  let content,headers;await handleMeetingResults({url:new URL('http://x/api/meeting-results/1/transcript'),req:{method:'GET'},res:{writeHead(s,h){headers=h},end(s){content=s}},u:{id:'d',role:'director'},query:async()=>({rows:[{id:1,owner:'d',title:'Meeting',transcript:[{timestamp:'00:01',speaker:'Анна',text:'Полный текст.'}]}]}),fail});

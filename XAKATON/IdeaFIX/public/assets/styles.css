@@ -931,3 +931,30 @@ main#view.home-screen{display:block!important;overflow-y:auto!important;overflow
 .idea-group{margin-bottom:10px}.idea-group h2{font-size:17px;line-height:1.3;overflow-wrap:anywhere}.idea-group details button{display:block;text-align:left;width:100%;margin-top:6px;font-size:12px;white-space:normal;overflow-wrap:anywhere}
 
 .company-news-tools{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}.company-news-grid{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr))}.company-news-panel{border:1px solid #d4e3f2;border-radius:12px;padding:12px;background:#fff;min-width:0}.company-news-panel h3{font-size:17px;margin:0 0 8px;color:#1b4e81}.company-news-article{border-top:1px solid #e0eaf5;padding:10px 0}.company-news-article h4{font-size:14px;line-height:1.4;margin:0 0 6px;overflow-wrap:anywhere}.company-news-article small{font-size:11px;color:#62758a}.company-news-article p{font-size:12px;line-height:1.5}.company-news-article a{font-size:12px}@media(max-width:600px){.company-news-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Compact home dashboard: all destinations share the available viewport. */
+main#view.home-screen{display:flex!important;flex-direction:column!important;gap:5px!important;overflow-y:auto!important;padding-bottom:5px!important}
+#view.home-screen>.home-hero-wrap{flex:0 0 auto!important;margin-bottom:0!important}
+#view.home-screen>.home-hero-wrap>.quote-head{height:clamp(48px,10dvh,86px)!important;min-height:0!important;margin-bottom:0!important}
+#view.home-screen>.home-next-meeting{min-height:0!important;flex:0 0 auto!important;padding:5px 8px!important;margin:0!important}
+#view.home-screen .next-meeting-heading{font-size:10px;line-height:1.2}
+#view.home-screen .next-meeting-heading button{min-height:24px;padding:3px 6px;font-size:10px}
+#view.home-screen #dashboard-upcoming .meeting-card{padding-top:3px}
+#view.home-screen #dashboard-upcoming .meeting-card strong{font-size:11px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#view.home-screen #dashboard-upcoming .meeting-card small{font-size:9px;line-height:1.2;margin:2px 0}
+#view.home-screen #dashboard-upcoming .meeting-card .badge{font-size:9px;padding:2px 4px}
+#view.home-screen #dashboard-upcoming .meeting-card>div:first-child>small:last-child{display:none}
+#view.home-screen>.home-all-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(48px,1fr);gap:5px;flex:1 0 auto;min-height:0;align-content:start}
+#view.home-screen .home-all-actions>.stage-journey,#view.home-screen .home-all-actions>.home-sections{display:contents!important}
+#view.home-screen .home-all-actions .stage-tile,#view.home-screen .home-all-actions .home-nav-button{height:auto!important;min-height:48px!important;padding:3px!important;border-radius:10px;box-shadow:none;gap:3px;min-width:0}
+#view.home-screen .home-all-actions .stage-tile>.stage-select{min-height:44px!important;padding:3px 1px!important;gap:3px}
+#view.home-screen .home-all-actions .stage-title,#view.home-screen .home-all-actions .home-nav-button{font-size:clamp(9px,2.5vw,11px)!important;line-height:1.15!important;letter-spacing:-.1px}
+#view.home-screen .home-all-actions .stage-icon,#view.home-screen .home-all-actions .home-nav-icon{width:23px!important;height:23px!important;font-size:15px!important;flex-shrink:0}
+#view.home-screen .home-all-actions svg{width:17px!important;height:17px!important}
+#view.home-screen>.home-ideas-title,#view.home-screen>.filters,#view.home-screen>#results,#view.home-screen>#list-pager{display:none!important}
+#view.home-screen>.home-stats{margin:0;gap:4px;flex:none}
+#view.home-screen>.home-stats>div{padding:3px;gap:4px}
+#view.home-screen>.home-stats b{font-size:14px}
+#view.home-screen>.home-stats small{font-size:8px}
+@media(min-width:900px){#view.home-screen>.home-all-actions{grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:minmax(58px,1fr)}}
+@media(max-height:500px) and (orientation:landscape){#view.home-screen>.home-hero-wrap{display:none}#view.home-screen>.home-all-actions{grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:minmax(42px,1fr)}}
