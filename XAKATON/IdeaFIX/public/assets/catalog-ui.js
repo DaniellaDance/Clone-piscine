@@ -9,7 +9,50 @@ let catalogPage=0,catalogSearch='',catalogCountry='',graphVendor='v1',catalogGro
 const vendorCollator=new Intl.Collator('ru',{numeric:true,sensitivity:'base'});const vendorExpanded=new Set();
 const vendorNameSort=(a,b)=>vendorCollator.compare(a.name,b.name)||a.id.localeCompare(b.id);
 
-async function showRegularClients(){const root=$('#catalog-results');root.innerHTML='<p class="hint">Загружаем постоянных клиентов…</p>';$('#catalog-pager').innerHTML='';try{const rows=await api('/regular-clients');if(!root.isConnected)return;root.innerHTML='<div class="client-directory"><div class="client-directory-head"><strong>Постоянные клиенты · '+rows.length+'</strong><button type="button" id="client-add">＋ Добавить</button></div><div class="client-list">'+(rows.length?rows.map(c=>'<article class="client-row"><span class="client-avatar">👤</span><div><strong>'+esc(c.company)+'</strong>'+(c.city?'<small>'+esc(c.city)+'</small>':'')+(c.contact_name?'<small>'+esc(c.contact_name)+'</small>':'')+(c.contact_email?'<a href="mailto:'+esc(c.contact_email)+'">'+esc(c.contact_email)+'</a>':'')+(c.notes?'<small>'+esc(c.notes)+'</small>':'')+'</div></article>').join(''):'<p class="hint">Клиентов пока нет. Добавьте первого постоянного клиента.</p>')+'</div></div>';$('#client-add').onclick=()=>{modal('Добавить постоянного клиента','<form id="regular-client-form" class="client-form"><label>Компания<input name="company" required minlength="2" maxlength="120"></label><label>Контактное лицо<input name="contact_name" maxlength="120"></label><label>Email<input name="contact_email" type="email" maxlength="200"></label><label>Город<input name="city" maxlength="120" placeholder="Например, Астана"></label><div class="scope-grid"><label>Широта<input name="latitude" type="number" step="0.0001" min="-90" max="90" placeholder="51.1694"></label><label>Долгота<input name="longitude" type="number" step="0.0001" min="-180" max="180" placeholder="71.4491"></label></div><p class="hint">Координаты необязательны: без них клиент виден в списке, с ними — звёздочкой на карте.</p><label>Примечание<input name="notes" maxlength="500"></label><button type="submit" class="primary">Сохранить</button></form>');$('#regular-client-form').onsubmit=async e=>{e.preventDefault();const b=Object.fromEntries(new FormData(e.currentTarget));try{await api('/regular-clients',b);$('#modal').close();showRegularClients()}catch(err){alert(err.message)}}}}catch(e){root.innerHTML='<p class="hint">Не удалось загрузить клиентов: '+esc(e.message)+'</p>'}}
+
+async function showRegularClients(){
+ const root=$('#catalog-results');
+ root.innerHTML='<p class="hint">Загружаем постоянных клиентов…</p>';$('#catalog-pager').innerHTML='';
+ try{
+  const rows=await api('/regular-clients');if(!root.isConnected)return;
+  const detail=(label,value)=>value?'<p><b>'+label+':</b> '+esc(value)+'</p>':'';
+  const safePhone=x=>String(x||'').replace(/[^+\d]/g,'');
+  const secureLink=(label,url)=>url?'<a class="client-action" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(label)+'</a>':'';
+  const chatLink=(value,service)=>{
+   const raw=String(value||'').trim();if(!raw)return '';
+   const phone=safePhone(raw);
+   if(service==='whatsapp')return phone?'https://wa.me/'+phone.replace(/^\+/,''):null;
+   if(service==='telegram'){if(/^https:\/\/t\.me\/[\w+/-]+$/i.test(raw))return raw;if(/^@?[\w]{5,32}$/.test(raw))return 'https://t.me/'+raw.replace(/^@/,'');return null}
+   if(service==='max'){if(/^https:\/\/(?:max\.ru|web\.max\.ru)\/[\w+/?=&.-]+$/i.test(raw))return raw;return null}
+   return null;
+  };
+  function openClient(c){
+   const mail=c.contact_email&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.contact_email)?'mailto:'+c.contact_email+'?subject='+encodeURIComponent('Сотрудничество — '+c.company):null;
+   modal('Карточка клиента', '<div class="client-detail"><h3>'+esc(c.company)+'</h3>'+detail('Город',c.city)+detail('Адрес',c.address)+detail('Контактное лицо',c.contact_name)+detail('Телефон',c.phone)+detail('Email',c.contact_email)+detail('WhatsApp',c.whatsapp)+detail('Telegram',c.telegram)+detail('MAX',c.max_contact)+detail('Примечание',c.notes)+'<div class="client-actions">'+(mail?secureLink('✉ Написать письмо',mail):'<p class="hint">Укажите email, чтобы написать письмо.</p>')+secureLink('Позвонить',c.phone?'tel:'+safePhone(c.phone):null)+secureLink('WhatsApp',chatLink(c.whatsapp,'whatsapp'))+secureLink('Telegram',chatLink(c.telegram,'telegram'))+secureLink('MAX',chatLink(c.max_contact,'max'))+'<button type="button" id="client-edit">Редактировать клиента</button></div></div>');
+   $('#client-edit').onclick=()=>clientForm(c);
+  }
+  function clientForm(c=null){
+   const val=(key)=>esc(c?.[key]||'');
+   modal(c?'Редактировать клиента':'Добавить постоянного клиента','<form id="regular-client-form" class="client-form stack">'+
+    '<label>Компания<input name="company" required minlength="2" maxlength="120" value="'+val('company')+'"></label>'+
+    '<label>Контактное лицо<input name="contact_name" maxlength="120" value="'+val('contact_name')+'"></label>'+
+    '<label>Телефон<input name="phone" type="tel" maxlength="60" value="'+val('phone')+'" placeholder="+7 …"></label>'+
+    '<label>Email<input name="contact_email" type="email" maxlength="200" value="'+val('contact_email')+'"></label>'+
+    '<label>WhatsApp<input name="whatsapp" maxlength="120" value="'+val('whatsapp')+'" placeholder="+7 …"></label>'+
+    '<label>Telegram<input name="telegram" maxlength="120" value="'+val('telegram')+'" placeholder="@username или https://t.me/…"></label>'+
+    '<label>MAX<input name="max_contact" maxlength="160" value="'+val('max_contact')+'" placeholder="Ссылка на профиль MAX"></label>'+
+    '<label>Город<input name="city" maxlength="120" value="'+val('city')+'" placeholder="Например, Астана"></label>'+
+    '<label>Адрес клиента<input name="address" maxlength="300" value="'+val('address')+'" placeholder="Улица, дом, офис"></label>'+
+    '<p class="hint">Координаты вводить не нужно. Адрес сохраняется в карточке. Пока геокодирование не подключено, карта показывает точку города, а не точное здание.</p>'+
+    '<label>Примечание<textarea name="notes" maxlength="500" rows="2">'+esc(c?.notes||'')+'</textarea></label>'+
+    '<p class="error" role="alert"></p><button type="submit" class="primary">Сохранить клиента</button></form>');
+   $('#regular-client-form').onsubmit=async e=>{e.preventDefault();const form=e.currentTarget;const b=Object.fromEntries(new FormData(form));if(c)b.id=c.id;const btn=form.querySelector('[type="submit"]');btn.disabled=true;try{await api('/regular-clients',b,c?'PATCH':'POST');$('#modal').close();showRegularClients();toast('Карточка клиента сохранена')}catch(err){form.querySelector('.error').textContent=err.message;btn.disabled=false}};
+  }
+  root.innerHTML='<div class="client-directory client-compact"><div class="client-directory-head"><strong>Постоянные клиенты · '+rows.length+'</strong><button type="button" id="client-add">＋ Добавить</button></div><div class="client-single-list">'+(rows.length?rows.map(c=>'<button type="button" class="client-single-row" data-client-id="'+esc(c.id)+'"><strong>'+esc(c.company)+'</strong><span>'+esc(c.city||'Город не указан')+'</span><span aria-hidden="true">›</span></button>').join(''):'<p class="hint">Клиентов пока нет.</p>')+'</div></div>';
+  $('#client-add').onclick=()=>clientForm();
+  root.querySelectorAll('[data-client-id]').forEach(btn=>btn.onclick=()=>{const c=rows.find(x=>String(x.id)===btn.dataset.clientId);if(c)openClient(c)});
+ }catch(e){root.innerHTML='<p class="hint">Не удалось загрузить клиентов: '+esc(e.message)+'</p>'}
+}
 const countryMapPoints={AT:[14.5,47.5],CA:[-106,56],JP:[138,37],RU:[94,61],US:[-98,39],GB:[-2,54],CZ:[15,49.8],IT:[12.5,42.8],NL:[5.3,52.2],PL:[19,52],DE:[10.4,51],FR:[2.5,46.5],AU:[134,-25],CN:[104,35],KR:[127.8,36],IL:[35,31.5],CH:[8.2,46.8],FI:[26,64],KZ:[67,48]};
 let partnerMap=null;
 
