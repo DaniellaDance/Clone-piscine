@@ -30,15 +30,60 @@ async function show(id){
   const [details,rows]=await Promise.all([api(base(id)),api(base(id)+'/messages')]);
   if(page!=='discussions')return;
   topic=details;const v=$('#view');v.classList.remove('list-screen');v.classList.add('discussion-screen');
-  v.innerHTML=heading+'<div class="discussion-subject"><b>'+title(details)+'</b><span>'+(details.closed_at?'Завершено':'В процессе')+'</span></div><div id="disc-messages" role="log" aria-label="Сообщения обсуждения"></div>'+(details.closed_at?'<div class="discussion-actions"><button id="disc-download" class="primary">Скачать протокол (.txt)</button><button type="button" id="disc-ai-protocol">✦ ИИ-протокол и поручения</button></div><div id="disc-ai-output"></div>':'<form id="disc-send"><label>Сообщение<textarea name="text" id="disc-text" rows="2" maxlength="3000" placeholder="Обсудите идею или проблему…"></textarea></label><label class="discussion-file-picker">📎 Добавить файлы<input id="disc-file-input" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.json,.png,.jpg,.jpeg,.webp,.mp3,.wav,.mp4,.webm"></label><div id="disc-selected-files" class="muted"></div><div class="discussion-actions"><button type="button" id="disc-voice">🎙 Надиктовать</button><button type="submit" class="primary">Отправить</button><button type="button" id="disc-close">Завершить и сохранить файл</button><button type="button" id="disc-ai-protocol">✦ ИИ-протокол и поручения</button></div><p class="hint">Протокол включает все отправленные сообщения, в том числе отправленную диктовку.</p><p class="error" role="alert"></p></form><div id="disc-ai-output"></div>');
+  v.innerHTML=heading+'<div class="discussion-subject"><b>'+title(details)+'</b><span>'+(details.closed_at?'Завершено':'В процессе')+'</span></div><div id="disc-messages" role="log" aria-label="Сообщения обсуждения"></div>'+(details.closed_at?'<div class="discussion-actions"><button id="disc-download" class="primary">Скачать протокол (.txt)</button><button type="button" id="disc-ai-protocol">✦ ИИ-протокол и поручения</button></div><div id="disc-ai-output"></div>':'<form id="disc-send"><label>Сообщение<textarea name="text" id="disc-text" rows="2" maxlength="3000" placeholder="Обсудите идею или проблему…"></textarea></label><label class="discussion-file-picker">📎 Прикрепить файл (автозагрузка)<input id="disc-file-input" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.json,.png,.jpg,.jpeg,.webp,.mp3,.wav,.mp4,.webm"></label><div id="disc-selected-files" class="muted"></div><div class="discussion-actions"><button type="button" id="disc-voice">🎙 Надиктовать</button><button type="submit" class="primary">Отправить</button><button type="button" id="disc-close">Завершить и сохранить файл</button><button type="button" id="disc-ai-protocol">✦ ИИ-протокол и поручения</button></div><p class="hint">Протокол включает все отправленные сообщения, в том числе отправленную диктовку.</p><p class="error" role="alert"></p></form><div id="disc-ai-output"></div>');
   $('#disc-back').onclick=()=>{active=null;topic=null;stopVoice();render()};
   paint(rows);
   $('#disc-ai-protocol').onclick=()=>aiProtocol(id);
   if(details.closed_at){$('#disc-download').onclick=()=>download(id);return}
-  let selectedFiles=[];const fileInput=$('#disc-file-input'),selection=$('#disc-selected-files');
-  const showSelection=()=>{selection.textContent=selectedFiles.map(f=>f.name+' ('+Math.ceil(f.size/1024)+' КБ)').join(' · ')};
-  fileInput.onchange=()=>{const files=[...fileInput.files];if(files.length>3||files.some(f=>f.size>2097152)){toast('Выберите до 3 файлов, каждый не больше 2 МБ');fileInput.value='';selectedFiles=[]}else selectedFiles=files;showSelection()};
-  bindForm('#disc-send',async form=>{stopVoice();const text=String(form.text||'').trim();if(!text&&!selectedFiles.length)throw new Error('Введите сообщение или выберите файл');if(text){await api(base(id)+'/messages',{text});const area=$('#disc-text');if(area)area.value=''}while(selectedFiles.length){const file=selectedFiles[0],base64=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(new Error('Не удалось прочитать '+file.name));reader.readAsDataURL(file)});await api(base(id)+'/files',{filename:file.name,mime:file.type||'application/octet-stream',base64});selectedFiles.shift();showSelection()}fileInput.value='';await refresh()});
+  const fileInput=$('#disc-file-input'),selection=$('#disc-selected-files'),sendButton=$('#disc-send button[type="submit"]'),closeButton=$('#disc-close');
+  let uploading=false;
+  selection.setAttribute('role','status');selection.setAttribute('aria-live','polite');
+  selection.textContent='Выберите до 3 файлов по 2 МБ. После выбора они прикрепляются автоматически.';
+  const readBase64=file=>new Promise((resolve,reject)=>{
+   const reader=new FileReader();
+   reader.onload=()=>{const result=String(reader.result||'');const comma=result.indexOf(',');if(comma<0){reject(new Error('Не удалось прочитать '+file.name));return}resolve(result.slice(comma+1))};
+   reader.onerror=()=>reject(new Error('Не удалось прочитать '+file.name));
+   reader.readAsDataURL(file);
+  });
+  fileInput.onchange=async()=>{
+   const files=Array.from(fileInput.files||[]);
+   fileInput.value='';
+   if(!files.length)return;
+   if(uploading){selection.textContent='Предыдущая загрузка ещё выполняется. Повторите выбор после её окончания.';return}
+   if(files.length>3||files.some(f=>f.size>2097152||f.size===0)){
+    const message='Можно выбрать до 3 непустых файлов, каждый не более 2 МБ.';
+    selection.textContent=message;toast(message);return;
+   }
+   const allowed=/\.(pdf|docx?|xlsx?|pptx?|txt|csv|json|png|jpe?g|webp|mp3|wav|mp4|webm)$/i;
+   if(files.some(f=>!allowed.test(f.name))){selection.textContent='Формат файла не поддерживается. Допустимы документы, изображения, аудио и видео.';return}
+   uploading=true;fileInput.disabled=true;sendButton.disabled=true;closeButton.disabled=true;
+   let completed=0;
+   try{
+    for(const file of files){
+     selection.textContent='Прикрепляем '+file.name+' ('+(completed+1)+' из '+files.length+')…';
+     const base64=await readBase64(file);
+     await api(base(id)+'/files',{filename:file.name,mime:file.type||'application/octet-stream',base64});
+     completed++;
+     selection.textContent='Прикреплено '+completed+' из '+files.length+'…';
+    }
+    selection.textContent='✓ '+completed+' файл(ов) прикреплено. Они уже видны в переписке.';
+    await refresh();
+   }catch(error){
+    selection.textContent='Ошибка прикрепления после '+completed+' файл(ов): '+error.message+'. Выберите оставшиеся файлы повторно.';
+    toast('Файл не прикрепился: '+error.message);
+    await refresh();
+   }finally{
+    uploading=false;fileInput.disabled=false;sendButton.disabled=false;closeButton.disabled=false;
+   }
+  };
+  bindForm('#disc-send',async form=>{
+   if(uploading)throw new Error('Дождитесь завершения прикрепления файла');
+   stopVoice();const text=String(form.text||'').trim();
+   if(!text)throw new Error('Введите сообщение. Файл прикрепляется автоматически при выборе.');
+   await api(base(id)+'/messages',{text});
+   const area=$('#disc-text');if(area)area.value='';
+   await refresh();
+  });
   $('#disc-close').onclick=async()=>{if(!confirm('Завершить обсуждение? Будет сохранён полный протокол всех сообщений.'))return;const b=$('#disc-close');b.disabled=true;try{stopVoice();await api(base(id)+'/close',{});await show(id);download(id);toast('Протокол сохранён и готов к скачиванию')}catch(e){toast(e.message);b.disabled=false}};
   $('#disc-voice').onclick=dictate;
  }catch(e){toast(e.message);active=null;await render()}
