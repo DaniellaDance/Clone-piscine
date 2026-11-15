@@ -62,7 +62,7 @@ function openAISecretary(){
  api('/ai/status').then(status=>{const el=$('#secretary-provider-status');if(!el)return;const configured=Object.entries(status.providers||{}).filter(([name,enabled])=>name!=='rules'&&enabled).map(([name])=>name);el.textContent=configured.length?'Языковая модель настроена: '+configured.join(', ')+'. Если провайдер не отвечает, используется локальный анализ по правилам.':'Языковая модель не подключена. Доступен только локальный анализ по правилам. Для полноценного ИИ настройте API на сервере.'}).catch(()=>{const el=$('#secretary-provider-status');if(el)el.textContent='Статус ИИ проверить не удалось. Проверьте подключение к серверу.'});
  $('#director-analytics-open').onclick=showDirectorAnalytics;
  $('#secretary-analyze').onclick=openIdeaAnalysis;
- $('#secretary-news-open').onclick=openCompanyNews;
+ $('#secretary-news-open').onclick=openVendorNews;
 
  $('#director-chat-open').onclick=()=>{ $('#modal').close(); page='chat'; shell(); render(); };
 }
@@ -499,7 +499,31 @@ function refreshHomeData(){
  if($('#results'))renderList();const upcoming=$('#dashboard-upcoming');if(upcoming)window.IFMeetings?.upcoming(upcoming);
 }
 
-async function openCompanyNews(){
+async async function openVendorNews(){
+ if(!['director','admin'].includes(me.role)){openSecretaryNews();return}
+ modal('Новости вендоров',`<section class="company-news-window"><div class="company-news-tools"><button type="button" id="vendor-news-refresh">Обновить</button><button type="button" id="vendor-news-analysis">Анализ отдельной публикации</button></div><p id="vendor-news-status" role="status">Загружаем публикации вендоров…</p><div class="company-news-grid" id="vendor-news-grid"></div></section>`);
+ const root=$('#modal').querySelector('.company-news-window');
+ root.querySelector('#vendor-news-refresh').onclick=openVendorNews;
+ root.querySelector('#vendor-news-analysis').onclick=openSecretaryNews;
+ let vendors=[];
+ try{const data=await api('/secretary/news-topics');vendors=data.vendors||[]}
+ catch(e){if(root.isConnected)root.querySelector('#vendor-news-status').textContent='Не удалось загрузить список вендоров: '+e.message;return}
+ if(!root.isConnected)return;
+ const grid=root.querySelector('#vendor-news-grid'),status=root.querySelector('#vendor-news-status');
+ grid.innerHTML=vendors.map((v,i)=>'<section class="company-news-panel" data-vendor-index="'+i+'"><h3>'+esc(v.name)+'</h3><p>Загружаем новости…</p></section>').join('');
+ let next=0,done=0,found=0;
+ const worker=async()=>{while(next<vendors.length&&root.isConnected){
+  const i=next++,panel=grid.querySelector('[data-vendor-index="'+i+'"]');
+  try{const data=await api('/vendor-news?vendor='+i);if(!root.isConnected)return;
+   found+=data.articles.length;
+   panel.innerHTML='<h3>'+esc(vendors[i].name)+'</h3>'+(data.stale?'<p class="hint">Показаны последние сохранённые публикации.</p>':'')+
+    (data.articles.length?data.articles.map(a=>'<article class="company-news-article"><h4 data-user-text>'+esc(a.title)+'</h4><small>'+esc(a.source)+' · '+(a.published?new Date(a.published).toLocaleDateString('ru-RU'):'Дата не указана')+'</small>'+(a.excerpt?'<p data-user-text>'+esc(a.excerpt)+'</p>':'')+'<a href="'+esc(a.url)+'" target="_blank" rel="noopener noreferrer">Источник ↗</a></article>').join(''):'<p class="hint">'+(data.unavailable?'Источник временно недоступен.':'За последние 30 дней публикаций не найдено.')+'</p>');
+  }catch(e){if(root.isConnected)panel.innerHTML='<h3>'+esc(vendors[i].name)+'</h3><p>'+esc(e.message)+'</p>'}
+  done++;status.textContent='Загружено '+done+' из '+vendors.length+' вендоров · найдено публикаций: '+found;
+ }};
+ await Promise.all([worker(),worker(),worker(),worker()]);
+}
+function openCompanyNews(){
  const companies=['Honeywell','Siemens','Johnson Controls','Bosch Building Technologies','Schneider Electric','ABB','Eaton','Carrier Global','Halma','Hochiki'];
  if(!['director','admin'].includes(me.role)){openSecretaryNews();return}
  modal('Новости топ-компаний в сфере систем безопасности',`<section class="company-news-window"><div class="company-news-tools"><button id="company-news-refresh" type="button">Обновить</button><button id="company-news-analysis" type="button">Анализ отдельной публикации</button></div><div class="company-news-grid">${companies.map((name,i)=>`<section class="company-news-panel" data-news-company="${i}"><h3>${esc(name)}</h3><p role="status">Загружаем новости…</p></section>`).join('')}</div></section>`);
