@@ -11,7 +11,7 @@ export function parseCompanyNews(xml,company){
  return {company,title,url:url.href,source:plain(item.source?.['#text']||item.source||'Google News RSS'),published:Number.isFinite(+published)?published.toISOString():null,excerpt:excerpt.split(/\s+/).slice(0,45).join(' ')};
  }).filter(Boolean).sort((a,b)=>new Date(b.published||0)-new Date(a.published||0)).slice(0,3);
 }
-async function getNewsForCompany(company,key,{fetcher=fetch,now=Date.now()}={}){
+export async function getNewsForCompany(company,key,{fetcher=fetch,now=Date.now()}={}){
  if(!company)throw Object.assign(Error('Выберите компанию'),{status:400});
  const old=cache.get(key);if(old&&now-old.fetchedAt<15*60000)return {...old,stale:false};if(pending.has(key))return pending.get(key);
  const task=(async()=>{try{const url='https://news.google.com/rss/search?'+new URLSearchParams({q:'"'+company+'" when:30d',hl:'ru',gl:'KZ',ceid:'KZ:ru'});
