@@ -3,7 +3,7 @@
 let active=null,topic=null,busy=false,recognizer=null;
 const isLeader=()=>me&&['director','admin','lead'].includes(me.role);
 const base=id=>'/discussions/topics/'+Number(id);
-const heading='<div class="discussion-heading"><h1>Обсуждение идей и проблем</h1><button id="disc-back" type="button">Все обсуждения</button></div>';
+const heading='<div class="discussion-heading"><h1>Обсуждение идей и проблем</h1><button id="disc-back" type="button">← Previous page</button></div>';
 const title=t=>'#'+t.ticket_id+' · '+esc(t.title)+' ('+(t.kind==='idea'?'идея':'проблема')+' · '+esc(t.department)+')';
 function download(id,format='txt'){const a=document.createElement('a');a.href='/api'+base(id)+'/export'+(format==='word'?'?format=word':'');a.download='IdeaFIX-discussion-'+id+(format==='word'?'.doc':'.txt');document.body.append(a);a.click();a.remove()}
 function stopVoice(){if(recognizer){try{recognizer.stop()}catch{}recognizer=null}}
@@ -117,6 +117,10 @@ function dictate(){
  rec.onerror=()=>{stopVoice();const b=$('#disc-voice');if(b)b.textContent='🎙 Надиктовать'};
  try{rec.start();button.textContent='■ Остановить запись'}catch(e){recognizer=null;toast(e.message)}
 }
-window.IFDiscussions={open,render};
+function previous(){
+ if(page!=='discussions'||!active)return false;
+ active=null;topic=null;stopVoice();render();return true;
+}
+window.IFDiscussions={open,render,previous};
 setInterval(refresh,5000);
 })();
