@@ -2,7 +2,7 @@ import {notifyUrgentChat} from './push.mjs';
 import {departments,isTop} from './access.mjs';
 export async function handleChat({url,req,u,body,query,send,fail}){
  if(url.pathname!=='/api/leadership-chat')return false;
- if(!['director','admin','lead'].includes(u.role))fail(403,'Чат доступен директору и руководителям отделов');
+ if(!['director','lead'].includes(u.role))fail(403,'Чат доступен директору и руководителям отделов');
  if(req.method==='POST'){
   const b=await body(req);if(typeof b.text!=='string'||b.text.trim().length<1||b.text.length>3000)fail(400,'Сообщение: от 1 до 3000 символов');
   const department=isTop(u)?b.department:u.department;
