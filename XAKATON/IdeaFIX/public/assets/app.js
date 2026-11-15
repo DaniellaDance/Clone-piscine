@@ -499,7 +499,7 @@ function refreshHomeData(){
  if($('#results'))renderList();const upcoming=$('#dashboard-upcoming');if(upcoming)window.IFMeetings?.upcoming(upcoming);
 }
 
-async async function openVendorNews(){
+async function openVendorNews(){
  if(!['director','admin'].includes(me.role)){openSecretaryNews();return}
  modal('Новости вендоров',`<section class="company-news-window"><div class="company-news-tools"><button type="button" id="vendor-news-refresh">Обновить</button><button type="button" id="vendor-news-analysis">Анализ отдельной публикации</button></div><p id="vendor-news-status" role="status">Загружаем публикации вендоров…</p><div class="company-news-grid" id="vendor-news-grid"></div></section>`);
  const root=$('#modal').querySelector('.company-news-window');
@@ -523,7 +523,7 @@ async async function openVendorNews(){
  }};
  await Promise.all([worker(),worker(),worker(),worker()]);
 }
-function openCompanyNews(){
+async function openCompanyNews(){
  const companies=['Honeywell','Siemens','Johnson Controls','Bosch Building Technologies','Schneider Electric','ABB','Eaton','Carrier Global','Halma','Hochiki'];
  if(!['director','admin'].includes(me.role)){openSecretaryNews();return}
  modal('Новости топ-компаний в сфере систем безопасности',`<section class="company-news-window"><div class="company-news-tools"><button id="company-news-refresh" type="button">Обновить</button><button id="company-news-analysis" type="button">Анализ отдельной публикации</button></div><div class="company-news-grid">${companies.map((name,i)=>`<section class="company-news-panel" data-news-company="${i}"><h3>${esc(name)}</h3><p role="status">Загружаем новости…</p></section>`).join('')}</div></section>`);
