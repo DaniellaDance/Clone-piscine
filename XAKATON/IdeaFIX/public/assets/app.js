@@ -456,22 +456,38 @@ window.addEventListener('pageshow',event=>{if(event.persisted){me=null;items=[];
 
 setInterval(()=>{if(me&&!document.hidden&&!$('#modal')?.open)refresh()},60000);
 
-function mountainProgress(stage){
+function mountainProgress(ticket){
+ const stage=ticket.stage||'insight';
  const keys=Object.keys(stages),at=Math.max(0,keys.indexOf(stage)),compact=['pilot','implementation','result'].includes(stage);
+ const events=Array.isArray(ticket.events)?ticket.events:[];
+ const starts=new Map();
+ const creation=new Date(ticket.created);
+ if(Number.isFinite(creation.getTime()))starts.set('insight',creation);
+ const byName=new Map(Object.entries(stages).map(([key,name])=>[name,key]));
+ for(const event of events){
+  const match=/^Этап:\s*([^·]+?)(?:\s*·|$)/.exec(String(event.text||''));
+  if(!match)continue;
+  const key=byName.get(match[1].trim());
+  const date=new Date(event.created);
+  if(key&&Number.isFinite(date.getTime())&&(!starts.has(key)||date<starts.get(key)))starts.set(key,date);
+ }
+ const datestr=date=>new Intl.DateTimeFormat('ru-RU',{timeZone:'Asia/Almaty',day:'2-digit',month:'2-digit',year:'numeric'}).format(date);
+ const formatDate=key=>starts.has(key)?'Начало: '+datestr(starts.get(key)):(keys.indexOf(key)>at?'Не начат':'Дата начала не зафиксирована');
  const start=compact?at:0;
  const rows=keys.slice(start).map((key,j)=>{
   const i=start+j,done=i<at,current=i===at,kind=done?'done':current?'current':'pending';
   const mark=done?'✓':current?'●':String(i+1);
-  const detail=done?'Этап пройден':current?'Текущий этап':'Ожидает выполнения';
-  return '<li class="tracking-step '+kind+'"'+(current?' aria-current="step"':'')+'><span class="tracking-marker" aria-hidden="true">'+mark+'</span><span class="tracking-info"><strong>'+esc(stages[key])+'</strong><small>'+detail+'</small></span></li>';
+  const detail=formatDate(key);
+  return '<li class="tracking-step '+kind+'"'+(current?' aria-current="step"':'')+'><span class="tracking-marker" aria-hidden="true">'+mark+'</span><span class="tracking-info"><strong>'+esc(stages[key])+'</strong><small>'+esc(detail)+'</small></span></li>';
  }).join('');
- return '<div class="parcel-tracking'+(compact?' parcel-tracking-compact':'')+'" aria-label="Отслеживание этапов идеи"><p class="tracking-summary"><strong>Пройдено: '+at+' из '+keys.length+'</strong><span>Сейчас: '+esc(stages[keys[at]])+'</span></p><ol class="tracking-list">'+rows+'</ol></div>';
+ const archived=compact?'<details class="tracking-history"><summary>Ранее пройденные этапы и даты ('+at+')</summary><ul>'+keys.slice(0,at).map(key=>'<li><strong>'+esc(stages[key])+':</strong> '+esc(formatDate(key))+'</li>').join('')+'</ul></details>':'';
+ return '<div class="parcel-tracking'+(compact?' parcel-tracking-compact':'')+'" aria-label="Отслеживание этапов идеи"><p class="tracking-summary"><strong>Пройдено: '+at+' из '+keys.length+'</strong><span>Сейчас: '+esc(stages[keys[at]])+'</span></p><ol class="tracking-list">'+rows+'</ol>'+archived+'</div>';
 }
 function workflowView(t){
  const w=t.workflow||{},keys=Object.keys(stages),at=keys.indexOf(t.stage);
  const moneyKeys=[['pilotIncome','Доход пилота'],['pilotExpense','Расходы пилота'],['implementationIncome','Доход внедрения'],['implementationExpense','Расходы внедрения']];
  const fields=[['insight','Что заметили'],['proposal','Что предлагаем изменить'],['benefit','Польза для компании'],['discussion','Итоги обсуждения'],['cost','Затраты и ресурсы'],['effect','Ожидаемый эффект'],['feasibility','Реализуемость и риски'],['reason','Обоснование решения'],['pilot','План пилота'],['pilotResult','Результат пилота'],['owner','Ответственный'],['deadline','Срок внедрения'],['implementation','Что внедрено'],['before','Показатель до'],['after','Показатель после'],['result','Итог и обратная связь автору'],...moneyKeys];
- let html='<section class="workflow"><h3>От инсайта до результата</h3>'+mountainProgress(t.stage);
+ let html='<section class="workflow"><h3>От инсайта до результата</h3>'+mountainProgress(t);
  if(t.stage==='discussion')html+='<div class="hint" style="margin:12px 0"><strong>После обсуждения</strong><p>Выберите дальнейшее действие по идее.</p><div style="display:flex;flex-wrap:wrap;gap:8px"><button type="button" id="discussion-to-bitrix" class="primary">Отправить в Битрикс24</button><button type="button" id="discussion-revise">Доработать</button></div><p id="discussion-action-status" role="status"></p></div>';
  html+=window.IFBitrix?.ticket(t)||'';
  if(!t.canManage&&!t.canEditInsight)return html+fields.filter(([k])=>w[k]).map(([k,label])=>`<p class="pre"><b>${label}:</b> <span data-user-text>${esc(w[k])}</span></p>`).join('')+'</section>';
