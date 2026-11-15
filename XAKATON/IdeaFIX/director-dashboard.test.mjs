@@ -4,9 +4,9 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 const source=readFileSync(new URL('./public/assets/app.js',import.meta.url),'utf8');
 const finance=source.slice(source.indexOf('function projectFinanceRows('),source.indexOf('async function renderFinancialResults('));
-const summary=source.slice(source.indexOf('function directorFinancialSummary('),source.indexOf('function showDirectorAnalytics('));
+const summary=source.slice(source.indexOf('function fourCurrencyMoney('),source.indexOf('function showDirectorAnalytics('));
 test('director summary calculates actual pilot totals and preserves missing data',()=>{
- const context={Intl,me:{id:'director'}};vm.createContext(context);vm.runInContext(finance+summary,context);
+ const context={Intl,me:{id:'director'},financeFx:{rates:{RUB:1,KZT:5,USD:.012,EUR:.011}}};vm.createContext(context);vm.runInContext(finance+summary,context);
  const html=context.directorFinancialSummary([{id:1,title:'Пилот',canManage:true,stage:'pilot',workflow:{pilotIncome:'120000',pilotExpense:'45000'}}]);
  assert.match(html,/120\D*000/);assert.match(html,/45\D*000/);assert.match(html,/75\D*000/);
  const empty=context.directorFinancialSummary([{canManage:true,stage:'pilot',workflow:{}}]);assert.match(empty,/Нет данных/);
