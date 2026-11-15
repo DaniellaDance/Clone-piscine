@@ -11,16 +11,22 @@ export function parseCompanyNews(xml,company){
  return {company,title,url:url.href,source:plain(item.source?.['#text']||item.source||'Google News RSS'),published:Number.isFinite(+published)?published.toISOString():null,excerpt:excerpt.split(/\s+/).slice(0,45).join(' ')};
  }).filter(Boolean).sort((a,b)=>new Date(b.published||0)-new Date(a.published||0)).slice(0,3);
 }
-export async function getCompanyNews(index,{fetcher=fetch,now=Date.now()}={}){
- const company=newsCompanies[index];if(!company)throw Object.assign(Error('Выберите компанию'),{status:400});
- const old=cache.get(index);if(old&&now-old.fetchedAt<15*60000)return {...old,stale:false};if(pending.has(index))return pending.get(index);
+async function getNewsForCompany(company,key,{fetcher=fetch,now=Date.now()}={}){
+ if(!company)throw Object.assign(Error('Выберите компанию'),{status:400});
+ const old=cache.get(key);if(old&&now-old.fetchedAt<15*60000)return {...old,stale:false};if(pending.has(key))return pending.get(key);
  const task=(async()=>{try{const url='https://news.google.com/rss/search?'+new URLSearchParams({q:'"'+company+'" when:30d',hl:'ru',gl:'KZ',ceid:'KZ:ru'});
  const response=await fetcher(url,{signal:AbortSignal.timeout(8000),headers:{accept:'application/rss+xml, application/xml'}});if(!response.ok)throw Error('RSS unavailable');
- const xml=await response.text();if(xml.length>1500000)throw Error('RSS too large');const articles=parseCompanyNews(xml,company);const result={company,articles,fetchedAt:now};cache.set(index,result);return {...result,stale:false};
- }catch{if(old)return {...old,stale:true};return {company,articles:[],fetchedAt:null,unavailable:true}}finally{pending.delete(index)}})();pending.set(index,task);return task;
+ const xml=await response.text();if(xml.length>1500000)throw Error('RSS too large');const articles=parseCompanyNews(xml,company);const result={company,articles,fetchedAt:now};cache.set(key,result);return {...result,stale:false};
+ }catch{if(old)return {...old,stale:true};return {company,articles:[],fetchedAt:null,unavailable:true}}finally{pending.delete(key)}})();pending.set(key,task);return task;
+}
+export async function getCompanyNews(index,options={}){return getNewsForCompany(newsCompanies[index],'leader:'+index,options)}
+export async function getVendorNews(index,options={}){
+ const {default:catalog}=await import('./catalog.json',{with:{type:'json'}});
+ const vendor=catalog.vendors[index];if(!vendor)throw Object.assign(Error('Выберите вендора'),{status:400});
+ return getNewsForCompany(vendor.name,'vendor:'+index,options);
 }
 export async function handleCompanyNews({url,req,u,send,fail}){
- if(url.pathname!=='/api/company-news')return false;
+ if(!['/api/company-news','/api/vendor-news'].includes(url.pathname))return false;
  if(!['director','admin'].includes(u.role))fail(403,'Новости доступны директору и администратору');if(req.method!=='GET')fail(405,'Используйте GET');
- const value=url.searchParams.get('company');if(value===null||!/^\d$/.test(value))fail(400,'Выберите компанию');send(await getCompanyNews(Number(value)));return true;
+ const vendorMode=url.pathname==='/api/vendor-news';const value=url.searchParams.get(vendorMode?'vendor':'company');if(value===null||!/^\d{1,2}$/.test(value))fail(400,'Выберите компанию');send(await (vendorMode?getVendorNews(Number(value)):getCompanyNews(Number(value))));return true;
 }
