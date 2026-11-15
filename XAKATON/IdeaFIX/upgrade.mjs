@@ -34,7 +34,7 @@ export function analytics(rows,now=new Date()){
 }
 export async function sweepOverdue(query){
  // Durable, idempotent escalation. Never escalate private draft insights.
- return query(`WITH due AS (SELECT id FROM ideafix.tickets WHERE status NOT IN ('done','reject') AND escalated_at IS NULL AND coalesce(workflow->>'visibility','')<>'private' AND (due<now() OR (first_response IS NULL AND first_response_due<now())) ORDER BY id FOR UPDATE SKIP LOCKED LIMIT 100) UPDATE ideafix.tickets t SET escalated_at=now(),controlled=true FROM due WHERE t.id=due.id RETURNING t.id`);
+ return query(`WITH due AS (SELECT id FROM ideafix.tickets WHERE status NOT IN ('done','reject') AND escalated_at IS NULL AND author NOT LIKE 'demo-v1-%' AND title NOT LIKE 'ДЕМО%' AND coalesce(workflow->>'visibility','')<>'private' AND (due<now() OR (first_response IS NULL AND first_response_due<now())) ORDER BY id FOR UPDATE SKIP LOCKED LIMIT 100) UPDATE ideafix.tickets t SET escalated_at=now(),controlled=true FROM due WHERE t.id=due.id RETURNING t.id`);
 }
 export async function handleUpgrade({url,req,u,query,pool,body,send,fail,visible,manage,ticket,ticketVisibilitySql}){
  const top=['director','admin'].includes(u.role);
@@ -50,7 +50,7 @@ export async function handleUpgrade({url,req,u,query,pool,body,send,fail,visible
  if(url.pathname==='/api/upgrade/improvements'){if(req.method!=='GET')fail(405,'Используйте GET');const rows=sortImprovements((await scoped('completed')).filter(t=>t.published&&t.status==='done'&&t.result)).map(t=>({id:t.id,title:t.title,result:t.result,department:t.department,author:t.anonymous?'Анонимно':t.author_name,created:t.created,resolved_at:t.resolved_at,days:t.resolved_at?businessDaysBetween(t.created,t.resolved_at):null}));return send({items:rows,total:rows.length,quarter:rows.filter(t=>{const d=new Date(t.resolved_at),n=new Date();return d.getFullYear()===n.getFullYear()&&Math.floor(d.getMonth()/3)===Math.floor(n.getMonth()/3)}).length})}
  if(url.pathname==='/api/upgrade/notifications'){
   if(req.method==='POST'){await query('UPDATE ideafix.inbox_events SET read_at=now() WHERE user_id=$1 AND read_at IS NULL',[u.id]);return send({ok:true})}if(req.method!=='GET')fail(405,'Метод недоступен');
-  await sweepOverdue(query);const rows=(await query('SELECT n.id AS notification_id,n.ticket,n.kind AS notification_kind,n.title AS notification_title,n.created AS notification_created,n.read_at,t.* FROM ideafix.inbox_events n JOIN ideafix.tickets t ON t.id=n.ticket WHERE n.user_id=$1 ORDER BY n.id DESC LIMIT 100',[u.id])).rows;
+  await sweepOverdue(query);const rows=(await query('SELECT n.id AS notification_id,n.ticket,n.kind AS notification_kind,n.title AS notification_title,n.created AS notification_created,n.read_at,t.* FROM ideafix.inbox_events n JOIN ideafix.tickets t ON t.id=n.ticket WHERE n.user_id=$1 AND t.author NOT LIKE 'demo-v1-%' AND t.title NOT LIKE 'ДЕМО%' ORDER BY n.id DESC LIMIT 100',[u.id])).rows;
   return send(rows.filter(t=>visible(u,t)).map(t=>({id:t.notification_id,ticket:t.ticket,kind:t.notification_kind,title:t.notification_title,created:t.notification_created,read_at:t.read_at})));
  }
  if(url.pathname==='/api/upgrade/routing'){
