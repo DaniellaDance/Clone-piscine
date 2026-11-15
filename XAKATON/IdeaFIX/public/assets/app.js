@@ -414,7 +414,7 @@ login();
 // Every new page load starts at the sign-in form; never restore /api/me automatically.
 window.addEventListener('pageshow',event=>{if(event.persisted){me=null;items=[];page='feed';login()}});
 
-setInterval(()=>{if(me&&!document.hidden)refresh()},15000);
+setInterval(()=>{if(me&&!document.hidden&&!$('#modal')?.open)refresh()},60000);
 
 function mountainProgress(stage){
  const keys=Object.keys(stages),at=Math.max(0,keys.indexOf(stage));
@@ -541,9 +541,11 @@ async function openVendorNews(){
  catch(e){if(root.isConnected)root.querySelector('#vendor-news-status').textContent='Не удалось загрузить список вендоров: '+e.message;return}
  if(!root.isConnected)return;
  const grid=root.querySelector('#vendor-news-grid'),status=root.querySelector('#vendor-news-status');
- grid.innerHTML=vendors.map((v,i)=>'<section class="company-news-panel" data-vendor-index="'+i+'"><h3>'+esc(v.name)+'</h3><p>Загружаем новости…</p></section>').join('');
+ grid.innerHTML=vendors.map((v,i)=>'<section class="company-news-panel" data-vendor-index="'+i+'"><h3>'+esc(v.name)+'</h3><p>Ожидает загрузки публикаций…</p></section>').join('');
+ const loadMore=document.createElement('button');loadMore.type='button';loadMore.textContent='Загрузить следующие 10 вендоров';loadMore.className='primary';root.append(loadMore);
+ let limit=Math.min(10,vendors.length);
  let next=0,done=0,found=0;
- const worker=async()=>{while(next<vendors.length&&root.isConnected){
+ const worker=async()=>{while(next<limit&&root.isConnected){
   const i=next++,panel=grid.querySelector('[data-vendor-index="'+i+'"]');
   try{const data=await api('/vendor-news?vendor='+i);if(!root.isConnected)return;
    found+=data.articles.length;
@@ -552,7 +554,9 @@ async function openVendorNews(){
   }catch(e){if(root.isConnected)panel.innerHTML='<h3>'+esc(vendors[i].name)+'</h3><p>'+esc(e.message)+'</p>'}
   done++;status.textContent='Загружено '+done+' из '+vendors.length+' вендоров · найдено публикаций: '+found;
  }};
- await Promise.all([worker(),worker(),worker(),worker()]);
+ const nextBatch=async()=>{loadMore.disabled=true;await Promise.all([worker(),worker(),worker(),worker()]);if(root.isConnected){loadMore.disabled=false;loadMore.hidden=next>=vendors.length;}};
+ loadMore.onclick=async()=>{limit=Math.min(vendors.length,limit+10);await nextBatch()};
+ await nextBatch();
 }
 async function openCompanyNews(){
  const companies=['Honeywell','Siemens','Johnson Controls','Bosch Building Technologies','Schneider Electric','ABB','Eaton','Carrier Global','Halma','Hochiki'];
