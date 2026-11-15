@@ -98,7 +98,7 @@ if(url.pathname==='/api/regular-clients'){
   const company=clean(b.company,2,120),contact=String(b.contact_name||'').trim().slice(0,120),email=String(b.contact_email||'').trim().slice(0,200);
   const notes=String(b.notes||'').trim().slice(0,500),city=String(b.city||'').trim().slice(0,120),address=String(b.address||'').trim().slice(0,300);
   const phone=String(b.phone||'').trim().slice(0,60),whatsapp=String(b.whatsapp||'').trim().slice(0,120),telegram=String(b.telegram||'').trim().slice(0,120),maxContact=String(b.max_contact||'').trim().slice(0,160);
-  if(email&&!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))fail(400,'Проверьте email');
+  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))fail(400,'Проверьте email');
   const fields=[company,contact,email,notes,city,address,phone,whatsapp,telegram,maxContact];
   if(req.method==='PATCH'){
    const id=Number(b.id);if(!Number.isSafeInteger(id)||id<=0)fail(400,'Выберите клиента');
