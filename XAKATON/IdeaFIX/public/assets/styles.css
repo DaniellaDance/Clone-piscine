@@ -1088,3 +1088,10 @@ main#view.home-screen{display:flex!important;flex-direction:column!important;gap
 .pilot-edit-details>summary{cursor:pointer;font-size:12px;font-weight:700;color:#244474}
 .pilot-edit-details[open] #workflow{margin-top:8px}
 @media(max-width:560px){.header-previous{font-size:10px;padding:6px;margin-right:3px}.dialoghead{gap:6px}.dialoghead .previous-page-button{font-size:10px;padding:5px}.pilot-one-screen-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pilot-one-screen-grid>div.pilot-wide{grid-column:span 2}.pilot-one-screen h3{font-size:12px}.pilot-one-screen-grid strong{-webkit-line-clamp:2}}
+
+/* Filter completed improvements by implementation month */
+.improvements-month-filter{display:flex;flex-wrap:wrap;align-items:center;gap:7px 10px;margin:8px 0 12px;padding:8px 10px;border:1px solid #d8e3f1;border-radius:11px;background:#f8fbff}
+.improvements-month-filter label{font-size:12px;font-weight:700}
+.improvements-month-filter select{min-width:140px;max-width:100%;padding:7px 9px;font-size:12px;border-radius:8px}
+.improvements-month-filter small{width:100%;color:#60748d;font-size:10px}
+@media(max-width:530px){.improvements-month-filter{gap:4px}.improvements-month-filter select{flex:1;min-width:0}}
