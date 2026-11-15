@@ -42,7 +42,7 @@ test('complete upgrade workflow on isolated Neon branch',{skip:!process.env.TEST
   const thread=await call('author','/discussions/topics',{ticket_id:shared.data.id});assert.equal(thread.status,201);
   const uploaded=await call('author','/discussions/topics/'+thread.data.id+'/files',{filename:'test-report.txt',mime:'text/plain',base64:Buffer.from('Discussion test file').toString('base64')});assert.equal(uploaded.status,201);
   const messages=await call('author','/discussions/topics/'+thread.data.id+'/messages');assert.ok(messages.data.some(m=>Number(m.file_id)===Number(uploaded.data.id)&&m.filename==='test-report.txt'));
-  assert.equal((await call('outsider','/discussions/topics/'+thread.data.id+'/files')).status,403);
+  assert.equal((await call('outsider','/discussions/topics/'+thread.data.id+'/files')).status,404);
   assert.equal((await call('author','/discussions/topics/'+thread.data.id+'/close',{})).status,200);
   assert.equal((await call('author','/discussions/topics/'+thread.data.id+'/files')).data.length,1);
   assert.equal((await call('author','/discussions/topics/'+thread.data.id+'/files',{filename:'late.txt',mime:'text/plain',base64:'aGVsbG8='})).status,409);
