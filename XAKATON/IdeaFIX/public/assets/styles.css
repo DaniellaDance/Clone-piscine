@@ -1028,3 +1028,16 @@ main#view.home-screen{display:flex!important;flex-direction:column!important;gap
 .client-form{max-width:100%;overflow-x:hidden}
 .client-form input,.client-form textarea{width:100%;max-width:100%;box-sizing:border-box}
 @media(max-width:420px){.client-compact .client-single-row{grid-template-columns:minmax(0,1fr) 78px 10px;gap:5px;font-size:12px;padding:8px}.client-single-row span:nth-child(2){font-size:11px}}
+
+
+/* Finance: left-aligned titles and compact four-currency figures on mobile. */
+.finance-table th:first-child,.finance-table .finance-project-title{text-align:left!important;vertical-align:top}
+.finance-table .finance-project-title{min-width:170px;max-width:260px;overflow-wrap:anywhere}
+.finance-table td:not(:first-child),.finance-table th:not(:first-child){text-align:left;vertical-align:top}
+.finance-four-values{display:grid;gap:3px;font-variant-numeric:tabular-nums;font-size:12px;line-height:1.35;white-space:nowrap;font-weight:500}
+.finance-four-values>span{display:block}
+.secretary-financial-summary .finance-four-values{white-space:normal;font-size:14px;margin:5px 0 12px}
+.finance-totals .finance-four-values{white-space:normal;font-size:13px;margin-top:8px}
+.finance-table{overflow-x:auto;max-width:100%}
+.finance-table table{min-width:700px}
+@media(max-width:600px){.finance-table td,.finance-table th{padding:10px 8px}.finance-table .finance-project-title{min-width:170px;max-width:200px}.finance-four-values{font-size:11px}}
