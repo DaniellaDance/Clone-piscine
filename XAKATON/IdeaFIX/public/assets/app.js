@@ -110,10 +110,40 @@ function openLeaderDiscussionFromSecretary(){
  window.IFDiscussions?.open();
 }
 
+
+const FINANCE_CODES=['RUB','KZT','USD','EUR','CNY'];
+let financeDisplay='RUB',financeFx=null,financeFxPending=null;
+async function loadFinanceFx(force=false){
+ if(financeFx&&!force&&Date.now()-financeFx.checked<3600000)return financeFx;
+ if(financeFxPending)return financeFxPending;
+ financeFxPending=(async()=>{
+  const r=await fetch('https://open.er-api.com/v6/latest/RUB',{cache:'no-store'});
+  if(!r.ok)throw Error('Сервер курсов недоступен');
+  const d=await r.json();
+  if(d.result!=='success'||!d.time_last_update_utc)throw Error('Курс не подтверждён');
+  const rates={};for(const c of FINANCE_CODES){rates[c]=Number(d.rates?.[c]);if(!Number.isFinite(rates[c])||rates[c]<=0)throw Error('Нет курса '+c)}
+  financeFx={rates,date:d.time_last_update_utc,checked:Date.now()};return financeFx;
+ })().finally(()=>financeFxPending=null);
+ return financeFxPending;
+}
+function convertedMoney(n,source='RUB'){
+ if(n===null||n===undefined)return 'Нет данных';
+ const factor=source===financeDisplay?1:financeFx?.rates?.[financeDisplay]/financeFx?.rates?.[source];
+ if(!Number.isFinite(factor))return 'Курс не загружен';
+ return new Intl.NumberFormat('ru-RU',{style:'currency',currency:financeDisplay,maximumFractionDigits:2}).format(Number(n)*factor);
+}
+function financeToolbar(){return '<label>Валюта отображения<select id="finance-currency">'+FINANCE_CODES.map(c=>'<option value="'+c+'" '+(c===financeDisplay?'selected':'')+'>'+c+'</option>').join('')+'</select></label><button type="button" id="finance-rates">Курсы валют</button><small id="finance-rate-date">'+(financeFx?'Курс от '+financeFx.date:'Курсы ещё не загружены')+'</small>'}
+function financeRatesDialog(){
+ modal('Курсы валют','<p>Курсы относительно 1 российского рубля (RUB). Пересчёт справочный.</p><div id="finance-rate-list" role="status">Загрузка…</div><button type="button" id="finance-rate-reload">Обновить</button><p><a href="https://nationalbank.kz/ru/exchangerates/ezhednevnye-oficialnye-rynochnye-kursy-valyut" target="_blank" rel="noopener noreferrer">Официальные курсы Нацбанка Казахстана</a></p>');
+ const output=$('#finance-rate-list'),button=$('#finance-rate-reload');
+ async function refresh(force){button.disabled=true;try{const fx=await loadFinanceFx(force);if(!output.isConnected)return;output.innerHTML='<table><thead><tr><th>Валюта</th><th>За 1 RUB</th></tr></thead><tbody>'+FINANCE_CODES.map(c=>'<tr><td>'+c+'</td><td>'+new Intl.NumberFormat('ru-RU',{maximumFractionDigits:5}).format(fx.rates[c])+'</td></tr>').join('')+'</tbody></table><small>Источник: ExchangeRate-API · '+fx.date+'</small>';document.dispatchEvent(new Event('ideafix-finance-fx'))}catch(e){output.textContent='Ошибка загрузки: '+e.message}finally{button.disabled=false}}
+ button.onclick=()=>refresh(true);refresh(false);
+}
+
 function directorFinancialSummary(tickets){
  const rows=projectFinanceRows(tickets,me),complete=rows.filter(r=>r.balance!==null);
- const money=n=>n===null?'Нет данных':new Intl.NumberFormat('ru-RU',{style:'currency',currency:'KZT',maximumFractionDigits:2}).format(n);
- const total=key=>{const known=rows.filter(r=>r[key]!==null);return known.length?known.reduce((n,r)=>n+r[key],0):null};
+ const money=n=>convertedMoney(n,'RUB');
+ const total=key=>{const known=rows.filter(r=>r[key]!==null);return known.length?known.reduce((n,r)=>n+(r.currency==='RUB'?r[key]:r[key]*(financeFx?.rates?.RUB/financeFx?.rates?.[r.currency])),0):null};
  return '<div class="secretary-financial-summary"><p>Доходы: <b>'+money(total('income'))+'</b></p><p>Расходы: <b>'+money(total('expense'))+'</b></p><p>Разница по заполненным строкам: <b>'+money(complete.length?complete.reduce((n,r)=>n+r.balance,0):null)+'</b></p><small>Данные карточек: '+rows.length+' · Полностью заполнено: '+complete.length+'. Импортированные данные Битрикс24 доступны в «Результатах».</small></div>';
 }
 function showDirectorAnalytics(){
@@ -372,14 +402,14 @@ function workflowView(t){
  if(t.stage==='discussion')html+='<div class="hint" style="margin:12px 0"><strong>После обсуждения</strong><p>Выберите дальнейшее действие по идее.</p><div style="display:flex;flex-wrap:wrap;gap:8px"><button type="button" id="discussion-to-bitrix" class="primary">Отправить в Битрикс24</button><button type="button" id="discussion-revise">Доработать</button></div><p id="discussion-action-status" role="status"></p></div>';
  html+=window.IFBitrix?.ticket(t)||'';
  if(!t.canManage&&!t.canEditInsight)return html+fields.filter(([k])=>w[k]).map(([k,label])=>`<p class="pre"><b>${label}:</b> <span data-user-text>${esc(w[k])}</span></p>`).join('')+'</section>';
- return html+`<form id="workflow" class="stack"><label>Текущий этап<select name="stage">${options(t.canEditInsight?{insight:'Инсайт',proposal:'Предложение'}:stages,t.stage)}</select></label><p class="hint">Этапы проходят по порядку. Можно сохранить текущий этап или вернуться к доработке. Для перехода система проверит необходимые данные.</p>`+fields.map(([k,label])=>`<label>${label}${k==='deadline'?`<input type="date" name="${k}" value="${esc(w[k]||'')}">`:moneyKeys.some(([key])=>key===k)?`<input type="number" name="${k}" min="0" step="0.01" inputmode="decimal" value="${esc(w[k]||'')}">`:`<textarea name="${k}" maxlength="2000" rows="2">${esc(w[k]||(k==='insight'?t.body:k==='proposal'&&t.kind==='idea'?t.body:''))}</textarea>`}</label>`).join('')+`<label>Решение<select name="decision"><option value="">Ещё не принято</option>${options({approved:'Принять',revise:'Доработать',rejected:'Отклонить'},w.decision)}</select></label><div class="error" role="alert"></div><button type="submit" class="primary">Сохранить этап</button></form></section>`;
+ return html+`<form id="workflow" class="stack"><label>Текущий этап<select name="stage">${options(t.canEditInsight?{insight:'Инсайт',proposal:'Предложение'}:stages,t.stage)}</select></label><label>Валюта финансов<select name="financeCurrency">${options({RUB:'Рубли RUB',KZT:'Тенге KZT',USD:'Доллары USD',EUR:'Евро EUR',CNY:'Юани CNY'},w.financeCurrency||'KZT')}</select></label><p class="hint">Этапы проходят по порядку. Можно сохранить текущий этап или вернуться к доработке. Для перехода система проверит необходимые данные.</p>`+fields.map(([k,label])=>`<label>${label}${k==='deadline'?`<input type="date" name="${k}" value="${esc(w[k]||'')}">`:moneyKeys.some(([key])=>key===k)?`<input type="number" name="${k}" min="0" step="0.01" inputmode="decimal" value="${esc(w[k]||'')}">`:`<textarea name="${k}" maxlength="2000" rows="2">${esc(w[k]||(k==='insight'?t.body:k==='proposal'&&t.kind==='idea'?t.body:''))}</textarea>`}</label>`).join('')+`<label>Решение<select name="decision"><option value="">Ещё не принято</option>${options({approved:'Принять',revise:'Доработать',rejected:'Отклонить'},w.decision)}</select></label><div class="error" role="alert"></div><button type="submit" class="primary">Сохранить этап</button></form></section>`;
 }
 function bindWorkflow(t){
  const coin=document.querySelector('[data-finance-coin]');
  if(coin){
   const showFinance=()=>{
    const w=t.workflow||{},value=k=>{const n=Number(String(w[k]||'0').replace(',','.'));return Number.isFinite(n)?n:0};
-   const money=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(n)+' ₸';
+   const money=n=>convertedMoney(n,w.financeCurrency||'KZT');
    const has=['pilotIncome','pilotExpense','implementationIncome','implementationExpense'].some(k=>String(w[k]||'').trim());
    const rows=[['Доход пилота',value('pilotIncome')],['Расходы пилота',value('pilotExpense')],['Итог пилота',value('pilotIncome')-value('pilotExpense')],['Доход внедрения',value('implementationIncome')],['Расходы внедрения',value('implementationExpense')],['Итог внедрения',value('implementationIncome')-value('implementationExpense')]];
    modal('🪙 Финансы идеи #'+t.id,(has?'':'<p>Финансовые данные пока не внесены.</p>')+rows.map(([label,n])=>'<p style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #ddd;padding:8px"><span>'+label+'</span><b>'+(has?money(n):'—')+'</b></p>').join(''));
@@ -405,7 +435,7 @@ function organizeTicket(){
 function stageFields(){
  const f=$('#workflow');if(!f)return;const selector=f.elements.stage;
  const groups={insight:['insight'],proposal:['proposal','benefit'],registration:['insight','proposal'],discussion:['discussion'],evaluation:['cost','effect','feasibility'],decision:['decision','reason'],pilot:['pilot','owner','deadline','pilotResult','pilotIncome','pilotExpense'],implementation:['implementation','owner','deadline','implementationIncome','implementationExpense'],result:['before','after','result','pilotIncome','pilotExpense','implementationIncome','implementationExpense']};
- const show=()=>{for(const label of f.querySelectorAll('label')){const input=label.querySelector('[name]');label.hidden=input&&input.name!=='stage'&&!groups[selector.value].includes(input.name)}};selector.addEventListener('change',show);show();
+ const show=()=>{for(const label of f.querySelectorAll('label')){const input=label.querySelector('[name]');label.hidden=input&&input.name!=='stage'&&input.name!=='financeCurrency'&&!groups[selector.value].includes(input.name)}};selector.addEventListener('change',show);show();
 }
 window.addEventListener('resize',()=>{if(['feed','mine','ideas','pilots'].includes(page)&&$('#results'))renderList()});
 
@@ -424,21 +454,21 @@ function projectFinanceRows(tickets,user){
   let w=t.workflow||{};if(typeof w==='string'){try{w=JSON.parse(w)}catch{w={}}}
   const phases=[['pilot','Пилот','pilotIncome','pilotExpense'],['project','Проект / внедрение','implementationIncome','implementationExpense']];
   return phases.filter(([id,,income,expense])=>id==='pilot'?['pilot','implementation','result'].includes(t.stage)||w.pilot||w[income]!==undefined&&String(w[income]).trim()||w[expense]!==undefined&&String(w[expense]).trim():['implementation','result'].includes(t.stage)||w.implementation||w[income]!==undefined&&String(w[income]).trim()||w[expense]!==undefined&&String(w[expense]).trim()).map(([phase,label,ik,ek])=>{
-   const income=money(w[ik]),expense=money(w[ek]);return {id:t.id,title:t.title,phase,label,stage:t.stage,income,expense,balance:income!==null&&expense!==null?income-expense:null};
+   const income=money(w[ik]),expense=money(w[ek]);return {id:t.id,title:t.title,phase,label,stage:t.stage,currency:w.financeCurrency||'KZT',income,expense,balance:income!==null&&expense!==null?income-expense:null};
   });
  });
 }
 async function renderFinancialResults(){
  const view=$('#view');let imported=[],demo=[],importError='';if(['director','admin','lead'].includes(me.role)){try{[imported,demo]=await Promise.all([api('/project-finances'),api('/project-finances/demo')])}catch(e){importError=e.message}}if(!view.isConnected||page!=='results')return;
  const local=projectFinanceRows(items,me).map(r=>({...r,source:'local'}));
- const rows=[...imported.map(r=>({...r,id:r.key,label:r.phase==='pilot'?'Пилот':'Проект',source:'bitrix',income:r.income===null?null:Number(r.income),expense:r.expense===null?null:Number(r.expense),balance:r.income!==null&&r.expense!==null?Number(r.income)-Number(r.expense):null})),...local,...demo.map(r=>({...r,id:r.key,label:r.phase==='pilot'?'Пилот':'Проект',source:'demo',income:Number(r.income),expense:Number(r.expense),balance:Number(r.income)-Number(r.expense)}))],money=n=>n===null?'Нет данных':new Intl.NumberFormat('ru-RU',{style:'currency',currency:'KZT',maximumFractionDigits:2}).format(n);
- view.innerHTML='<section class="finance-heading"><span class="eyebrow">Фактические показатели</span><h1>Результаты</h1><p>Доходы и расходы проектов и пилотов из Битрикс24</p><button type="button" id="finance-demo">Показать демо-базу</button><button type="button" id="finance-import" class="primary">↓ Загрузить из Битрикс24</button></section><div class="finance-filters"><label>Источник<select id="finance-source"><option value="all">Реальные данные — все источники</option><option value="demo">ДЕМО · проекты и пилоты</option><option value="bitrix">Битрикс24</option><option value="local">Созданные в программе</option></select></label><label>Показать<select id="finance-phase"><option value="">Все проекты и пилоты</option><option value="pilot">Пилоты</option><option value="project">Проекты / внедрение</option></select></label><label>Найти<input id="finance-search" placeholder="Название или номер"></label></div><div id="finance-totals" class="finance-totals"></div><p id="finance-note" class="hint"></p><div class="tablewrap finance-table"><table><thead><tr><th>Проект / пилот</th><th>Доход</th><th>Расход</th><th>Разница</th><th></th></tr></thead><tbody id="finance-rows"></tbody></table></div><p class="hint">Суммы в тенге. Внесите фактический доход и расход в карточке на этапе «Пилот», «Внедрение» или «Результат». Ноль учитывается только если он введён явно.</p>';
+ const rows=[...imported.map(r=>({...r,currency:r.currency||'KZT',id:r.key,label:r.phase==='pilot'?'Пилот':'Проект',source:'bitrix',income:r.income===null?null:Number(r.income),expense:r.expense===null?null:Number(r.expense),balance:r.income!==null&&r.expense!==null?Number(r.income)-Number(r.expense):null})),...local,...demo.map(r=>({...r,currency:r.currency||'KZT',id:r.key,label:r.phase==='pilot'?'Пилот':'Проект',source:'demo',income:Number(r.income),expense:Number(r.expense),balance:Number(r.income)-Number(r.expense)}))],money=(n,c='RUB')=>convertedMoney(n,c);
+ view.innerHTML='<section class="finance-heading"><span class="eyebrow">Фактические показатели</span><h1>Результаты</h1><p>Доходы и расходы проектов и пилотов из Битрикс24</p><button type="button" id="finance-demo">Показать демо-базу</button><button type="button" id="finance-import" class="primary">↓ Загрузить из Битрикс24</button></section><div class="finance-filters"><label>Источник<select id="finance-source"><option value="all">Реальные данные — все источники</option><option value="demo">ДЕМО · проекты и пилоты</option><option value="bitrix">Битрикс24</option><option value="local">Созданные в программе</option></select></label><label>Показать<select id="finance-phase"><option value="">Все проекты и пилоты</option><option value="pilot">Пилоты</option><option value="project">Проекты / внедрение</option></select></label><label>Найти<input id="finance-search" placeholder="Название или номер"></label></div><div class="finance-filters">'+financeToolbar()+'</div><div id="finance-totals" class="finance-totals"></div><p id="finance-note" class="hint"></p><div class="tablewrap finance-table"><table><thead><tr><th>Проект / пилот</th><th>Доход</th><th>Расход</th><th>Разница</th><th></th></tr></thead><tbody id="finance-rows"></tbody></table></div><p class="hint">База новых записей — рубли. Старые записи в тенге не переименовываются. Внесите фактический доход и расход в карточке на этапе «Пилот», «Внедрение» или «Результат». Ноль учитывается только если он введён явно.</p>';
  const draw=()=>{const phase=$('#finance-phase').value,source=$('#finance-source').value,q=$('#finance-search').value.toLocaleLowerCase('ru');const shown=rows.filter(r=>(source==='all'?r.source!=='demo':r.source===source)&&(!phase||r.phase===phase)&&(!q||(r.title+' '+r.id).toLocaleLowerCase('ru').includes(q)));
- const sum=key=>{const known=shown.filter(r=>r[key]!==null);return known.length?known.reduce((n,r)=>n+r[key],0):null};const complete=shown.filter(r=>r.balance!==null);
- $('#finance-totals').innerHTML=[['Внесённые доходы',sum('income')],['Внесённые расходы',sum('expense')],['Разница по заполненным строкам',complete.length?complete.reduce((n,r)=>n+r.balance,0):null]].map(([label,n])=>'<div><small>'+label+'</small><strong>'+money(n)+'</strong></div>').join('');
+ const sum=key=>{const known=shown.filter(r=>r[key]!==null);if(!known.length)return null;return known.reduce((n,r)=>n+(r.currency==='RUB'?r[key]:r[key]*(financeFx?.rates?.RUB/financeFx?.rates?.[r.currency])),0)};const complete=shown.filter(r=>r.balance!==null);
+ $('#finance-totals').innerHTML=[['Внесённые доходы',sum('income')],['Внесённые расходы',sum('expense')],['Разница по заполненным строкам',complete.length?complete.reduce((n,r)=>n+(r.currency==='RUB'?r.balance:r.balance*(financeFx?.rates?.RUB/financeFx?.rates?.[r.currency])),0):null]].map(([label,n])=>'<div><small>'+label+'</small><strong>'+money(n)+'</strong></div>').join('');
  $('#finance-note').textContent=(source==='demo'?'ДЕМО: вымышленные показатели, не отчётность компании. ':'')+(shown.length?'Показано: '+shown.length+' · Полностью заполнено: '+complete.length+(complete.length<shown.length?' · Итог неполный: часть сумм ещё не внесена.':''):'Проекты и пилоты пока не созданы или не подходят под фильтр.');
- $('#finance-rows').innerHTML=shown.map(r=>'<tr><td><b>'+esc(r.title)+'</b><small>#'+esc(r.id)+' · '+r.label+' · '+esc(r.source==='demo'?'ДЕМО · '+r.department:r.source==='bitrix'?'Битрикс24':stages[r.stage]||r.stage)+'</small></td><td>'+money(r.income)+'</td><td>'+money(r.expense)+'</td><td class="'+(r.balance!==null&&r.balance<0?'late':'')+'">'+money(r.balance)+'</td><td><button type="button" data-finance-open="'+r.id+'" '+(r.source==='demo'?'disabled':'')+'>Открыть</button></td></tr>').join('');view.querySelectorAll('[data-finance-open]').forEach(b=>b.onclick=()=>{const row=shown.find(r=>String(r.id)===b.dataset.financeOpen);if(row?.source_url)window.open(row.source_url,'_blank','noopener,noreferrer');else openTicket(b.dataset.financeOpen)});};
- $('#finance-demo').onclick=()=>{$('#finance-source').value='demo';draw()};$('#finance-import').onclick=openBitrixProjectImport;$('#finance-phase').onchange=draw;$('#finance-source').onchange=draw;$('#finance-search').oninput=draw;draw();if(importError)$('#finance-note').textContent='Не удалось загрузить сохранённые данные: '+importError;
+ $('#finance-rows').innerHTML=shown.map(r=>'<tr><td><b>'+esc(r.title)+'</b><small>#'+esc(r.id)+' · '+r.label+' · '+esc(r.source==='demo'?'ДЕМО · '+r.department:r.source==='bitrix'?'Битрикс24':stages[r.stage]||r.stage)+'</small></td><td>'+money(r.income,r.currency)+'</td><td>'+money(r.expense,r.currency)+'</td><td class="'+(r.balance!==null&&r.balance<0?'late':'')+'">'+money(r.balance,r.currency)+'</td><td><button type="button" data-finance-open="'+r.id+'" '+(r.source==='demo'?'disabled':'')+'>Открыть</button></td></tr>').join('');view.querySelectorAll('[data-finance-open]').forEach(b=>b.onclick=()=>{const row=shown.find(r=>String(r.id)===b.dataset.financeOpen);if(row?.source_url)window.open(row.source_url,'_blank','noopener,noreferrer');else openTicket(b.dataset.financeOpen)});};
+ $('#finance-currency').onchange=e=>{financeDisplay=e.target.value;draw()};$('#finance-rates').onclick=financeRatesDialog;loadFinanceFx().then(()=>{if($('#finance-totals')){draw();$('#finance-rate-date').textContent='Курс от '+financeFx.date}}).catch(()=>{});document.addEventListener('ideafix-finance-fx',()=>{if($('#finance-totals'))draw()},{once:true});$('#finance-demo').onclick=()=>{$('#finance-source').value='demo';draw()};$('#finance-import').onclick=openBitrixProjectImport;$('#finance-phase').onchange=draw;$('#finance-source').onchange=draw;$('#finance-search').oninput=draw;draw();if(importError)$('#finance-note').textContent='Не удалось загрузить сохранённые данные: '+importError;
 }
 
 async function openBitrixProjectImport(){
