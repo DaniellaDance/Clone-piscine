@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {formatDiscussionProtocol, handleDiscussions} from './discussions.mjs';
 
-const me={id:'lead-1',role:'lead',name:'Руководитель',department:'ИТ'};
+const me={id:'employee-1',role:'employee',name:'Сотрудник',department:'ИТ'};
 const leaderMessage=(text,n)=>({id:n,author:'lead-1',text,created:'2026-11-11T16:00:00.000Z',name:'Руководитель',department:'ИТ'});
 const topic={id:8,ticket_id:114,title:'Пилот электронной проверки',kind:'idea',department:'ИТ',created:'2026-11-11T15:00:00.000Z',closed_at:null};
 const makeArgs=(path,method,user,query,pool)=>({
@@ -22,13 +22,13 @@ test('full protocol retains all sent words in chronological order',()=>{
  assert.ok(txt.indexOf('Первая важная')<txt.indexOf('Вторая фраза'));
  assert.match(txt,/Всего сообщений: 2/);
 });
-test('ordinary employee cannot access leadership discussions',async()=>{
+test('director cannot open employee discussions even with an API request',async()=>{
  let accessed=false;
- const args=makeArgs('/discussions/candidates','GET',{...me,role:'employee'},async()=>{accessed=true});
+ const args=makeArgs('/discussions/candidates','GET',{...me,role:'director'},async()=>{accessed=true});
  await assert.rejects(handleDiscussions(args),e=>e.status===403);
  assert.equal(accessed,false);
 });
-test('only allowed ideas/problems returned to leader',async()=>{
+test('only employee-visible ideas and problems are candidates',async()=>{
  const args=makeArgs('/discussions/candidates','GET',me,async(sql,params)=>{
   assert.match(sql,/NOT anonymous/);assert.deepEqual(params,[false,'ИТ']);
   return {rows:[{id:114,kind:'idea',title:'Идея',department:'ИТ'},{id:115,kind:'problem',title:'Проблема',department:'ИТ'},{id:116,kind:'praise',title:'Благодарность'}]};
