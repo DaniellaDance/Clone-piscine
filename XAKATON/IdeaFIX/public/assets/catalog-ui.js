@@ -219,13 +219,14 @@ function catalogResults(mode){const list=cat.vendors.filter(x=>(!catalogCountry|
 
  const shown=list; // All vendors in one scrollable view, no pagination.
  const safeUrl=u=>/^https:\/\//i.test(String(u||''))?String(u):'';
+ const siteName=u=>{try{return new URL(u).hostname.replace(/^www\\./,'')}catch{return 'Сайт'}};
  const root=$('#catalog-results');
  root.innerHTML=shown.length?'<div class="vendor-compact-list">'+shown.map(v=>{
   const site=safeUrl(v.url),email=String(v.email||''),phone=String(v.phone||'');
   const products=cat.products.filter(p=>p.vendor_id===v.id);
   return '<article class="vendor-compact-card" data-vendor-card="'+esc(v.id)+'">'+
    '<div class="vendor-compact-row"><button type="button" class="vendor-compact-name" data-vendor-toggle="'+esc(v.id)+'" aria-expanded="false" aria-controls="vendor-info-'+esc(v.id)+'">▸ '+esc(v.name)+'</button>'+
-   '<span class="vendor-compact-contact">'+(site?'<a href="'+esc(site)+'" target="_blank" rel="noopener noreferrer" title="Официальный сайт">Сайт ↗</a>':'<span>Сайт не указан</span>')+'</span>'+
+   '<span class="vendor-compact-contact">'+(site?'<a href="'+esc(site)+'" target="_blank" rel="noopener noreferrer" title="Официальный сайт"> '+esc(siteName(site))+' ↗</a>':'<span>Сайт не указан</span>')+'</span>'+
    '<span class="vendor-compact-contact">'+(email?'<a href="mailto:'+encodeURIComponent(email)+'">'+esc(email)+'</a>':'<span>Email не указан</span>')+'</span>'+
    '<span class="vendor-compact-contact">'+(phone?'<a href="tel:'+phone.replace(/[^+\\d]/g,'')+'">'+esc(phone)+'</a>':'<span>Телефон не указан</span>')+'</span></div>'+
    '<div class="vendor-compact-details" id="vendor-info-'+esc(v.id)+'" hidden>'+
