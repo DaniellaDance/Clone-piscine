@@ -81,12 +81,15 @@ export async function marketIntelligence(kind,{query=null,fetcher=fetch,now=Date
      rss('"Modus Trade Group" security',{fetcher,now})
    ]);
    const seen=new Set();
-   const articles=feeds.flatMap(f=>f.articles).filter(a=>{
-     const headline=(a.title+' '+(a.excerpt||'')).toLowerCase();
-     if(!/модус трейд|modus trade/.test(headline))return false;
-     const key=a.title.toLowerCase().replace(/\\s+/g,' ').trim();
-     if(seen.has(key))return false;seen.add(key);return true;
-   }).sort((a,b)=>new Date(b.published)-new Date(a.published).slice(0,10);
+   const articles=feeds.flatMap(feed=>feed.articles).filter(article=>{
+     const title=String(article.title||'');
+     const content=(title+' '+String(article.excerpt||'')).toLowerCase();
+     if(!content.includes('модус трейд')&&!content.includes('modus trade'))return false;
+     const key=title.toLowerCase().trim();
+     if(seen.has(key))return false;
+     seen.add(key);
+     return true;
+   }).sort((left,right)=>new Date(right.published)-new Date(left.published)).slice(0,10);
    const confirmed=[{
      title:'Digital Qazaqstan Day: старт хакатона ГК «Модус Трейд» в Павлодаре',
      published:'2026-11-10T09:00:00+06:00',
