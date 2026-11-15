@@ -1141,3 +1141,13 @@ main#view.home-screen{display:flex!important;flex-direction:column!important;gap
 @media(min-width:701px), (orientation:landscape){
  #view.home-screen .mobile-home-functions{display:none!important}
 }
+
+
+/* More usable home space: no redundant Home footer when already on Home */
+.bottom-nav[hidden]{display:none!important}
+#view.home-screen .mobile-extra-tile{display:none!important}
+@media(max-width:700px) and (orientation:portrait){
+ #view.home-screen .home-all-actions .mobile-extra-tile{display:flex!important}
+ #view.home-screen .home-all-actions{grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-rows:minmax(0,1fr)!important}
+ #view.home-screen .home-all-actions .mobile-extra-tile>.stage-select{display:flex!important;height:100%!important;align-items:center!important;justify-content:center!important}
+}
