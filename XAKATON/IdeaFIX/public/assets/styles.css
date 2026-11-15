@@ -1095,3 +1095,26 @@ main#view.home-screen{display:flex!important;flex-direction:column!important;gap
 .improvements-month-filter select{min-width:140px;max-width:100%;padding:7px 9px;font-size:12px;border-radius:8px}
 .improvements-month-filter small{width:100%;color:#60748d;font-size:10px}
 @media(max-width:530px){.improvements-month-filter{gap:4px}.improvements-month-filter select{flex:1;min-width:0}}
+
+
+/* Vendor directory: all entries on one screen, scroll only within list */
+#view[data-catalog-mode="vendors"]{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+#view[data-catalog-mode="vendors"]>.page-head{flex-shrink:0}
+#view[data-catalog-mode="vendors"] .catalog-toolbar,#view[data-catalog-mode="vendors"] .catalog-note{flex-shrink:0}
+#view[data-catalog-mode="vendors"] #catalog-results{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-gutter:stable;padding:3px 4px 10px 0}
+#view[data-catalog-mode="vendors"] #catalog-pager{display:none!important}
+.vendor-compact-list{display:flex;flex-direction:column;gap:5px;min-width:0}
+.vendor-compact-card{min-width:0;border:1px solid #d8e3f0;border-radius:10px;background:#fff}
+.vendor-compact-row{display:grid;grid-template-columns:minmax(110px,1.35fr) minmax(54px,.55fr) minmax(135px,1.25fr) minmax(105px,.85fr);align-items:center;gap:7px;padding:7px 9px;font-size:12px;min-width:0}
+.vendor-compact-name{font-size:12px!important;font-weight:750;color:#1c3b69!important;background:transparent!important;border:0!important;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;padding:5px 0!important}
+.vendor-compact-contact{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;font-size:11px}
+.vendor-compact-contact a{color:#145bb0;text-decoration:underline;text-underline-offset:2px}
+.vendor-compact-contact span{color:#78869a}
+.vendor-compact-details{border-top:1px solid #d8e3f0;background:#f8fbff;padding:10px;display:grid;gap:8px;min-width:0}
+.vendor-compact-details[hidden],.vendor-compact-details [hidden]{display:none!important}
+.vendor-compact-details p{font-size:12px;margin:0}
+.vendor-compact-details label{font-size:12px;display:grid;gap:4px;min-width:0}
+.vendor-compact-details select,.vendor-compact-details input{max-width:100%;min-width:0;width:100%;box-sizing:border-box;padding:8px;border:1px solid #cad8eb;border-radius:8px;background:white}
+.vendor-compact-actions{display:flex;gap:7px;flex-wrap:wrap}
+.vendor-compact-actions button{min-height:32px;font-size:12px;padding:7px 10px}
+@media(max-width:650px){#view[data-catalog-mode="vendors"] .catalog-toolbar{gap:5px}#view[data-catalog-mode="vendors"] .catalog-note{font-size:10px;margin:5px 0}.vendor-compact-row{grid-template-columns:minmax(95px,1.1fr) minmax(45px,.5fr) minmax(90px,1fr) minmax(79px,.8fr);gap:4px;padding:6px;font-size:10px}.vendor-compact-name{font-size:11px!important}.vendor-compact-contact{font-size:9px}.vendor-compact-details{padding:8px}}
