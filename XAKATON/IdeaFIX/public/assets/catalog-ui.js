@@ -216,10 +216,73 @@ function vendorScheme(list){const button=v=>`<button type="button" data-eco-vend
 }
 function catalogResults(mode){const list=cat.vendors.filter(x=>(!catalogCountry||x.country===catalogCountry)&&(!catalogSearch||(x.name+' '+x.special+' '+(x.industry||[]).map(id=>cat.industry.find(t=>t.id===id)?.label[0]||'').join(' ')+' '+countries[x.country]+' '+x.tech.map(specialization).join(' ')+' '+window.IFI18n.t(x.special)+' '+window.IFI18n.t(countries[x.country])+' '+x.tech.map(id=>window.IFI18n.t(specialization(id))).join(' ')).toLowerCase().includes(catalogSearch.toLowerCase()))).sort(vendorNameSort);const per=10;catalogPage=Math.min(catalogPage,Math.max(0,Math.ceil(list.length/per)-1));if(mode==='ecosystem'){
  const view=$('#view');view.classList.add('ecosystem-screen');$('#catalog-results').innerHTML=list.length?vendorScheme(list.slice(catalogPage*per,(catalogPage+1)*per)):'<div class="empty">По выбранным условиям вендоры не найдены</div>';$('#vendor-groups-note').textContent=catalogGroup==='industry'?'Отрасли показаны по подтверждённым связям справочника. Вендоры без таких связей находятся в отдельной группе.':catalogGroup==='technical'?'Один вендор может входить в несколько технологических направлений.':'Нажмите на компанию, чтобы открыть её карточку.';$('#catalog-pager').innerHTML=`<button id="catalog-prev" ${catalogPage===0?'disabled':''} aria-label="Предыдущая страница">←</button><small>${catalogPage+1} / ${Math.max(1,Math.ceil(list.length/per))} · ${list.length}</small><button id="catalog-next" ${catalogPage>=Math.ceil(list.length/per)-1?'disabled':''} aria-label="Следующая страница">→</button>`;$('#catalog-prev').onclick=()=>{catalogPage--;catalogResults(mode)};$('#catalog-next').onclick=()=>{catalogPage++;catalogResults(mode)};document.querySelectorAll('[data-eco-vendor]').forEach(b=>b.onclick=()=>{const v=cat.vendors.find(x=>x.id===b.dataset.ecoVendor);openVendorCard(v)});document.querySelectorAll('[data-vendor-group]').forEach(d=>d.ontoggle=()=>{if(d.open)vendorExpanded.add(d.dataset.vendorGroup);else vendorExpanded.delete(d.dataset.vendorGroup)});return}
- $('#catalog-results').innerHTML=list.length?`<div class="vendor-grid">${list.slice(catalogPage*per,(catalogPage+1)*per).map(v=>`<article class="vendor-card"><div class="vendor-title"><h2 data-user-text>${vendorBrand(v)}</h2></div><p>${esc(v.special)}</p>${v.parent?`<small><span>Компания / группа:</span> <span data-user-text>${esc(v.parent)}</span></small>`:''}<div class="vendor-links"><a href="${esc(v.url)}" target="_blank" rel="noopener">Официальный контакт / источник ↗</a>${v.email?`<a data-user-text href="mailto:${esc(v.email)}">${esc(v.email)}</a>`:''}${v.phone?`<a data-user-text href="tel:${v.phone.replace(/[^+\d]/g,'')}">${esc(v.phone)}</a>`:''}</div>${v.note?`<details><summary>Уточнение страны</summary><p>${esc(v.note)}</p></details>`:''}<details><summary>Источники проверки</summary>${v.sources.map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">${i+1}. <span>Официальный источник</span> ↗</a>`).join('<br>')}</details><button data-scope-vendor="${v.id}">Создать инсайт по вендору</button></article>`).join('')}</div>`:'<div class="empty">Ничего не найдено</div>';
- $('#catalog-pager').innerHTML=`<button id="catalog-prev" ${catalogPage===0?'disabled':''} aria-label="Предыдущая страница">←</button><small>${catalogPage+1} / ${Math.max(1,Math.ceil(list.length/per))} · ${list.length}</small><button id="catalog-next" ${catalogPage>=Math.ceil(list.length/per)-1?'disabled':''} aria-label="Следующая страница">→</button>`;$('#catalog-prev').onclick=()=>{catalogPage--;catalogResults(mode)};$('#catalog-next').onclick=()=>{catalogPage++;catalogResults(mode)};
- document.querySelectorAll('[data-scope-vendor]').forEach(b=>b.onclick=()=>{newTicket();$('#create [name="vendor_id"]').value=b.dataset.scopeVendor;$('#create [name="vendor_id"]').dispatchEvent(new Event('change'))});
- $('#catalog-results').insertAdjacentHTML('beforeend',`<div class="local-contact"><b>Модус Трейд Казахстан</b><span>Контакт по подбору и поставке в Казахстане:</span> <a data-user-text href="tel:+77006103393">${cat.distributor.phone}</a> <a data-user-text href="mailto:mail@modus-trade.kz">mail@modus-trade.kz</a></div>`)
+
+ const shown=list.slice(catalogPage*per,(catalogPage+1)*per);
+ const safeUrl=u=>/^https:\/\//i.test(String(u||''))?String(u):'';
+ const root=$('#catalog-results');
+ root.innerHTML=shown.length?'<div class="vendor-compact-list">'+shown.map(v=>{
+  const site=safeUrl(v.url),email=String(v.email||''),phone=String(v.phone||'');
+  const products=cat.products.filter(p=>p.vendor_id===v.id);
+  return '<article class="vendor-compact-card" data-vendor-card="'+esc(v.id)+'">'+
+   '<div class="vendor-compact-row"><button type="button" class="vendor-compact-name" data-vendor-toggle="'+esc(v.id)+'" aria-expanded="false" aria-controls="vendor-info-'+esc(v.id)+'">▸ '+esc(v.name)+'</button>'+
+   '<span class="vendor-compact-contact">'+(site?'<a href="'+esc(site)+'" target="_blank" rel="noopener noreferrer" title="Официальный сайт">Сайт ↗</a>':'<span>Сайт не указан</span>')+'</span>'+
+   '<span class="vendor-compact-contact">'+(email?'<a href="mailto:'+encodeURIComponent(email)+'">'+esc(email)+'</a>':'<span>Email не указан</span>')+'</span>'+
+   '<span class="vendor-compact-contact">'+(phone?'<a href="tel:'+phone.replace(/[^+\\d]/g,'')+'">'+esc(phone)+'</a>':'<span>Телефон не указан</span>')+'</span></div>'+
+   '<div class="vendor-compact-details" id="vendor-info-'+esc(v.id)+'" hidden>'+
+   '<p><b>Продукция и услуги:</b> '+esc(v.special||'Категория не указана')+'</p>'+
+   '<p><b>Направления:</b> '+esc(v.tech.map(specialization).join(', ')||'Не указаны')+'</p>'+
+   (v.parent?'<p><b>Компания / группа:</b> '+esc(v.parent)+'</p>':'')+
+   '<label>Выбрать продукцию или услугу<select data-vendor-offering="'+esc(v.id)+'"><option value="">Общая заявка по вендору</option>'+
+    products.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.name)+' · '+esc(({product:'Продукт',service:'Услуга',direction:'Направление'})[p.kind]||'Позиция')+'</option>').join('')+
+   '</select></label>'+
+   '<div data-offering-description="'+esc(v.id)+'" class="hint"></div>'+
+   '<label>Марка / модель<select data-vendor-brand="'+esc(v.id)+'" disabled><option value="">Сначала выберите продукцию</option></select></label>'+
+   '<label data-vendor-custom-wrap="'+esc(v.id)+'" hidden>Укажите марку / модель<input data-vendor-custom="'+esc(v.id)+'" maxlength="120" placeholder="Название марки или модели"></label>'+
+   '<div class="vendor-compact-actions"><button type="button" class="primary" data-vendor-request="'+esc(v.id)+'">＋ Написать заявку</button><button type="button" data-vendor-full="'+esc(v.id)+'">Подробнее о вендоре</button></div>'+
+   (v.sources?.length?'<details><summary>Источники и подтверждение контактов</summary>'+v.sources.map(u=>'<a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+esc(u)+'</a>').join('<br>')+'</details>':'')+
+   '</div></article>';
+ }).join('')+'</div>':'<div class="empty">Ничего не найдено</div>';
+ $('#catalog-pager').innerHTML='<button id="catalog-prev" '+(catalogPage===0?'disabled':'')+' aria-label="Предыдущая страница">←</button><small>'+(catalogPage+1)+' / '+Math.max(1,Math.ceil(list.length/per))+' · '+list.length+'</small><button id="catalog-next" '+(catalogPage>=Math.ceil(list.length/per)-1?'disabled':'')+' aria-label="Следующая страница">→</button>';
+ $('#catalog-prev').onclick=()=>{catalogPage--;catalogResults(mode)};
+ $('#catalog-next').onclick=()=>{catalogPage++;catalogResults(mode)};
+ root.querySelectorAll('[data-vendor-toggle]').forEach(button=>button.onclick=()=>{
+  const details=root.querySelector('[id="vendor-info-'+button.dataset.vendorToggle+'"]');
+  const opening=details.hidden;details.hidden=!opening;button.setAttribute('aria-expanded',String(opening));button.textContent=(opening?'▾ ':'▸ ')+cat.vendors.find(v=>v.id===button.dataset.vendorToggle).name;
+ });
+ root.querySelectorAll('[data-vendor-offering]').forEach(select=>{
+  const id=select.dataset.vendorOffering,v=cat.vendors.find(x=>x.id===id),brands=root.querySelector('[data-vendor-brand="'+id+'"]'),description=root.querySelector('[data-offering-description="'+id+'"]'),customWrap=root.querySelector('[data-vendor-custom-wrap="'+id+'"]');
+  select.onchange=()=>{
+   const p=cat.products.find(x=>x.id===select.value&&x.vendor_id===id);
+   const names=[...new Set([...(p?.brands||[]),...(p?.models||[]),...(v?.brands||[])].map(x=>typeof x==='string'?x:x?.name).filter(Boolean))];
+   brands.disabled=!p;brands.innerHTML='<option value="">Без указания марки</option>'+names.map(n=>'<option value="'+esc(n)+'">'+esc(n)+'</option>').join('')+(p?'<option value="__other__">＋ Указать вручную</option>':'');
+   customWrap.hidden=true;
+   description.innerHTML=p?'<p><b>'+esc(p.name)+'</b> — '+esc(p.description||'Описание не указано')+'</p>'+(safeUrl(p.source)?'<a href="'+esc(p.source)+'" target="_blank" rel="noopener noreferrer">Каталог продукции ↗</a>':''):'<p>Общая заявка без привязки к конкретной продукции.</p>';
+  };
+  brands.onchange=()=>{customWrap.hidden=brands.value!=='__other__'};
+  select.onchange();
+ });
+ root.querySelectorAll('[data-vendor-request]').forEach(button=>button.onclick=()=>{
+  const id=button.dataset.vendorRequest,v=cat.vendors.find(x=>x.id===id),picker=root.querySelector('[data-vendor-offering="'+id+'"]'),chosen=cat.products.find(p=>p.id===picker.value&&p.vendor_id===id),brandPicker=root.querySelector('[data-vendor-brand="'+id+'"]');
+  const brand=brandPicker.value==='__other__'?root.querySelector('[data-vendor-custom="'+id+'"]').value.trim():brandPicker.value;
+  newTicket();
+  const form=$('#create');if(!form)return;
+  form.elements.vendor_id.value=id;form.elements.vendor_id.dispatchEvent(new Event('change'));
+  form.elements.entry_type.value='request';form.elements.entry_type.dispatchEvent(new Event('change'));
+  form.elements.kind.value='problem';
+  if(chosen){
+   const offering=form.elements.offering_choice;
+   if(offering){offering.value=chosen.id;offering.dispatchEvent(new Event('change'));}
+   if(brand){const brands=form.elements.product_brand_choice;
+    if(brands){const exists=[...brands.options].some(o=>o.value===brand);brands.value=exists?brand:'__other__';brands.dispatchEvent(new Event('change'));if(!exists)form.elements.product_brand_other.value=brand;}
+   }
+  }
+  const input=form.elements.body;
+  input.value='Запрос вендору '+v.name+(chosen?' по '+chosen.name:'')+(brand?', марка / модель '+brand:'')+'. Уточните, пожалуйста: ';
+  input.focus();
+ });
+ root.querySelectorAll('[data-vendor-full]').forEach(button=>button.onclick=()=>{const v=cat.vendors.find(x=>x.id===button.dataset.vendorFull);if(v)openVendorCard(v)});
+ root.insertAdjacentHTML('beforeend','<div class="local-contact"><b>Модус Трейд Казахстан</b><span>Контакт по подбору и поставке в Казахстане:</span> <a href="tel:+77006103393">'+esc(cat.distributor.phone)+'</a> <a href="mailto:mail@modus-trade.kz">mail@modus-trade.kz</a></div>');
+
 }
 const vendorCountryZones={AT:'Europe/Vienna',CA:'America/Toronto',JP:'Asia/Tokyo',RU:'Europe/Moscow',US:'America/New_York',GB:'Europe/London',CZ:'Europe/Prague',IT:'Europe/Rome',NL:'Europe/Amsterdam',PL:'Europe/Warsaw',DE:'Europe/Berlin',FR:'Europe/Paris',AU:'Australia/Sydney',CN:'Asia/Shanghai',KR:'Asia/Seoul',IL:'Asia/Jerusalem',CH:'Europe/Zurich',FI:'Europe/Helsinki'};
 function vendorClock(v){const zone=vendorCountryZones[v.country];if(!zone)return '<p class="hint">Часовой пояс вендора пока не установлен.</p>';const userZone=Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';const now=new Date();const offset=z=>{const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:z,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(now).filter(x=>x.type!=='literal').map(x=>[x.type,Number(x.value)]));return (Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second)-now.getTime())/60000};try{const difference=Math.round((offset(zone)-offset(userZone))/60*10)/10;const format=z=>new Intl.DateTimeFormat('ru-RU',{timeZone:z,hour:'2-digit',minute:'2-digit',hour12:false}).format(now);const relation=difference===0?'Время совпадает':difference>0?'У вендора на '+Math.abs(difference)+' ч. позже':'У вендора на '+Math.abs(difference)+' ч. раньше';const region={RU:'Москва (Россия охватывает несколько часовых поясов)',US:'Нью-Йорк (США охватывают несколько часовых поясов)',CA:'Торонто (Канада охватывает несколько часовых поясов)',AU:'Сидней (Австралия охватывает несколько часовых поясов)'}[v.country]||countries[v.country];return '<section class="vendor-clock panel"><h3>🕒 Разница во времени</h3><div class="vendor-clock-times"><span>У вас <strong>'+format(userZone)+'</strong></span><span>'+esc(region)+' <strong>'+format(zone)+'</strong></span></div><p>'+relation+'</p><small>Определено по часовому поясу устройства. Для точного времени офиса нужен город вендора.</small></section>'}catch{return '<p class="hint">Не удалось определить разницу во времени.</p>'}}
