@@ -12,7 +12,90 @@ const vendorNameSort=(a,b)=>vendorCollator.compare(a.name,b.name)||a.id.localeCo
 async function showRegularClients(){const root=$('#catalog-results');root.innerHTML='<p class="hint">Загружаем постоянных клиентов…</p>';$('#catalog-pager').innerHTML='';try{const rows=await api('/regular-clients');if(!root.isConnected)return;root.innerHTML='<div class="client-directory"><div class="client-directory-head"><strong>Постоянные клиенты · '+rows.length+'</strong><button type="button" id="client-add">＋ Добавить</button></div><div class="client-list">'+(rows.length?rows.map(c=>'<article class="client-row"><span class="client-avatar">👤</span><div><strong>'+esc(c.company)+'</strong>'+(c.city?'<small>'+esc(c.city)+'</small>':'')+(c.contact_name?'<small>'+esc(c.contact_name)+'</small>':'')+(c.contact_email?'<a href="mailto:'+esc(c.contact_email)+'">'+esc(c.contact_email)+'</a>':'')+(c.notes?'<small>'+esc(c.notes)+'</small>':'')+'</div></article>').join(''):'<p class="hint">Клиентов пока нет. Добавьте первого постоянного клиента.</p>')+'</div></div>';$('#client-add').onclick=()=>{modal('Добавить постоянного клиента','<form id="regular-client-form" class="client-form"><label>Компания<input name="company" required minlength="2" maxlength="120"></label><label>Контактное лицо<input name="contact_name" maxlength="120"></label><label>Email<input name="contact_email" type="email" maxlength="200"></label><label>Город<input name="city" maxlength="120" placeholder="Например, Астана"></label><div class="scope-grid"><label>Широта<input name="latitude" type="number" step="0.0001" min="-90" max="90" placeholder="51.1694"></label><label>Долгота<input name="longitude" type="number" step="0.0001" min="-180" max="180" placeholder="71.4491"></label></div><p class="hint">Координаты необязательны: без них клиент виден в списке, с ними — звёздочкой на карте.</p><label>Примечание<input name="notes" maxlength="500"></label><button type="submit" class="primary">Сохранить</button></form>');$('#regular-client-form').onsubmit=async e=>{e.preventDefault();const b=Object.fromEntries(new FormData(e.currentTarget));try{await api('/regular-clients',b);$('#modal').close();showRegularClients()}catch(err){alert(err.message)}}}}catch(e){root.innerHTML='<p class="hint">Не удалось загрузить клиентов: '+esc(e.message)+'</p>'}}
 const countryMapPoints={AT:[14.5,47.5],CA:[-106,56],JP:[138,37],RU:[94,61],US:[-98,39],GB:[-2,54],CZ:[15,49.8],IT:[12.5,42.8],NL:[5.3,52.2],PL:[19,52],DE:[10.4,51],FR:[2.5,46.5],AU:[134,-25],CN:[104,35],KR:[127.8,36],IL:[35,31.5],CH:[8.2,46.8],FI:[26,64],KZ:[67,48]};
 let partnerMap=null;
-function showPartnerWorldMap(){
+
+async function showPartnerWorldMap(){
+ const root=$('#catalog-results');
+ if(partnerMap?.destroy)partnerMap.destroy();partnerMap=null;
+ try{
+  const provider=await api('/map-provider');
+  if(provider?.configured&&provider.key){
+   await showPartnerWorldMap2GIS(provider.key);
+   return;
+  }
+ }catch(e){console.warn('2GIS not available; showing fallback map',e.message)}
+ if(root?.isConnected)showPartnerWorldMapFallback();
+}
+function load2GISScript(){
+ if(window.mapgl?.Map)return Promise.resolve(window.mapgl);
+ if(window.IF2GISLoader)return window.IF2GISLoader;
+ window.IF2GISLoader=new Promise((resolve,reject)=>{
+  const script=document.createElement('script');
+  script.src='https://mapgl.2gis.com/api/js/v1';script.async=true;
+  script.onload=()=>window.mapgl?.Map?resolve(window.mapgl):reject(new Error('2ГИС не загрузился'));
+  script.onerror=()=>reject(new Error('Не удалось загрузить 2ГИС'));
+  document.head.append(script);
+ }).catch(e=>{window.IF2GISLoader=null;throw e});
+ return window.IF2GISLoader;
+}
+async function showPartnerWorldMap2GIS(key){
+ const mapgl=await load2GISScript(),root=$('#catalog-results');
+ if(!root?.isConnected)return;
+ root.innerHTML='<section class="partner-map-panel partner-atlas gis-atlas"><header class="atlas-heading"><div><h2>Мир Модус Трейд</h2><p>2ГИС · Нажмите на метку для просмотра информации</p></div><button type="button" data-gis-reset>Весь мир</button></header><div class="atlas-toolbar"><label>Страна<select data-gis-country><option value="">Все страны</option>'+Object.entries(countries).filter(([c])=>c!=='UNCONFIRMED').sort((a,b)=>vendorCollator.compare(a[1],b[1])).map(([c,n])=>'<option value="'+esc(c)+'">'+esc(n)+'</option>').join('')+'</select></label><label>Объекты<select data-gis-layer><option value="all">Все категории</option><option value="vendors">Вендоры</option><option value="partners">Партнёры</option><option value="clients">Клиенты</option><option value="projects">Проекты</option></select></label><button type="button" data-gis-future>Карта будущего</button></div><div class="gis-workspace"><div id="partner-world-map" class="gis-map" role="region" aria-label="Карта 2ГИС с интерактивными метками"></div><section id="partner-map-details" class="gis-details" aria-live="polite"><p>Выберите метку или страну.</p></section></div><p class="hint" data-gis-note>Метки показывают только записи каталога IdeaFIX. Для мест без города используется центр страны, а не адрес компании.</p><p class="hint">Картографические данные © 2ГИС</p></section>';
+ $('#catalog-pager').innerHTML='';
+ const map=new mapgl.Map('partner-world-map',{key,center:[65,48],zoom:3});
+ const panel=root.querySelector('#partner-map-details');
+ const country=root.querySelector('[data-gis-country]'),layer=root.querySelector('[data-gis-layer]'),futureButton=root.querySelector('[data-gis-future]');
+ let records=[],future=false,markers=[],alive=true,loaded=false;
+ const validPoint=r=>{
+  const lat=Number(r.latitude),lng=Number(r.longitude);
+  if(r.latitude!=null&&r.longitude!=null&&r.latitude!==''&&r.longitude!==''&&Number.isFinite(lat)&&Number.isFinite(lng)&&Math.abs(lat)<=90&&Math.abs(lng)<=180)return [lng,lat];
+  const city=String(r.city||'').trim().toLowerCase();
+  const cityPoint=cat.city_points?.[r.country+':'+city];
+  if(cityPoint)return [Number(cityPoint[1]),Number(cityPoint[0])];
+  return countryMapPoints[r.country]||null;
+ };
+ const label=r=>({vendors:'Вендор',partners:'Партнёр',clients:'Клиент',projects:'Проект'})[r.category]||'Объект';
+ const visible=()=>records.filter(r=>(future?(r.horizon||'current')!=='current':(r.horizon||'current')==='current')&&(!country.value||r.country===country.value)&&(layer.value==='all'||r.category===layer.value));
+ const openGroup=group=>{
+  if(!alive)return;
+  panel.classList.add('is-open');
+  panel.innerHTML='<button type="button" class="gis-close" aria-label="Закрыть карточку">×</button><h3>'+esc(group.name)+' · '+group.items.length+' объект(ов)</h3><div class="gis-cards">'+group.items.map(r=>'<article class="panel"><strong>'+esc(r.name)+'</strong><p><b>Тип:</b> '+esc(label(r))+'</p><p><b>Место:</b> '+esc([r.city,countries[r.country]||r.country,r.address].filter(Boolean).join(', ')||'Не указано')+'</p>'+mapExtraDetails(r)+'<p><b>Статус:</b> '+esc(r.horizon==='planned'?'Планируется':r.horizon==='negotiation'?'Переговоры':r.category==='projects'?(r.status==='completed'?'Завершён':'В работе'):'Действующий')+'</p><p>Проблем: '+Number(r.issue_count||0)+' · Задач: '+Number(r.task_count||0)+'</p>'+'</article>').join('')+'</div>';
+  panel.querySelector('.gis-close').onclick=()=>panel.classList.remove('is-open');
+  panel.querySelectorAll('[data-map-vendor]').forEach(b=>b.onclick=()=>{const v=cat.vendors.find(v=>v.id===b.dataset.mapVendor);if(v)openVendorCard(v)});
+ };
+ const refresh=()=>{
+  if(!alive)return;
+  markers.forEach(m=>m.destroy());markers=[];
+  const groups=new Map();
+  for(const r of visible()){
+   const coords=validPoint(r);if(!coords||coords.some(n=>!Number.isFinite(n)))continue;
+   const name=r.city||countries[r.country]||r.name;
+   const id=coords.join(':');
+   if(!groups.has(id))groups.set(id,{coords,name,items:[]});
+   groups.get(id).items.push(r);
+  }
+  for(const group of groups.values()){
+   const problem=group.items.some(r=>Number(r.issue_count||0)+Number(r.task_count||0)>0);
+   const marker=new mapgl.Marker(map,{coordinates:group.coords,label:{text:String(group.items.length)+' · '+group.name,offset:[0,24],relativeAnchor:[0.5,0]}});
+   marker.on('click',()=>openGroup(group));
+   markers.push(marker);
+  }
+  if(!groups.size){panel.classList.add('is-open');panel.innerHTML='<p>Для выбранного фильтра нет точек с известной страной или координатами.</p>'}
+ };
+ const reload=async()=>{
+  try{const data=await api('/map-directory');if(alive){records=Array.isArray(data)?data:[];loaded=true;refresh()}}
+  catch(e){if(alive){records=cat.vendors.map(v=>({id:'vendor:'+v.id,vendor_id:v.id,name:v.name,category:'vendors',country:v.country,...(v.location||{})}));refresh();root.querySelector('[data-gis-note]').textContent='Не удалось загрузить часть объектов: '+e.message}}
+ };
+ country.onchange=()=>{if(country.value&&countryMapPoints[country.value]){const p=countryMapPoints[country.value];map.setCenter(p);map.setZoom(country.value==='RU'||country.value==='US'?4:5)}refresh()};
+ layer.onchange=refresh;
+ futureButton.onclick=()=>{future=!future;futureButton.setAttribute('aria-pressed',String(future));refresh()};
+ root.querySelector('[data-gis-reset]').onclick=()=>{country.value='';layer.value='all';map.setCenter([65,48]);map.setZoom(3);refresh()};
+ const timer=setInterval(reload,30000);
+ partnerMap={destroy(){alive=false;clearInterval(timer);markers.forEach(m=>m.destroy());map.destroy()},invalidateSize(){}};
+ await reload();
+}
+
+function showPartnerWorldMapFallback(){
  const root=$('#catalog-results');if(partnerMap?.destroy)partnerMap.destroy();partnerMap=null;
  root.innerHTML=`<section class="partner-map-panel partner-atlas"><header class="atlas-heading"><div><span class="atlas-eyebrow">MODUS TRADE · ПАРТНЁРЫ</span><h2>Мир Модус Трейд</h2><p>Выберите страну — откройте компании, проекты и встречи</p></div><button type="button" data-map-reset>↗ Весь мир</button></header><div class="atlas-toolbar"><label>Страна<select data-map-country aria-label="Страна на карте"><option value="">Весь мир</option>${Object.entries(countries).filter(([code])=>code!=='UNCONFIRMED').sort((a,b)=>vendorCollator.compare(a[1],b[1])).map(([code,name])=>'<option value="'+code+'">'+esc(name)+'</option>').join('')}</select></label><div class="atlas-basemap" role="group" aria-label="Вид карты"><button type="button" data-map-style="atlas" aria-pressed="true">Обзорная</button><button type="button" data-map-style="streets" aria-pressed="false">Уличная</button></div><div class="atlas-layers" role="group" aria-label="Объекты на карте"><button type="button" data-map-layer="all" aria-pressed="true">Все</button><button type="button" data-map-layer="vendors" aria-pressed="false">Вендоры</button><button type="button" data-map-layer="partners" aria-pressed="false">Партнёры</button><button type="button" data-map-layer="clients" aria-pressed="false">Постоянные клиенты</button><button type="button" data-map-layer="projects" aria-pressed="false">Проекты</button><select data-map-project-status aria-label="Статус проекта"><option value="">Все проекты</option><option value="completed">Завершённые</option><option value="active">Незавершённые</option></select><button type="button" data-map-future aria-pressed="false">Карта будущего</button><button type="button" data-map-add>＋ Добавить на карту</button></div><details class="atlas-options"><summary>Слои и действия</summary><label><input type="checkbox" data-map-routes> Условные связи</label><button type="button" data-map-project-add>＋ Проект</button><button type="button" data-map-clients>★ Клиенты</button></details></div><p class="hint map-note" data-map-note hidden></p><div class="atlas-workspace"><div class="atlas-canvas-wrap"><div id="partner-world-map" class="native-partner-map" role="region" tabindex="0" aria-label="Карта партнёров. Стрелки перемещают карту, плюс и минус меняют масштаб."><div class="native-map-tiles" hidden></div><svg class="atlas-land" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><image href="assets/world-map.svg" x="-1024" y="0" width="1024" height="1024"/><image href="assets/world-map.svg" x="0" y="0" width="1024" height="1024"/><image href="assets/world-map.svg" x="1024" y="0" width="1024" height="1024"/></svg><svg class="native-map-overlay" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"></svg><div class="native-map-pins"></div></div><div class="atlas-zoom"><button type="button" data-map-zoom="in" aria-label="Приблизить">＋</button><button type="button" data-map-zoom="out" aria-label="Отдалить">−</button></div><div class="atlas-legend"><span style="color:#1672d4">● Нет открытых проблем</span><span style="color:#d92b35">● Есть проблемы / задачи</span><span>● Вендоры</span><span>◆ Офисы</span><span>● Проекты</span><span>★ Клиенты</span></div><div class="atlas-credit"><a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener noreferrer">Natural Earth</a><span data-osm-credit hidden> · © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a></span></div></div><section id="partner-map-details" class="partner-map-details atlas-directory" aria-label="Компании выбранной страны" aria-live="polite"></section></div></section>`;
  $('#catalog-pager').innerHTML='';const mount=$('#partner-world-map'),tiles=mount.querySelector('.native-map-tiles'),overlay=mount.querySelector('.native-map-overlay'),pins=mount.querySelector('.native-map-pins'),details=$('#partner-map-details');let zoom=2,center=[48,67],routes=false,projects=[],clients=[],alive=true,mapStyle='atlas',selectedCountry='',layer='all',projectStatus='',mapRecords=cat.vendors.map(v=>({id:'vendor:'+v.id,vendor_id:v.id,name:v.name,category:'vendors',country:v.country,...(v.location||{})})),futureMode=false;const land=mount.querySelector('.atlas-land'),tileCache=new Map();
