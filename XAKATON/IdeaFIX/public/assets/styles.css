@@ -1013,3 +1013,18 @@ main#view.home-screen{display:flex!important;flex-direction:column!important;gap
 .partner-atlas .native-map-pin:focus-visible{outline:3px solid #f4a42d;outline-offset:3px}
 .partner-atlas .partner-map-details{overflow-wrap:anywhere}
 @media(max-width:800px){.partner-atlas .native-map-pin{width:20px!important;height:20px!important;min-width:20px!important;min-height:20px!important;max-width:20px!important;max-height:20px!important}}
+
+/* Compact clients: one row per company; full details live inside a modal. */
+.client-compact .client-single-list{display:flex;flex-direction:column;gap:5px;margin-top:12px;max-width:100%;overflow:hidden}
+.client-compact .client-single-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(75px,28%) 15px;align-items:center;gap:8px;width:100%;min-width:0;min-height:44px;padding:8px 12px;border:1px solid #d7e2f1;border-radius:10px;background:#f6f9fe;color:#223754;text-align:left;font-size:14px;line-height:1.3;cursor:pointer}
+.client-single-row strong,.client-single-row span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.client-single-row span:nth-child(2){color:#607187;font-size:12px}
+.client-single-row:is(:hover,:focus-visible){border-color:#3274e8;background:#edf4ff}
+.client-detail{max-height:70dvh;overflow-y:auto;padding:4px 2px}
+.client-detail h3{margin:0 0 12px}
+.client-detail p{margin:7px 0;overflow-wrap:anywhere}
+.client-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.client-actions .client-action,.client-actions button{display:inline-flex;align-items:center;min-height:40px;padding:8px 12px;border-radius:9px;border:1px solid #bad2ed;text-decoration:none;background:#edf5ff;color:#173c78;font-size:13px;font-weight:600}
+.client-form{max-width:100%;overflow-x:hidden}
+.client-form input,.client-form textarea{width:100%;max-width:100%;box-sizing:border-box}
+@media(max-width:420px){.client-compact .client-single-row{grid-template-columns:minmax(0,1fr) 78px 10px;gap:5px;font-size:12px;padding:8px}.client-single-row span:nth-child(2){font-size:11px}}
