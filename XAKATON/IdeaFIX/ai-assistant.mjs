@@ -122,7 +122,7 @@ async function generate(instructions,payload,local){
 
 export async function handleAI({url,req,u,body,query,send,fail}){
  if(!url.pathname.startsWith('/api/ai/'))return false;
- if(!leader(u))fail(403,'ИИ-анализ доступен руководителям');
+ if(!leader(u)&&!(u?.role==='employee'&&url.pathname==='/api/ai/discussion-protocol'))fail(403,'ИИ-анализ доступен руководителям');
  if(url.pathname==='/api/ai/status'&&req.method==='GET'){
   send({free_mode:true,preferred:preference(),default_provider:'rules',providers:{rules:true,freebuff:hasFreebuff(),gemini:hasGemini()},note:'Бесплатный режим по правилам работает без ключей и кредитов. Freebuff и Gemini подключаются как необязательные.'});return true;
  }
@@ -155,9 +155,10 @@ export async function handleAI({url,req,u,body,query,send,fail}){
   send({ticket_id:ticketId,analysis:result,ai_generated:result.provider!=='rules',requires_human_approval:true,provider:result.provider,free_mode:result.free_mode,provider_notes:result.provider_notes});return true;
  }
  if(url.pathname==='/api/ai/discussion-protocol'){
+  if(u.role!=='employee')fail(403,'ИИ-протокол обсуждений доступен только сотрудникам');
   const topicId=id(input.topic_id);if(!topicId)fail(400,'Выберите обсуждение');
-  const topic=(await query('SELECT d.id,d.ticket_id,t.title,t.department,t.author,t.anonymous,t.kind,t.idea_audience,t.workflow,t.entry_type FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id WHERE d.id=$1',[topicId])).rows[0];if(!topic||!canSeeTicket(u,topic))fail(404,'Обсуждение не найдено');
-  if(u.role==='lead'&&topic.department!==u.department)fail(403,'Нет доступа');
+  const topic=(await query("SELECT d.id,d.ticket_id,t.title,t.department,t.author,t.anonymous,t.kind,t.idea_audience,t.workflow,t.entry_type FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id JOIN ideafix.users creator ON creator.id=d.created_by WHERE d.id=$1 AND creator.role='employee'",[topicId])).rows[0];if(!topic||!canSeeTicket(u,topic))fail(404,'Обсуждение не найдено');
+  if(topic.department!==u.department)fail(403,'Нет доступа к обсуждениям другого отдела');
   const rows=(await query('SELECT m.text,m.created,u.name FROM ideafix.discussion_messages m JOIN ideafix.users u ON u.id=m.author WHERE m.topic_id=$1 ORDER BY m.id LIMIT 200',[topicId])).rows;
   if(!rows.length)fail(400,'В обсуждении пока нет сообщений');
   const payload={topic:topic.title,messages:rows};
