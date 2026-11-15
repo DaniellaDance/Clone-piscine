@@ -91,8 +91,23 @@ if(url.pathname==='/api/completed-kz-projects'){
 }
 if(url.pathname==='/api/regular-clients'){
  if(u.role!=='director'&&u.role!=='admin')fail(403,'Справочник клиентов доступен руководству');
- if(req.method==='GET')return send((await query('SELECT id,company,contact_name,contact_email,notes,city,latitude,longitude FROM ideafix.regular_clients ORDER BY company')).rows);
- if(req.method==='POST'){const b=await body(req);const coords=[b.latitude,b.longitude].map(v=>v===''||v==null?null:Number(v));if(coords.some((n,i)=>n!==null&&(!Number.isFinite(n)||Math.abs(n)>(i?180:90))))fail(400,'Проверьте координаты точки клиента');const company=clean(b.company,2,120),contact=String(b.contact_name||'').trim().slice(0,120),email=String(b.contact_email||'').trim().slice(0,200),notes=String(b.notes||'').trim().slice(0,500),city=String(b.city||'').trim().slice(0,120);if(email&&!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))fail(400,'Проверьте email');return send((await query('INSERT INTO ideafix.regular_clients(company,contact_name,contact_email,notes,city,latitude,longitude) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING id,company,contact_name,contact_email,notes,city,latitude,longitude',[company,contact,email,notes,city,coords[0],coords[1]])).rows[0],201)}
+ const columns='id,company,contact_name,contact_email,notes,city,address,phone,whatsapp,telegram,max_contact,latitude,longitude';
+ if(req.method==='GET')return send((await query('SELECT '+columns+' FROM ideafix.regular_clients ORDER BY company')).rows);
+ if(req.method==='POST'||req.method==='PATCH'){
+  const b=await body(req);
+  const company=clean(b.company,2,120),contact=String(b.contact_name||'').trim().slice(0,120),email=String(b.contact_email||'').trim().slice(0,200);
+  const notes=String(b.notes||'').trim().slice(0,500),city=String(b.city||'').trim().slice(0,120),address=String(b.address||'').trim().slice(0,300);
+  const phone=String(b.phone||'').trim().slice(0,60),whatsapp=String(b.whatsapp||'').trim().slice(0,120),telegram=String(b.telegram||'').trim().slice(0,120),maxContact=String(b.max_contact||'').trim().slice(0,160);
+  if(email&&!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))fail(400,'Проверьте email');
+  const fields=[company,contact,email,notes,city,address,phone,whatsapp,telegram,maxContact];
+  if(req.method==='PATCH'){
+   const id=Number(b.id);if(!Number.isSafeInteger(id)||id<=0)fail(400,'Выберите клиента');
+   const old=(await query('SELECT address,latitude,longitude FROM ideafix.regular_clients WHERE id=$1',[id])).rows[0];if(!old)fail(404,'Клиент не найден');
+   const changed=old.address!==address;
+   return send((await query('UPDATE ideafix.regular_clients SET company=$1,contact_name=$2,contact_email=$3,notes=$4,city=$5,address=$6,phone=$7,whatsapp=$8,telegram=$9,max_contact=$10,latitude=CASE WHEN $12 THEN NULL ELSE latitude END,longitude=CASE WHEN $12 THEN NULL ELSE longitude END WHERE id=$11 RETURNING '+columns,[...fields,id,changed])).rows[0]);
+  }
+  return send((await query('INSERT INTO ideafix.regular_clients(company,contact_name,contact_email,notes,city,address,phone,whatsapp,telegram,max_contact) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING '+columns,fields)).rows[0],201);
+ }
  fail(405,'Метод недоступен');
 }
 if(url.pathname==='/api/partners'){
