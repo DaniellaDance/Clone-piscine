@@ -993,3 +993,23 @@ main#view.home-screen{display:flex!important;flex-direction:column!important;gap
 .partner-atlas .native-map-pin img,.partner-atlas .native-map-pin>b,.partner-atlas .native-map-pin .atlas-pin-symbol{display:none!important}
 .partner-atlas .native-map-pin:focus-visible{outline:3px solid #ff9e27!important;outline-offset:3px!important}
 .partner-atlas .native-map-pin.omsk-pin,.partner-atlas .native-map-pin.astana-pin{width:19px!important;height:19px!important}
+
+
+/* IdeaFIX map: precise compact markers instead of oversized overlapping circles. */
+.partner-atlas .native-map-pin{
+  box-sizing:border-box!important;width:22px!important;height:22px!important;
+  min-width:22px!important;min-height:22px!important;max-width:22px!important;
+  max-height:22px!important;padding:0!important;border:2px solid #fff!important;
+  border-radius:50%!important;display:flex;align-items:center;justify-content:center;
+  font-size:11px!important;line-height:1!important;white-space:nowrap;
+  box-shadow:0 1px 5px #0d213b55!important;overflow:visible;
+  isolation:isolate;
+}
+.partner-atlas .native-map-pin.atlas-vendor-pin{width:22px!important;height:22px!important;background:#1672d4!important;color:white!important}
+.partner-atlas .native-map-pin img{width:13px!important;height:13px!important;object-fit:contain}
+.partner-atlas .native-map-pin .atlas-pin-label{display:none!important;pointer-events:none;position:absolute;left:50%;top:26px;transform:translateX(-50%);z-index:10;font-weight:600;color:#243448;white-space:nowrap}
+.partner-atlas .native-map-pin:is(:focus-visible,:hover) .atlas-pin-label{display:block!important}
+.partner-atlas .native-map-pin[data-record-count]:after{content:attr(data-record-count);position:absolute;top:-8px;right:-10px;min-width:14px;height:14px;padding:1px 2px;line-height:12px;border-radius:9px;font-size:9px;font-weight:700;color:white;background:#263d63;border:1px solid white}
+.partner-atlas .native-map-pin:focus-visible{outline:3px solid #f4a42d;outline-offset:3px}
+.partner-atlas .partner-map-details{overflow-wrap:anywhere}
+@media(max-width:800px){.partner-atlas .native-map-pin{width:20px!important;height:20px!important;min-width:20px!important;min-height:20px!important;max-width:20px!important;max-height:20px!important}}
