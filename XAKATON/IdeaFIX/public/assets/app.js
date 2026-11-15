@@ -9,11 +9,43 @@ const options=(o,selected)=>Object.entries(o).map(([v,t])=>`<option value="${esc
 const depOptions=selected=>options(Object.fromEntries((!me||['director','admin'].includes(me.role)?deps:[me.department]).map(d=>[d,d])),selected);
 function toast(text){$('#toast').textContent=text;$('#toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').classList.remove('show'),5500)}
 async function api(path,data,method){const r=await fetch('/api'+path,{method:method||(data?'POST':'GET'),headers:data?{'Content-Type':'application/json'}:{},body:data?JSON.stringify(data):undefined,signal:AbortSignal.timeout(25000)}).catch(e=>{throw new Error(e.name==='TimeoutError'||e.name==='AbortError'?'Сервер отвечает слишком долго. Повторите запрос.':'Нет соединения с сервером. Проверьте интернет.')});const j=await r.json();if(!r.ok){const e=new Error(j.error||'Ошибка запроса');e.status=r.status;throw e}return j}
-function modal(title,content){const d=$('#modal');d.dispatchEvent(new Event('ideafix-modal-replace'));d.innerHTML=`<div class="dialoghead"><h2>${esc(title)}</h2><button data-close aria-label="Закрыть">×</button></div>${content}`;if(!d.open)d.showModal();d.querySelector('[data-close]').onclick=()=>d.close()}
+const pageHistory=[];
+let lastShellPage=null;
+const dialogHistory=[];
+function previousPage(){
+ const d=$('#modal');
+ if(d?.open){
+  if(dialogHistory.length){
+   const previous=dialogHistory.pop();
+   d.dispatchEvent(new Event('ideafix-modal-replace'));
+   d.replaceChildren(previous);
+  }else d.close();
+  return;
+ }
+ if(page==='discussions'&&window.IFDiscussions?.previous?.())return;
+ const prior=pageHistory.pop();
+ if(prior&&me){page=prior;filter='';term='';stageFilter='';lastShellPage=prior;shell();render()}
+}
+function modal(title,content){
+ const d=$('#modal');
+ if(d.open){
+  const previous=document.createDocumentFragment();
+  while(d.firstChild)previous.appendChild(d.firstChild);
+  dialogHistory.push(previous);
+  if(dialogHistory.length>12)dialogHistory.shift();
+ }else dialogHistory.length=0;
+ d.dispatchEvent(new Event('ideafix-modal-replace'));
+ d.innerHTML=`<div class="dialoghead"><button type="button" class="previous-page-button" data-previous-page>← Previous page</button><h2>${esc(title)}</h2><button type="button" data-close aria-label="Закрыть">×</button></div>${content}`;
+ if(!d.open)d.showModal();
+ d.querySelector('[data-previous-page]').onclick=previousPage;
+ d.querySelector('[data-close]').onclick=()=>d.close();
+}
+$('#modal')?.addEventListener('close',()=>{dialogHistory.length=0});
+
 function formError(form,e){let p=form.querySelector('.error');if(!p){p=document.createElement('p');p.className='error';p.setAttribute('role','alert');form.append(p)}p.textContent=e.message;p.hidden=false;p.setAttribute('role','alert');p.scrollIntoView({block:'nearest',behavior:'smooth'});}
 function bindForm(id,fn){const f=$(id);if(!f)return;f.onsubmit=async e=>{e.preventDefault();const b=f.querySelector('button[type=submit]');if(b)b.disabled=true;const error=f.querySelector('.error');if(error)error.textContent='';try{await fn(Object.fromEntries(new FormData(f)),f)}catch(err){formError(f,err)}finally{if(b)b.disabled=false}}}
 const brand=`<div class="brand"><img class="brand-logo" src="assets/fix-idea-logo.webp?v=approved-20261113" alt="Fix Idea" width="330" height="93"></div>`;
-function login(){me=null;$('#app').innerHTML=`<div class="auth"><section class="auth-story">${brand}<h1>Хорошие идеи<br>меняют компанию.</h1><p>Замечайте. Предлагайте. Улучшайте.<br>От первого сообщения — до конкретного результата.</p><p style="margin-top:40px;font-size:12px">Каждая обработанная заявка делает нашу компанию лучше, а жизнь клиентов безопаснее!</p><div class="alpine-scene" aria-hidden="true"></div><span class="mountain-slogan">От идеи до победы!</span></section><section class="auth-form"><div class="eyebrow">Единое пространство обратной связи</div><h2>${authMode==='login'?'С возвращением':'Давайте знакомиться'}</h2><div class="tabs"><button id="login-tab" class="${authMode==='login'?'active':''}">Войти</button><button id="register-tab" class="${authMode==='register'?'active':''}">Регистрация</button></div><form id="auth">${authMode==='register'?`<label>Ваше имя<input name="name" autocomplete="name" required minlength="2" maxlength="100"></label><label>Подразделение<select name="department">${depOptions('ИТ')}</select></label>`:''}<label>Логин<input name="login" autocomplete="username" required minlength="3" maxlength="80"></label><label>Пароль<input type="password" name="password" autocomplete="${authMode==='login'?'current-password':'new-password'}" required minlength="3" maxlength="128"></label><p class="error" role="alert"></p><button class="primary" type="submit">${authMode==='login'?'Войти в FixIdea':'Создать аккаунт'}</button></form><p class="hint">Новый аккаунт получает роль сотрудника. Директор назначает руководителей и администраторов.</p><p class="muted"><a href="install.html">Установить приложение →</a></p></section></div>`;$('#login-tab').onclick=()=>{authMode='login';login()};$('#register-tab').onclick=()=>{authMode='register';login()};bindForm('#auth',async b=>{me=await api('/'+authMode,b);page='feed';await refresh(true)})}
+function login(){pageHistory.length=0;lastShellPage=null;dialogHistory.length=0;me=null;$('#app').innerHTML=`<div class="auth"><section class="auth-story">${brand}<h1>Хорошие идеи<br>меняют компанию.</h1><p>Замечайте. Предлагайте. Улучшайте.<br>От первого сообщения — до конкретного результата.</p><p style="margin-top:40px;font-size:12px">Каждая обработанная заявка делает нашу компанию лучше, а жизнь клиентов безопаснее!</p><div class="alpine-scene" aria-hidden="true"></div><span class="mountain-slogan">От идеи до победы!</span></section><section class="auth-form"><div class="eyebrow">Единое пространство обратной связи</div><h2>${authMode==='login'?'С возвращением':'Давайте знакомиться'}</h2><div class="tabs"><button id="login-tab" class="${authMode==='login'?'active':''}">Войти</button><button id="register-tab" class="${authMode==='register'?'active':''}">Регистрация</button></div><form id="auth">${authMode==='register'?`<label>Ваше имя<input name="name" autocomplete="name" required minlength="2" maxlength="100"></label><label>Подразделение<select name="department">${depOptions('ИТ')}</select></label>`:''}<label>Логин<input name="login" autocomplete="username" required minlength="3" maxlength="80"></label><label>Пароль<input type="password" name="password" autocomplete="${authMode==='login'?'current-password':'new-password'}" required minlength="3" maxlength="128"></label><p class="error" role="alert"></p><button class="primary" type="submit">${authMode==='login'?'Войти в FixIdea':'Создать аккаунт'}</button></form><p class="hint">Новый аккаунт получает роль сотрудника. Директор назначает руководителей и администраторов.</p><p class="muted"><a href="install.html">Установить приложение →</a></p></section></div>`;$('#login-tab').onclick=()=>{authMode='login';login()};$('#register-tab').onclick=()=>{authMode='register';login()};bindForm('#auth',async b=>{me=await api('/'+authMode,b);page='feed';await refresh(true)})}
 async function showMediaInbox(){
  modal('Аудио и видеообращения','<p id="media-inbox-status">Загрузка обращений…</p><div id="media-inbox-items"></div>');
  const target=$('#media-inbox-items'),status=$('#media-inbox-status');
@@ -200,6 +232,13 @@ const navSvg=(name)=>{
 };
 let homeSectionsMarkup="";const homeOpenSections=new Set();
 function shell(){
+ if(me){
+  if(lastShellPage!==null&&page!==lastShellPage){
+   if(pageHistory.at(-1)!==lastShellPage)pageHistory.push(lastShellPage);
+   if(pageHistory.length>25)pageHistory.shift();
+  }
+  lastShellPage=page;
+ }
  const nav=[['upgrade-improvements','Что мы улучшили'],...(me.role==='admin'?[['upgrade-outbox','Журнал интеграции']]:[]),...(['director','admin','lead'].includes(me.role)?[['upgrade-analytics','Аналитика обращений'],['upgrade-groups','Похожие идеи']]:[]),['feed','Главная'],['mine','Мои инсайты'],['ideas','Витрина идей'],...(['director','admin'].includes(me.role)?[['results','Результаты']]:[]),['vendors','Контакты вендоров'],['ecosystem','Вендоры'],['meetings','График совещаний'],...(me.role==='director'?[['meeting-results','Итоги совещаний и встреч']]:[]),['planner','План дня'],['organization','Отделы и сотрудники'],...(['director','lead'].includes(me.role)?[['chat','Чат руководителей'],['discussions','Обсуждения идей']]:[]),...(['director','lead','admin'].includes(me.role)?[['pulse','Пульс компании']]:[]),...(['director','admin'].includes(me.role)?[['settings','Управление']]:[]),...(['director','lead','admin'].includes(me.role)?[['ai-secretary','ИИ Секретарь']]:[]),['preferences','Настройки'],['apps','Приложения']];
  const leading=[['feed','Главная','home']];
  const other=nav.filter(([id])=>!leading.some(([key])=>key===id));
@@ -208,8 +247,9 @@ function shell(){
  const homeEntries=navGroups.flatMap(([,ids])=>other.filter(([id])=>ids.includes(id)&&!homePrimary.has(id)));
  homeSectionsMarkup='<section class="home-sections" id="home-sections" aria-label="Разделы программы">'+homeEntries.map(([id,label])=>'<button type="button" class="home-nav-button" data-home-page="'+id+'"><span class="home-nav-icon" aria-hidden="true">'+navSvg(({vendors:'globe',organization:'account',preferences:'more',settings:'more'})[id]||'board')+'</span><span>'+label+'</span></button>').join('')+'</section>';
  const navButton=(id,label,glyph)=>'<button type="button" data-page="'+id+'" class="bottom-link'+(page===id?' active':'')+'" title="'+label+'"><span class="bottom-icon" aria-hidden="true">'+navSvg(glyph)+'</span><span class="bottom-text">'+label+'</span></button>';
- $('#app').innerHTML='<header class="header">'+brand+'<div class="account"><span class="username" data-user-text>'+esc(me.name)+' · '+role[me.role]+'</span><span id="connection">● Онлайн</span><details class="account-more"><summary aria-label="Личный кабинет" title="Личный кабинет">'+navSvg("account")+'</summary><div class="account-popup"><span data-user-text>'+esc(me.name)+'</span><button type="button" id="logout">Выйти</button></div></details></div></header><div class="layout"><main id="view"></main></div><nav class="bottom-nav" aria-label="Главное меню">'+leading.map(([id,label,icon])=>navButton(id,label,icon)).join('')+'</nav>';
+ $('#app').innerHTML='<header class="header"><button type="button" class="previous-page-button header-previous" id="previous-page"'+(pageHistory.length?'':' hidden')+'>← Previous page</button>'+brand+'<div class="account"><span class="username" data-user-text>'+esc(me.name)+' · '+role[me.role]+'</span><span id="connection">● Онлайн</span><details class="account-more"><summary aria-label="Личный кабинет" title="Личный кабинет">'+navSvg("account")+'</summary><div class="account-popup"><span data-user-text>'+esc(me.name)+'</span><button type="button" id="logout">Выйти</button></div></details></div></header><div class="layout"><main id="view"></main></div><nav class="bottom-nav" aria-label="Главное меню">'+leading.map(([id,label,icon])=>navButton(id,label,icon)).join('')+'</nav>';
 
+ $('#previous-page').onclick=previousPage;
  $('#logout').onclick=async()=>{try{await window.IFPush?.detach();await api('/logout',{});login()}catch(e){toast(e.message)}};
  window.IFUpgrade?.mount({api,modal,toast,openTicket,me});
  document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{if(b.dataset.page==='ai-secretary'){document.querySelector('.bottom-more')?.removeAttribute('open');openAISecretary();return}page=b.dataset.page;filter='';term='';stageFilter='';shell();render()});
