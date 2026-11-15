@@ -1,7 +1,7 @@
 (()=>{
  let seen=new Map(),busy=false,chatDepartment='';
- const top=()=>['director','admin'].includes(me?.role);
- const allowed=()=>me&&['director','admin','lead'].includes(me.role);
+ const top=()=>me?.role==='director';
+ const allowed=()=>me&&['director','lead'].includes(me.role);
  const read=()=>{try{return Number(localStorage.getItem('if-chat-read-'+me.id)||0)}catch{return 0}};
  const mark=id=>{try{localStorage.setItem('if-chat-read-'+me.id,String(id))}catch{}};
  async function poll(){if(!allowed()||document.hidden||busy)return;busy=true;try{const rows=await api('/leadership-chat'+(top()&&chatDepartment?'?department='+encodeURIComponent(chatDepartment):''));if(!allowed())return;const previous=seen.get(me.id)||0,last=rows.at(-1)?.id||0;seen.set(me.id,last);const unread=rows.filter(m=>m.id>read()&&m.author!==me.id),newRows=rows.filter(m=>m.id>previous&&m.author!==me.id);const nav=document.querySelector('[data-page="chat"]');if(nav){nav.textContent='Чат руководителей'+(unread.length?' · '+unread.length:'');nav.classList.toggle('chat-unread',!!unread.length)}if(page==='chat'&&!$('#modal').open){show(rows);mark(last)}else if(previous&&newRows.length){toast(newRows.some(m=>m.urgent)?'Срочно: новое сообщение в чате руководителей':'Новое сообщение в чате руководителей');sound()}}catch{}finally{busy=false}}
