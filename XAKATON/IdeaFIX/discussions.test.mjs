@@ -31,7 +31,7 @@ test('director cannot open employee discussions even with an API request',async(
 test('only employee-visible ideas and problems are candidates',async()=>{
  const args=makeArgs('/discussions/candidates','GET',me,async(sql,params)=>{
   assert.match(sql,/NOT anonymous/);assert.deepEqual(params,[false,'ИТ']);
-  return {rows:[{id:114,kind:'idea',title:'Идея',department:'ИТ'},{id:115,kind:'problem',title:'Проблема',department:'ИТ'},{id:116,kind:'praise',title:'Благодарность'}]};
+  return {rows:[{id:114,kind:'idea',title:'Идея',department:'ИТ'},{id:115,kind:'problem',title:'Проблема',department:'ИТ',published:true},{id:116,kind:'praise',title:'Благодарность'}]};
  });
  await handleDiscussions(args);
  assert.deepEqual(makeArgs.last.data.map(v=>v.id),[114,115]);
