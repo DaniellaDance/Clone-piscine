@@ -34,6 +34,10 @@ export function formatDiscussionProtocol(topic, messages) {
   lines.push('', 'Всего сообщений: ' + messages.length, 'Конец протокола.');
   return lines.join('\n') + '\n';
 }
+const utf8Bom=Buffer.from([0xef,0xbb,0xbf]);
+const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+export function formatDiscussionWord(text){return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Протокол обсуждения IdeaFIX</title><style>body{font-family:Arial,sans-serif;font-size:12pt;line-height:1.5;margin:2cm}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit}</style></head><body><pre>'+escapeHtml(text)+'</pre></body></html>';}
+
 
 export async function handleDiscussions({url, req, u, body, query, pool, send, fail, res}) {
   if (!url.pathname.startsWith('/api/discussions')) return false;
@@ -153,13 +157,19 @@ export async function handleDiscussions({url, req, u, body, query, pool, send, f
       [topicId]
     )).rows[0];
     if (!file) fail(404, 'Протокол ещё не сформирован');
+    const raw=Buffer.isBuffer(file.bytes)?file.bytes:Buffer.from(file.bytes);
+    const text=raw.toString('utf8').replace(/^\uFEFF/,'');
+    const asWord=url.searchParams.get('format')==='word';
+    const output=asWord?Buffer.from(formatDiscussionWord(text),'utf8'):Buffer.concat([utf8Bom,Buffer.from(text,'utf8')]);
+    const filename='IdeaFIX-discussion-'+topicId+(asWord?'.doc':'.txt');
     res.writeHead(200,{
-      'Content-Type':'text/plain; charset=utf-8',
-      'Content-Disposition':"attachment; filename*=UTF-8''"+encodeURIComponent(file.filename),
+      'Content-Type':asWord?'application/msword; charset=utf-8':'text/plain; charset=utf-8',
+      'Content-Disposition':"attachment; filename*=UTF-8''"+encodeURIComponent(filename),
+      'Content-Length':output.length,
       'Cache-Control':'private, no-store',
       'X-Content-Type-Options':'nosniff'
     });
-    res.end(file.bytes);
+    res.end(output);
     return true;
   }
 
