@@ -1,7 +1,7 @@
 import {canSeeTicket} from './access.mjs';
-// Closed leadership discussions: one topic per meeting thread, durable in Postgres.
-// Only director/department leads can select, chat, finalize and download protocols.
-const leaders = u => u && ['director', 'admin', 'lead'].includes(u.role);
+// Employee discussions are isolated from historical management threads.
+// Topic lists, files, messages and protocols require employee role and department membership.
+const discussionEmployee = u => u?.role === 'employee';
 const asId = (value, fail) => {
   const n = Number(value);
   if (!Number.isSafeInteger(n) || n <= 0) fail(400, 'Неверный номер обсуждения');
@@ -41,13 +41,13 @@ export function formatDiscussionWord(text){return '<!doctype html><html lang="ru
 
 export async function handleDiscussions({url, req, u, body, query, pool, send, fail, res}) {
   if (!url.pathname.startsWith('/api/discussions')) return false;
-  if (!leaders(u)) fail(403, 'Обсуждения доступны директору и руководителям отделов');
+  if (!discussionEmployee(u)) fail(403, 'Обсуждения идей и проблем доступны только сотрудникам');
 
   if (url.pathname === '/api/discussions/candidates') {
     if (req.method !== 'GET') fail(405, 'Метод недоступен');
     const rows = (await query(
       "SELECT id,title,kind,department,stage,author,anonymous,idea_audience,workflow,entry_type FROM ideafix.tickets WHERE NOT anonymous AND ($1 OR department=$2) ORDER BY created DESC LIMIT 200",
-      [['director','admin'].includes(u.role), u.department]
+      [false, u.department]
     )).rows;
     send(rows.filter(t => ['idea', 'problem'].includes(t.kind)&&canSeeTicket(u,t)));
     return true;
@@ -56,7 +56,7 @@ export async function handleDiscussions({url, req, u, body, query, pool, send, f
   if (url.pathname === '/api/discussions/topics') {
     if (req.method === 'GET') {
       const rows = (await query(
-        "SELECT d.id,d.ticket_id,d.created,d.closed_at,t.title,t.kind,t.department,t.author,t.anonymous,t.idea_audience,t.workflow,t.entry_type,t.stage,u.name AS created_by_name FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id JOIN ideafix.users u ON u.id=d.created_by WHERE ($1 OR t.department=$2) ORDER BY d.created DESC LIMIT 100",[u.role==='director',u.department]
+        "SELECT d.id,d.ticket_id,d.created,d.closed_at,t.title,t.kind,t.department,t.author,t.anonymous,t.idea_audience,t.workflow,t.entry_type,t.stage,u.name AS created_by_name FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id JOIN ideafix.users u ON u.id=d.created_by WHERE ($1 OR t.department=$2) AND u.role='employee' ORDER BY d.created DESC LIMIT 100",[false,u.department]
       )).rows;
       send(rows.filter(t=>canSeeTicket(u,t))); return true;
     }
@@ -66,7 +66,7 @@ export async function handleDiscussions({url, req, u, body, query, pool, send, f
     const t = (await query('SELECT id,title,kind,department,anonymous,published,author,idea_audience,workflow,entry_type,stage FROM ideafix.tickets WHERE id=$1', [ticketId])).rows[0];
     if (!t||!canSeeTicket(u,t)) fail(404, 'Идея или проблема не найдена');
     if (t.anonymous || !['idea','problem'].includes(t.kind)) fail(403, 'Для общего обсуждения можно выбирать только неанонимные идеи и проблемы');
-    if (!['director','admin'].includes(u.role) && t.department !== u.department)
+    if (t.department !== u.department)
       fail(403, 'Можно выбирать только идеи и проблемы своего отдела');
     const record = (await query(
       'INSERT INTO ideafix.discussion_topics(ticket_id,created_by) VALUES($1,$2) RETURNING id,ticket_id,created,closed_at',
@@ -80,10 +80,10 @@ export async function handleDiscussions({url, req, u, body, query, pool, send, f
   if (!m) fail(404, 'Обсуждение не найдено');
   const topicId = asId(m[1], fail), action = m[2] || '';if(m[3]&&action!=='files')fail(404,'Файл не найден');
   const topic = (await query(
-    'SELECT d.id,d.ticket_id,d.created,d.closed_at,t.title,t.kind,t.department,t.author,t.anonymous,t.idea_audience,t.workflow,t.entry_type,t.stage FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id WHERE d.id=$1',
+    "SELECT d.id,d.ticket_id,d.created,d.closed_at,t.title,t.kind,t.department,t.author,t.anonymous,t.idea_audience,t.workflow,t.entry_type,t.stage FROM ideafix.discussion_topics d JOIN ideafix.tickets t ON t.id=d.ticket_id JOIN ideafix.users creator ON creator.id=d.created_by WHERE d.id=$1 AND creator.role='employee'",
     [topicId]
   )).rows[0];
-  if (!topic || !canSeeTicket(u,topic) || (!['director','admin'].includes(u.role) && topic.department!==u.department)) fail(404, 'Обсуждение не найдено');
+  if (!topic || !canSeeTicket(u,topic) || topic.department!==u.department) fail(404, 'Обсуждение не найдено');
 
   if(action==='files'){
     if(req.method==='GET'&&m[3]){
