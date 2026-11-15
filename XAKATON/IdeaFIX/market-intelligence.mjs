@@ -74,6 +74,30 @@ export async function marketIntelligence(kind,{query=null,fetcher=fetch,now=Date
    await Promise.all(Array.from({length:5},worker));
    return {items,disclaimer:'Десять направлений систем безопасности, а не рейтинг по продажам. Новости и даты — из внешних RSS.'};
  }
+ if(kind==='modus-news'){
+   const feeds=await Promise.all([
+     rss('"ГК Модус Трейд" OR "Modus Trade" бизнес хакатон',{fetcher,now}),
+     rss('"Модус Трейд" Омск Павлодар',{fetcher,now}),
+     rss('"Modus Trade Group" security',{fetcher,now})
+   ]);
+   const seen=new Set();
+   const articles=feeds.flatMap(f=>f.articles).filter(a=>{
+     const headline=(a.title+' '+(a.excerpt||'')).toLowerCase();
+     if(!/модус трейд|modus trade/.test(headline))return false;
+     const key=a.title.toLowerCase().replace(/\\s+/g,' ').trim();
+     if(seen.has(key))return false;seen.add(key);return true;
+   }).sort((a,b)=>new Date(b.published)-new Date(a.published).slice(0,10);
+   const confirmed=[{
+     title:'Digital Qazaqstan Day: старт хакатона ГК «Модус Трейд» в Павлодаре',
+     published:'2026-11-10T09:00:00+06:00',
+     source:'Astana Hub — программа мероприятия',
+     url:'https://astanahub.com/ru/event/digital-qazaqstan-day/',
+     excerpt:'В программе форума 10 ноября 2026 года указан старт хакатона совместно с ГК «Модус Трейд». Задача — создать систему обратной связи для сотрудников.',
+     type:'official_announcement'
+   }];
+   return {articles,confirmed,unavailable:feeds.every(f=>f.unavailable),
+     disclaimer:'Подтверждённое событие отображается отдельно от свежих публикаций. Остальные новости загружаются из внешних источников; одноимённые компании необходимо проверять по первоисточнику.'};
+ }
  if(kind==='ai-business'){
    const feeds=await Promise.all(['artificial intelligence enterprise business adoption','generative AI enterprise workflow automation','business AI agents security'].map(q=>rss(q,{fetcher,now})));
    const seen=new Set(),articles=feeds.flatMap(f=>f.articles).filter(a=>{const k=a.title.toLowerCase();if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>new Date(b.published)-new Date(a.published)).slice(0,10);
