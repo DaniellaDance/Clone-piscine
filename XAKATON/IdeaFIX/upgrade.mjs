@@ -47,7 +47,28 @@ export async function handleUpgrade({url,req,u,query,pool,body,send,fail,visible
  const join=url.pathname.match(/^\/api\/upgrade\/tickets\/(\d+)\/join$/);
  if(join){if(req.method!=='POST')fail(405,'Используйте POST');const t=await ticket(+join[1]);if(!visible(u,t)||!t.published||t.anonymous)fail(404,'Обращение недоступно для присоединения');await query('INSERT INTO ideafix.ticket_followers(ticket,user_id) VALUES($1,$2) ON CONFLICT DO NOTHING',[t.id,u.id]);return send({ok:true,message:'Вы присоединились. Изменения появятся в уведомлениях.'})}
  if(url.pathname==='/api/upgrade/analytics'){if(req.method!=='GET')fail(405,'Используйте GET');if(!['director','admin','lead'].includes(u.role))fail(403,'Аналитика доступна руководителям');await sweepOverdue(query);return send(analytics(await scoped()))}
- if(url.pathname==='/api/upgrade/improvements'){if(req.method!=='GET')fail(405,'Используйте GET');const rows=sortImprovements((await scoped('completed')).filter(t=>t.published&&t.status==='done'&&t.result)).map(t=>({id:t.id,title:t.title,result:t.result,department:t.department,author:t.anonymous?'Анонимно':t.author_name,created:t.created,resolved_at:t.resolved_at,days:t.resolved_at?businessDaysBetween(t.created,t.resolved_at):null}));return send({items:rows,total:rows.length,quarter:rows.filter(t=>{const d=new Date(t.resolved_at),n=new Date();return d.getFullYear()===n.getFullYear()&&Math.floor(d.getMonth()/3)===Math.floor(n.getMonth()/3)}).length})}
+ if(url.pathname==='/api/upgrade/improvements'){
+  if(req.method!=='GET')fail(405,'Используйте GET');
+  const tickets=sortImprovements((await scoped('completed')).filter(t=>t.published&&t.status==='done'&&t.result));
+  const ids=tickets.map(t=>t.id);
+  const starts=new Map();
+  if(ids.length){
+   const dated=(await query("SELECT ticket,min(created) AS started_at FROM ideafix.events WHERE ticket=ANY($1::int[]) AND text ~ '^Этап: Внедрение( ·|$)' GROUP BY ticket",[ids])).rows;
+   for(const item of dated)starts.set(Number(item.ticket),item.started_at);
+  }
+  const rows=tickets.map(t=>({
+   id:t.id,title:t.title,result:t.result,department:t.department,
+   author:t.anonymous?'Анонимно':t.author_name,
+   created:t.created,implementation_started_at:starts.get(Number(t.id))||null,
+   resolved_at:t.resolved_at,
+   days:t.resolved_at?businessDaysBetween(t.created,t.resolved_at):null
+  }));
+  return send({items:rows,total:rows.length,quarter:rows.filter(t=>{
+   if(!t.resolved_at)return false;
+   const d=new Date(t.resolved_at),n=new Date();
+   return d.getFullYear()===n.getFullYear()&&Math.floor(d.getMonth()/3)===Math.floor(n.getMonth()/3)
+  }).length});
+ }
  if(url.pathname==='/api/upgrade/notifications'){
   if(req.method==='POST'){await query('UPDATE ideafix.inbox_events SET read_at=now() WHERE user_id=$1 AND read_at IS NULL',[u.id]);return send({ok:true})}if(req.method!=='GET')fail(405,'Метод недоступен');
   await sweepOverdue(query);const rows=(await query(`SELECT n.id AS notification_id,n.ticket,n.kind AS notification_kind,n.title AS notification_title,n.created AS notification_created,n.read_at,t.* FROM ideafix.inbox_events n JOIN ideafix.tickets t ON t.id=n.ticket WHERE n.user_id=$1 AND t.author NOT LIKE 'demo-v1-%' AND t.title NOT LIKE 'ДЕМО%' ORDER BY n.id DESC LIMIT 100`,[u.id])).rows;
