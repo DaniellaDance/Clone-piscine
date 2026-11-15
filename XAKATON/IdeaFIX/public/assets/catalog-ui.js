@@ -217,7 +217,7 @@ function vendorScheme(list){const button=v=>`<button type="button" data-eco-vend
 function catalogResults(mode){const list=cat.vendors.filter(x=>(!catalogCountry||x.country===catalogCountry)&&(!catalogSearch||(x.name+' '+x.special+' '+(x.industry||[]).map(id=>cat.industry.find(t=>t.id===id)?.label[0]||'').join(' ')+' '+countries[x.country]+' '+x.tech.map(specialization).join(' ')+' '+window.IFI18n.t(x.special)+' '+window.IFI18n.t(countries[x.country])+' '+x.tech.map(id=>window.IFI18n.t(specialization(id))).join(' ')).toLowerCase().includes(catalogSearch.toLowerCase()))).sort(vendorNameSort);const per=10;catalogPage=Math.min(catalogPage,Math.max(0,Math.ceil(list.length/per)-1));if(mode==='ecosystem'){
  const view=$('#view');view.classList.add('ecosystem-screen');$('#catalog-results').innerHTML=list.length?vendorScheme(list.slice(catalogPage*per,(catalogPage+1)*per)):'<div class="empty">По выбранным условиям вендоры не найдены</div>';$('#vendor-groups-note').textContent=catalogGroup==='industry'?'Отрасли показаны по подтверждённым связям справочника. Вендоры без таких связей находятся в отдельной группе.':catalogGroup==='technical'?'Один вендор может входить в несколько технологических направлений.':'Нажмите на компанию, чтобы открыть её карточку.';$('#catalog-pager').innerHTML=`<button id="catalog-prev" ${catalogPage===0?'disabled':''} aria-label="Предыдущая страница">←</button><small>${catalogPage+1} / ${Math.max(1,Math.ceil(list.length/per))} · ${list.length}</small><button id="catalog-next" ${catalogPage>=Math.ceil(list.length/per)-1?'disabled':''} aria-label="Следующая страница">→</button>`;$('#catalog-prev').onclick=()=>{catalogPage--;catalogResults(mode)};$('#catalog-next').onclick=()=>{catalogPage++;catalogResults(mode)};document.querySelectorAll('[data-eco-vendor]').forEach(b=>b.onclick=()=>{const v=cat.vendors.find(x=>x.id===b.dataset.ecoVendor);openVendorCard(v)});document.querySelectorAll('[data-vendor-group]').forEach(d=>d.ontoggle=()=>{if(d.open)vendorExpanded.add(d.dataset.vendorGroup);else vendorExpanded.delete(d.dataset.vendorGroup)});return}
 
- const shown=list.slice(catalogPage*per,(catalogPage+1)*per);
+ const shown=list; // All vendors in one scrollable view, no pagination.
  const safeUrl=u=>/^https:\/\//i.test(String(u||''))?String(u):'';
  const root=$('#catalog-results');
  root.innerHTML=shown.length?'<div class="vendor-compact-list">'+shown.map(v=>{
@@ -242,9 +242,7 @@ function catalogResults(mode){const list=cat.vendors.filter(x=>(!catalogCountry|
    (v.sources?.length?'<details><summary>Источники и подтверждение контактов</summary>'+v.sources.map(u=>'<a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+esc(u)+'</a>').join('<br>')+'</details>':'')+
    '</div></article>';
  }).join('')+'</div>':'<div class="empty">Ничего не найдено</div>';
- $('#catalog-pager').innerHTML='<button id="catalog-prev" '+(catalogPage===0?'disabled':'')+' aria-label="Предыдущая страница">←</button><small>'+(catalogPage+1)+' / '+Math.max(1,Math.ceil(list.length/per))+' · '+list.length+'</small><button id="catalog-next" '+(catalogPage>=Math.ceil(list.length/per)-1?'disabled':'')+' aria-label="Следующая страница">→</button>';
- $('#catalog-prev').onclick=()=>{catalogPage--;catalogResults(mode)};
- $('#catalog-next').onclick=()=>{catalogPage++;catalogResults(mode)};
+ $('#catalog-pager').innerHTML='';
  root.querySelectorAll('[data-vendor-toggle]').forEach(button=>button.onclick=()=>{
   const details=root.querySelector('[id="vendor-info-'+button.dataset.vendorToggle+'"]');
   const opening=details.hidden;details.hidden=!opening;button.setAttribute('aria-expanded',String(opening));button.textContent=(opening?'▾ ':'▸ ')+cat.vendors.find(v=>v.id===button.dataset.vendorToggle).name;
