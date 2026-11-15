@@ -1,19 +1,19 @@
 (()=>{
 'use strict';
 let active=null,topic=null,busy=false,recognizer=null;
-const isLeader=()=>me&&['director','admin','lead'].includes(me.role);
+const isEmployee=()=>me?.role==='employee';
 const base=id=>'/discussions/topics/'+Number(id);
 const heading='<div class="discussion-heading"><h1>Обсуждение идей и проблем</h1><button id="disc-back" type="button">← Previous page</button></div>';
 const title=t=>'#'+t.ticket_id+' · '+esc(t.title)+' ('+(t.kind==='idea'?'идея':'проблема')+' · '+esc(t.department)+')';
 function download(id,format='txt'){const a=document.createElement('a');a.href='/api'+base(id)+'/export'+(format==='word'?'?format=word':'');a.download='IdeaFIX-discussion-'+id+(format==='word'?'.doc':'.txt');document.body.append(a);a.click();a.remove()}
 function stopVoice(){if(recognizer){try{recognizer.stop()}catch{}recognizer=null}}
-async function open(){if(!isLeader()){modal('Обсуждение','<p>Рабочий чат доступен директору и руководителям отделов.</p>');return}page='discussions';shell();await render()}
+async function open(){if(!isEmployee()){modal('Обсуждение','<p>Обсуждение идей и проблем доступно только сотрудникам.</p>');return}page='discussions';shell();await render()}
 async function render(){
- if(!isLeader())return;
+ if(!isEmployee())return;
  const v=$('#view');if(!v)return;
  v.classList.remove('list-screen');v.classList.add('discussion-screen');
  if(active){await show(active);return}
- v.innerHTML=heading+'<section class="panel"><h2>Выбрать вопрос обсуждения</h2><p class="muted">Тема доступна директору и руководителям, имеющим доступ к записи.</p><div class="discussion-create"><select id="disc-ticket" aria-label="Тема"></select><button id="disc-create" class="primary" type="button">Начать обсуждение</button></div></section><section class="panel"><h2>Обсуждения и сохранённые протоколы</h2><div id="disc-topics">Загрузка…</div></section>';
+ v.innerHTML=heading+'<section class="panel"><h2>Выбрать вопрос обсуждения</h2><p class="muted">В обсуждении участвуют сотрудники отдела, имеющие доступ к записи.</p><div class="discussion-create"><select id="disc-ticket" aria-label="Тема"></select><button id="disc-create" class="primary" type="button">Начать обсуждение</button></div></section><section class="panel"><h2>Обсуждения и сохранённые протоколы</h2><div id="disc-topics">Загрузка…</div></section>';
  $('#disc-back').hidden=true;
  try{
   const [choices,topics]=await Promise.all([api('/discussions/candidates'),api('/discussions/topics')]);
