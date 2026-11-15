@@ -144,7 +144,7 @@ function directorFinancialSummary(tickets){
  const rows=projectFinanceRows(tickets,me),complete=rows.filter(r=>r.balance!==null);
  const money=n=>convertedMoney(n,'RUB');
  const total=key=>{const known=rows.filter(r=>r[key]!==null);return known.length?known.reduce((n,r)=>n+(r.currency==='RUB'?r[key]:r[key]*(financeFx?.rates?.RUB/financeFx?.rates?.[r.currency])),0):null};
- return '<div class="secretary-financial-summary"><p>Доходы: <b>'+money(total('income'))+'</b></p><p>Расходы: <b>'+money(total('expense'))+'</b></p><p>Разница по заполненным строкам: <b>'+money(complete.length?complete.reduce((n,r)=>n+r.balance,0):null)+'</b></p><small>Данные карточек: '+rows.length+' · Полностью заполнено: '+complete.length+'. Импортированные данные Битрикс24 доступны в «Результатах».</small></div>';
+ return '<div class="secretary-financial-summary"><p>Доходы: <b>'+money(total('income'))+'</b></p><p>Расходы: <b>'+money(total('expense'))+'</b></p><p>Разница по заполненным строкам: <b>'+money(complete.length?complete.reduce((n,r)=>n+(r.currency==='RUB'?r.balance:r.balance*(financeFx?.rates?.RUB/financeFx?.rates?.[r.currency])),0):null)+'</b></p><small>Данные карточек: '+rows.length+' · Полностью заполнено: '+complete.length+'. Импортированные данные Битрикс24 доступны в «Результатах».</small></div>';
 }
 function showDirectorAnalytics(){
  const pilotItems=items.filter(t=>['pilot','implementation','result'].includes(t.stage));
