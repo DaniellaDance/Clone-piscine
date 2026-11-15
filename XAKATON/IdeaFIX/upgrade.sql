@@ -66,6 +66,8 @@ BEGIN
  ELSIF NEW.assignee_id IS DISTINCT FROM OLD.assignee_id THEN kind:='assigned';label:='Назначен ответственный';
  ELSE RETURN NEW;END IF;
  INSERT INTO ideafix.ticket_audit(ticket,version,event) VALUES(NEW.id,NEW.version,kind);
+ -- Demo tickets remain auditable but must never produce real notifications or integration deliveries.
+ IF NEW.author LIKE 'demo-v1-%' OR NEW.title LIKE 'ДЕМО%' THEN RETURN NEW; END IF;
  IF NOT private_draft THEN
   INSERT INTO ideafix.integration_outbox(ticket,event) VALUES(NEW.id,kind);
  END IF;
@@ -91,7 +93,7 @@ UPDATE ideafix.tickets SET assignment_reason=assignment_reason WHERE assignee_id
 CREATE OR REPLACE FUNCTION ideafix.notify_ticket_comment() RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE a text;
 BEGIN
- IF NOT NEW.internal AND NEW.actor<>'Система' THEN
+ IF NOT NEW.internal AND NEW.actor<>'Система' AND NOT EXISTS (SELECT 1 FROM ideafix.tickets t WHERE t.id=NEW.ticket AND (t.author LIKE 'demo-v1-%' OR t.title LIKE 'ДЕМО%')) THEN
   SELECT author INTO a FROM ideafix.tickets WHERE id=NEW.ticket;
   IF a IS NOT NULL THEN INSERT INTO ideafix.inbox_events(user_id,ticket,kind,title) VALUES(a,NEW.ticket,'comment','Новый комментарий или запрос уточнения');END IF;
  END IF;RETURN NEW;
