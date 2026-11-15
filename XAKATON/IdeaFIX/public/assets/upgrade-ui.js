@@ -24,9 +24,29 @@ window.IFUpgrade=(()=>{
   }
   if(page==='upgrade-improvements'){
    const data=await ctx.api('/upgrade/improvements');if(!current())return;
-   const shortTitle=t=>String(t||'Улучшение').replace(/^ДЕМО\s*[·:—-]?\s*/iu,'').slice(0,100);
+   const shortTitle=t=>String(t||'Улучшение').replace(/^ДЕМО\\s*[·:—-]?\\s*/iu,'').slice(0,100);
    const formattedDate=value=>{if(!value)return 'Не зафиксирована';const date=new Date(value);return Number.isFinite(date.getTime())?date.toLocaleDateString('ru-RU',{timeZone:'Asia/Almaty'}):'Не зафиксирована'};
-   target.innerHTML=heading('Наши внедрения в производстве')+'<div class="improvements-summary"><span>Всего: <b>'+data.total+'</b></span><span>За квартал: <b>'+data.quarter+'</b></span><small>Сначала последние</small></div><div class="upgrade-improvements-compact" role="list">'+(data.items.length?data.items.map(t=>`<article class="improvement-row" role="listitem"><div class="improvement-row-main"><h2 data-user-text>${esc(shortTitle(t.title))}</h2><small>${/^ДЕМО/iu.test(t.title)?'<span class="improvement-demo">Демо</span> · ':''}${esc(t.department)} · Создано: ${formattedDate(t.created)} · Начало внедрения: ${formattedDate(t.implementation_started_at)} · Завершено: ${formattedDate(t.resolved_at)}</small></div><button type="button" data-improvement="${t.id}" aria-label="Подробнее об улучшении #${t.id}">Подробнее</button></article>`).join(''):'<p class="hint">Завершённых опубликованных улучшений пока нет.</p>')+'</div>';target.querySelectorAll('[data-improvement]').forEach(b=>b.onclick=()=>ctx.openTicket(b.dataset.improvement));return;
+   const monthKey=value=>{
+    if(!value)return '';
+    const date=new Date(value);
+    if(!Number.isFinite(date.getTime()))return '';
+    const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Almaty',year:'numeric',month:'2-digit'}).formatToParts(date);
+    return parts.find(p=>p.type==='year').value+'-'+parts.find(p=>p.type==='month').value;
+   };
+   const dateForMonth=t=>t.implementation_started_at||t.created;
+   const months=[...new Set(data.items.map(t=>monthKey(dateForMonth(t))).filter(Boolean))].sort().reverse();
+   const monthLabel=value=>{
+    const [year,month]=value.split('-').map(Number);
+    return new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(Date.UTC(year,month-1,1)));
+   };
+   target.innerHTML=heading('Наши улучшения в работе')+'<div class="improvements-summary"><span>Всего: <b>'+data.total+'</b></span><span>За квартал: <b>'+data.quarter+'</b></span></div><div class="improvements-month-filter"><label for="improvements-month">Сортировка по месяцу</label><select id="improvements-month"><option value="">Все месяцы</option>'+months.map(m=>'<option value="'+m+'">'+monthLabel(m)+'</option>').join('')+'</select><small>По дате начала внедрения; если она не зафиксирована — по дате создания</small></div><div class="upgrade-improvements-compact" id="improvements-list" role="list"></div>';
+   const list=target.querySelector('#improvements-list'),select=target.querySelector('#improvements-month');
+   const renderList=()=>{
+    const filtered=select.value?data.items.filter(t=>monthKey(dateForMonth(t))===select.value):data.items;
+    list.innerHTML=filtered.length?filtered.map(t=>`<article class="improvement-row" role="listitem"><div class="improvement-row-main"><h2 data-user-text>${esc(shortTitle(t.title))}</h2><small>${/^ДЕМО/iu.test(t.title)?'<span class="improvement-demo">Демо</span> · ':''}${esc(t.department)} · Создано: ${formattedDate(t.created)} · Начало внедрения: ${formattedDate(t.implementation_started_at)} · Завершено: ${formattedDate(t.resolved_at)}</small></div><button type="button" data-improvement="${t.id}" aria-label="Подробнее об улучшении #${t.id}">Подробнее</button></article>`).join(''):'<p class="hint">За выбранный месяц записей нет.</p>';
+    list.querySelectorAll('[data-improvement]').forEach(b=>b.onclick=()=>ctx.openTicket(b.dataset.improvement));
+   };
+   select.onchange=renderList;renderList();return;
   }
   if(page==='upgrade-routing'){
    const data=await ctx.api('/upgrade/routing');if(!current())return;const opts=(department,value)=>'<option value="">Автоматический резерв</option>'+data.people.filter(p=>p.role!=='lead'||p.department===department).map(p=>'<option value="'+esc(p.id)+'" '+(p.id===value?'selected':'')+'>'+esc(p.name+' · '+p.department)+(p.unavailable_until&&new Date(p.unavailable_until)>new Date()?' (отсутствует)':'')+'</option>').join('');
