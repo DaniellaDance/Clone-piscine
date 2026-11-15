@@ -1041,3 +1041,20 @@ main#view.home-screen{display:flex!important;flex-direction:column!important;gap
 .finance-table{overflow-x:auto;max-width:100%}
 .finance-table table{min-width:700px}
 @media(max-width:600px){.finance-table td,.finance-table th{padding:10px 8px}.finance-table .finance-project-title{min-width:170px;max-width:200px}.finance-four-values{font-size:11px}}
+
+
+/* Accessible compact intelligence panels for mobile and desktop */
+.market-intelligence{display:grid;gap:12px;padding:8px;max-width:100%;overflow-wrap:anywhere}
+.market-intelligence-toolbar{display:flex;justify-content:flex-end}
+.market-intelligence-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:10px}
+.market-intelligence-card,.market-news-article{background:#fff;border:1px solid #ccddec;border-radius:12px;padding:12px;min-width:0}
+.market-intelligence-card summary{display:flex;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer}
+.market-news-article{margin:8px 0}
+.market-news-article small,.market-intelligence-card small{display:block;margin:5px 0;color:#50627b}
+.market-news-article a{overflow-wrap:anywhere}
+.market-quote{font-size:19px;font-weight:750;font-variant-numeric:tabular-nums;margin-top:10px}
+.market-status{font-size:11px;padding:4px 7px;border-radius:8px;background:#f1f4f6}
+.market-review_risks{background:#fff0d8;color:#834900}
+.market-monitor_growth{background:#e1f6e7;color:#225a31}
+.market-up{color:#127d3b}.market-down{color:#c53232}
+@media(max-width:540px){.market-intelligence-grid{grid-template-columns:minmax(0,1fr)}.market-quote{font-size:17px}}
